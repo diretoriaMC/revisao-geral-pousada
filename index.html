@@ -80,6 +80,8 @@
     .apt-card .apt-num { font-size: 22px; font-weight: 800; color: #1F3864; }
     .apt-card .apt-nome { font-size: 11px; color: #666; margin-top: 2px; }
     .apt-card .apt-status { font-size: 11px; font-weight: 700; margin-top: 6px; }
+    .apt-card.sem-revisao { border-color: #dde3ea; background: #f7f9fb; }
+    .apt-card.sem-revisao .apt-status { color: #8a9ab0; }
     .apt-card.ok { border-color: #c8e6c9; }
     .apt-card.ok .apt-status { color: #2e7d32; }
     .apt-card.urgente { border-color: #ffe0b2; background: #fff8f0; }
@@ -562,7 +564,7 @@
       <div class="item-label">Porta do banheiro abre / fecha / trava</div>
       <select class="status-select" id="por_banheiro" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Atenção">🔴 Atenção</option>
       </select>
@@ -590,7 +592,7 @@
       <div class="item-label">Janelas fecham bem, sem folgas</div>
       <select class="status-select" id="jan_fecham" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Atenção">🔴 Atenção</option>
       </select>
@@ -608,7 +610,7 @@
       <div class="item-label">Tela protetora sem furos (se houver)</div>
       <select class="status-select" id="jan_tela" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Atenção">🔴 Atenção</option>
         <option value="N/A">N/A</option>
@@ -636,7 +638,7 @@
       <div class="item-label">Rejunte íntegro e sem falhas</div>
       <select class="status-select" id="pis_rejunte" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Refazer">🔴 Refazer</option>
       </select>
@@ -717,7 +719,7 @@
       <div class="item-label">Azulejos do banheiro sem quebras ou trincas</div>
       <select class="status-select" id="par_azulejos" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Substituir">🔴 Substituir</option>
       </select>
@@ -726,7 +728,7 @@
       <div class="item-label">Rodapés fixos e sem danos</div>
       <select class="status-select" id="par_rodapes" onchange="atualizarProgresso()">
         <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
+        <option value="✅ OK">✅ OL</option>
         <option value="⚠️ Verificar">⚠️ Verificar</option>
         <option value="🔴 Atenção">🔴 Atenção</option>
       </select>
@@ -839,17 +841,16 @@ const LISTA_APTOS = [
 ];
 
 // Montar objeto indexado por posição (1–45)
+// Status inicial: todos sem revisão – a contagem começa só após o técnico registrar
 const APARTAMENTOS = {};
 LISTA_APTOS.forEach((apt, idx) => {
   const seq = idx + 1;
-  const diasAleatorio = (seq * 7 + 13) % 95;
-  let status = diasAleatorio <= 0 ? 'vencido' : diasAleatorio <= 14 ? 'urgente' : 'ok';
   APARTAMENTOS[seq] = {
     id: apt.id,
     andar: apt.andar,
     nome: apt.id,
-    status: status,
-    diasRestantes: diasAleatorio
+    status: 'sem-revisao',   // sem histórico ainda
+    diasRestantes: null      // sem contagem até primeira revisão
   };
 });
 
@@ -876,7 +877,9 @@ function renderGrid(filtro) {
     aptsDeste.forEach(([seq, apt]) => {
       const card = document.createElement('div');
       card.className = `apt-card ${apt.status}`;
-      const statusTxt = apt.status === 'vencido'
+      const statusTxt = apt.status === 'sem-revisao'
+        ? '⬜ Sem revisão'
+        : apt.status === 'vencido'
         ? '🔴 Vencido'
         : apt.status === 'urgente'
         ? `⚠️ ${apt.diasRestantes}d restantes`
@@ -905,7 +908,9 @@ function selecionarApt(num) {
   document.getElementById('form-apt-sub').textContent = `${apt.andar}  ·  Pousada Marie Claire  ·  Revisão Geral Completa`;
 
   const badgesEl = document.getElementById('form-apt-badges');
-  let statusBadge = apt.status === 'vencido'
+  let statusBadge = apt.status === 'sem-revisao'
+    ? `<span class="badge">⬜ Sem revisão registrada</span>`
+    : apt.status === 'vencido'
     ? `<span class="badge vencido">🔴 Revisão Vencida</span>`
     : apt.status === 'urgente'
     ? `<span class="badge urgente">⚠️ Revisão Próxima (${apt.diasRestantes} dias)</span>`
@@ -1086,7 +1091,7 @@ function mostrarSucesso(p) {
     👷 Técnico: <strong>${p.tecnico}</strong><br><br>
     💧 Hidráulico: ${p.status_hidraulico}<br>
     ⚡ Elétrica: ${p.status_eletrica}<br>
-    🛋️ Móveis: ${p.status_mobiliario}<br>
+    🛋️ Móveis: ${p.status_mobiliario}|br>
     🍳 Eletrodomésticos: ${p.status_eletrodomest}<br>
     🚪 Portas: ${p.status_portas}<br>
     🪟 Janelas: ${p.status_janelas}<br>
