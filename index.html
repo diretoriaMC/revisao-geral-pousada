@@ -89,6 +89,7 @@
     .apt-card.vencido { border-color: #ffcdd2; background: #fff5f5; }
     .apt-card.vencido .apt-status { color: #c62828; }
     .apt-card:hover { border-color: #2E75B6; box-shadow: 0 2px 12px rgba(46,117,182,.2); }
+    .apt-card .apt-ultima { font-size: 10px; color: #8a9ab0; margin-top: 4px; }
 
     /* ── TELA DO FORMULÁRIO ── */
     #tela-form { display: none; }
@@ -989,10 +990,14 @@ function renderGrid(filtro) {
         : apt.status === 'urgente'
         ? `⚠️ ${apt.diasRestantes}d restantes`
         : `✅ ${apt.diasRestantes}d restantes`;
+      const ultimaInfo = apt.ultimaRevisao
+        ? `<div class="apt-ultima">📅 ${apt.ultimaRevisao}</div>`
+        : '';
       card.innerHTML = `
         <div class="apt-num">${apt.id.replace('Apto ','')}</div>
         <div class="apt-nome">${apt.id}</div>
         <div class="apt-status">${statusTxt}</div>
+        ${ultimaInfo}
       `;
       card.onclick = () => selecionarApt(parseInt(seq));
       grid.appendChild(card);
@@ -1020,7 +1025,13 @@ function selecionarApt(num) {
     : apt.status === 'urgente'
     ? `<span class="badge urgente">⚠️ Revisão Próxima (${apt.diasRestantes} dias)</span>`
     : `<span class="badge ok">✅ Em Dia (${apt.diasRestantes} dias)</span>`;
-  badgesEl.innerHTML = `<span class="badge">🏨 ${apt.id}</span><span class="badge">${apt.andar}</span>${statusBadge}`;
+  const ultimaBadge = apt.ultimaRevisao
+    ? `<span class="badge">📅 Última: ${apt.ultimaRevisao}</span>`
+    : '';
+  const tecnicoBadge = apt.ultimoTecnico
+    ? `<span class="badge">👷 ${apt.ultimoTecnico}</span>`
+    : '';
+  badgesEl.innerHTML = `<span class="badge">🏨 ${apt.id}</span><span class="badge">${apt.andar}</span>${statusBadge}${ultimaBadge}${tecnicoBadge}`;
 
   // Exibir data de hoje automaticamente (sem campo editável)
   const hoje = new Date();
@@ -1228,6 +1239,22 @@ function enviarFormulario() {
 }
 
 function mostrarSucesso(p) {
+  // Atualizar o status local do apartamento imediatamente
+  const seq = aptSelecionado;
+  if (seq && APARTAMENTOS[seq]) {
+    const partes = (p.proxima_revisao || '').split('/');
+    if (partes.length === 3) {
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const proxima = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T00:00:00`);
+      const dias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
+      APARTAMENTOS[seq].status = dias < 0 ? 'vencido' : dias <= 30 ? 'urgente' : 'ok';
+      APARTAMENTOS[seq].diasRestantes = dias;
+      APARTAMENTOS[seq].ultimaRevisao = p.data_revisao;
+      APARTAMENTOS[seq].ultimoTecnico = p.tecnico;
+      APARTAMENTOS[seq].proximaRevisao = p.proxima_revisao;
+    }
+  }
+
   document.getElementById('tela-form').style.display = 'none';
   document.getElementById('tela-sucesso').style.display = 'block';
 
@@ -1239,7 +1266,7 @@ function mostrarSucesso(p) {
     👷 Técnico: <strong>${p.tecnico}</strong><br><br>
     💧 Hidráulico: ${p.status_hidraulico}<br>
     ⚡ Elétrica: ${p.status_eletrica}<br>
-    🛋️ Móveis: ${p.status_mobiliario}|br>
+    🛋️ Móveis: ${p.status_mobiliario}<br>
     🍳 Eletrodomésticos: ${p.status_eletrodomest}<br>
     🚪 Portas: ${p.status_portas}<br>
     🪟 Janelas: ${p.status_janelas}<br>
@@ -1252,8 +1279,55 @@ function mostrarSucesso(p) {
   window.scrollTo(0, 0);
 }
 
-// Inicializar
-renderGrid();
+// ─────────────────────────────────────────
+// CARREGAR HISTÓRICO DA PLANILHA
+// ─────────────────────────────────────────
+function carregarHistorico() {
+  const grid = document.getElementById('grid-apts');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#2E75B6;font-size:14px;font-weight:600;">⏳ Carregando histórico...</div>';
+
+  fetch(SCRIPT_URL + '?action=historico')
+    .then(r => r.json())
+    .then(dados => {
+      // dados esperado: [ { apartamento: "Apto 01", data_revisao: "10/04/2026", proxima_revisao: "18/09/2026", tecnico: "..." }, ... ]
+      const hoje = new Date();
+      hoje.setHours(0,0,0,0);
+
+      dados.forEach(row => {
+        // Encontrar qual seq corresponde a esse apartamento
+        const seq = Object.keys(APARTAMENTOS).find(k => APARTAMENTOS[k].id === row.apartamento);
+        if (!seq) return;
+
+        // Calcular dias restantes até a próxima revisão
+        // proxima_revisao vem no formato dd/mm/yyyy
+        const partes = (row.proxima_revisao || '').split('/');
+        if (partes.length !== 3) return;
+        const proxima = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T00:00:00`);
+        const diffMs = proxima - hoje;
+        const dias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        let status;
+        if (dias < 0)       status = 'vencido';
+        else if (dias <= 30) status = 'urgente';
+        else                status = 'ok';
+
+        APARTAMENTOS[seq].status        = status;
+        APARTAMENTOS[seq].diasRestantes = dias;
+        APARTAMENTOS[seq].ultimoTecnico = row.tecnico || '';
+        APARTAMENTOS[seq].ultimaRevisao = row.data_revisao || '';
+        APARTAMENTOS[seq].proximaRevisao = row.proxima_revisao || '';
+      });
+
+      renderGrid();
+    })
+    .catch(() => {
+      // Se falhar (offline, etc.), exibe a grade no estado padrão
+      renderGrid();
+    });
+}
+
+// Inicializar — busca histórico ao abrir
+carregarHistorico();
 </script>
 </body>
 </html>
