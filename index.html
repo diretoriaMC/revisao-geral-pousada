@@ -304,6 +304,58 @@
       font-weight: 600;
       margin-bottom: 12px;
     }
+
+    /* ── SEÇÕES COLAPSÁVEIS ── */
+    .form-section.collapsible h3 {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      margin-bottom: 0;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .form-section.collapsible h3 .section-toggle {
+      font-size: 18px;
+      color: #2E75B6;
+      transition: transform .25s;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    .form-section.collapsible.collapsed h3 {
+      border-bottom: none;
+    }
+    .form-section.collapsible.collapsed h3 .section-toggle {
+      transform: rotate(-90deg);
+    }
+    .section-body {
+      overflow: hidden;
+      transition: max-height .3s ease, opacity .3s ease, padding-top .3s ease;
+      max-height: 2000px;
+      opacity: 1;
+      padding-top: 14px;
+      border-top: 2px solid #EFF4FB;
+      margin-top: 12px;
+    }
+    .form-section.collapsible.collapsed .section-body {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      border-top: none;
+      margin-top: 0;
+    }
+    .section-summary {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8a9ab0;
+      margin-left: 8px;
+      flex: 1;
+      text-align: right;
+    }
+    .section-summary.ok { color: #2e7d32; }
+    .section-summary.atencao { color: #e65100; }
+    .section-summary.vermelho { color: #c62828; }
   </style>
 </head>
 <body>
@@ -353,389 +405,442 @@
   <div class="form-section">
     <h3>📋 Dados da Revisão</h3>
     <div class="field">
-      <label>📅 Data da Revisão<span class="req">*</span></label>
-      <input type="date" id="data_revisao" required>
-    </div>
-    <div class="field">
       <label>👷 Nome do Técnico<span class="req">*</span></label>
       <input type="text" id="tecnico" placeholder="Ex: João Silva" required>
+    </div>
+    <div style="background:#EFF4FB;border-radius:8px;padding:10px 14px;font-size:13px;color:#1F3864;font-weight:600;">
+      📅 Data registrada automaticamente: <span id="data-display"></span>
     </div>
   </div>
 
   <!-- 2. HIDRÁULICO -->
-  <div class="form-section">
-    <h3>💧 Hidráulico / Água</h3>
-    <div class="section-progress" id="prog-ac">Preencha todos os itens abaixo</div>
-    <div class="checklist-item">
-      <div class="item-label">Torneiras sem gotejamento</div>
-      <select class="status-select" id="hid_torneiras" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Chuveiro com boa pressão e temperatura</div>
-      <select class="status-select" id="hid_chuveiro" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Vaso sanitário funcionando (descarga, vedação)</div>
-      <select class="status-select" id="hid_vaso" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Sem manchas de umidade ou infiltração visível</div>
-      <select class="status-select" id="hid_umidade" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Hidráulico</label>
-      <textarea id="hid_obs" placeholder="Descreva problemas encontrados..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-hid">
+    <h3 onclick="toggleSection('sec-hid')">
+      💧 Hidráulico / Água
+      <span class="section-summary" id="sum-hid"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="section-progress" id="prog-ac">Preencha todos os itens abaixo</div>
+      <div class="checklist-item">
+        <div class="item-label">Torneiras sem gotejamento</div>
+        <select class="status-select" id="hid_torneiras" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Chuveiro com boa pressão e temperatura</div>
+        <select class="status-select" id="hid_chuveiro" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Vaso sanitário funcionando (descarga, vedação)</div>
+        <select class="status-select" id="hid_vaso" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Sem manchas de umidade ou infiltração visível</div>
+        <select class="status-select" id="hid_umidade" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Hidráulico</label>
+        <textarea id="hid_obs" placeholder="Descreva problemas encontrados..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 3. ELÉTRICA -->
-  <div class="form-section">
-    <h3>⚡ Elétrica / Iluminação</h3>
-    <div class="checklist-item">
-      <div class="item-label">Todas as lâmpadas funcionando</div>
-      <select class="status-select" id="ele_lampadas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Trocar 1">⚠️ Trocar 1</option>
-        <option value="🔴 Várias queimadas">🔴 Várias queimadas</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Tomadas e interruptores operacionais</div>
-      <select class="status-select" id="ele_tomadas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">TV funcionando corretamente</div>
-      <select class="status-select" id="ele_tv" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Tomadas USB / carregadores embutidos ok</div>
-      <select class="status-select" id="ele_usb" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Elétrica</label>
-      <textarea id="ele_obs" placeholder="Lâmpadas queimadas, tomadas com problema..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-ele">
+    <h3 onclick="toggleSection('sec-ele')">
+      ⚡ Elétrica / Iluminação
+      <span class="section-summary" id="sum-ele"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Todas as lâmpadas funcionando</div>
+        <select class="status-select" id="ele_lampadas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Trocar 1">⚠️ Trocar 1</option>
+          <option value="🔴 Várias queimadas">🔴 Várias queimadas</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Tomadas e interruptores operacionais</div>
+        <select class="status-select" id="ele_tomadas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">TV funcionando corretamente</div>
+        <select class="status-select" id="ele_tv" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Tomadas USB / carregadores embutidos ok</div>
+        <select class="status-select" id="ele_usb" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Elétrica</label>
+        <textarea id="ele_obs" placeholder="Lâmpadas queimadas, tomadas com problema..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 4. MÓVEIS -->
-  <div class="form-section">
-    <h3>🛋️ Móveis</h3>
-    <div class="checklist-item">
-      <div class="item-label">Cama: colchão, estrado, cabeceira</div>
-      <select class="status-select" id="mob_cama" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Guarda-roupa: portas, gavetas, cabides</div>
-      <select class="status-select" id="mob_guarda" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Mesa, cadeiras e demais móveis</div>
-      <select class="status-select" id="mob_mesas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Cortinas / persianas funcionando</div>
-      <select class="status-select" id="mob_cortinas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Trocar">🔴 Trocar</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Cofre funcionando</div>
-      <select class="status-select" id="mob_cofre" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Móveis</label>
-      <textarea id="mob_obs" placeholder="Peças quebradas, itens para substituir..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-mob">
+    <h3 onclick="toggleSection('sec-mob')">
+      🛋️ Móveis
+      <span class="section-summary" id="sum-mob"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Cama: colchão, estrado, cabeceira</div>
+        <select class="status-select" id="mob_cama" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Guarda-roupa: portas, gavetas, cabides</div>
+        <select class="status-select" id="mob_guarda" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Mesa, cadeiras e demais móveis</div>
+        <select class="status-select" id="mob_mesas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Cortinas / persianas funcionando</div>
+        <select class="status-select" id="mob_cortinas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Trocar">🔴 Trocar</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Cofre funcionando</div>
+        <select class="status-select" id="mob_cofre" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Móveis</label>
+        <textarea id="mob_obs" placeholder="Peças quebradas, itens para substituir..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 5. ELETRODOMÉSTICOS -->
-  <div class="form-section">
-    <h3>🍳 Eletrodomésticos</h3>
-    <div class="checklist-item">
-      <div class="item-label">Frigobar / minigeladeira</div>
-      <select class="status-select" id="ele2_frigobar" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Secador de cabelo</div>
-      <select class="status-select" id="ele2_secador" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Chaleira / cafeteira</div>
-      <select class="status-select" id="ele2_chaleira" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Eletrodomésticos</label>
-      <textarea id="ele2_obs" placeholder="Equipamentos com problema..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-ele2">
+    <h3 onclick="toggleSection('sec-ele2')">
+      🍳 Eletrodomésticos
+      <span class="section-summary" id="sum-ele2"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Frigobar / minigeladeira</div>
+        <select class="status-select" id="ele2_frigobar" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Secador de cabelo</div>
+        <select class="status-select" id="ele2_secador" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Chaleira / cafeteira</div>
+        <select class="status-select" id="ele2_chaleira" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Eletrodomésticos</label>
+        <textarea id="ele2_obs" placeholder="Equipamentos com problema..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 6. PORTAS -->
-  <div class="form-section">
-    <h3>🚪 Portas</h3>
-    <div class="checklist-item">
-      <div class="item-label">Porta de entrada: fechadura, chave e trinco</div>
-      <select class="status-select" id="por_entrada" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Porta do banheiro abre / fecha / trava</div>
-      <select class="status-select" id="por_banheiro" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Demais portas internas (se houver)</div>
-      <select class="status-select" id="por_internas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Portas</label>
-      <textarea id="por_obs" placeholder="Fechaduras, dobradiças, trincos com problema..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-por">
+    <h3 onclick="toggleSection('sec-por')">
+      🚪 Portas
+      <span class="section-summary" id="sum-por"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Porta de entrada: fechadura, chave e trinco</div>
+        <select class="status-select" id="por_entrada" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Porta do banheiro abre / fecha / trava</div>
+        <select class="status-select" id="por_banheiro" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Demais portas internas (se houver)</div>
+        <select class="status-select" id="por_internas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Portas</label>
+        <textarea id="por_obs" placeholder="Fechaduras, dobradiças, trincos com problema..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 7. JANELAS -->
-  <div class="form-section">
-    <h3>🪟 Janelas</h3>
-    <div class="checklist-item">
-      <div class="item-label">Janelas fecham bem, sem folgas</div>
-      <select class="status-select" id="jan_fecham" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Vidros íntegros, sem trincas ou quebras</div>
-      <select class="status-select" id="jan_vidros" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Tela protetora sem furos (se houver)</div>
-      <select class="status-select" id="jan_tela" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-        <option value="N/A">N/A</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Janelas</label>
-      <textarea id="jan_obs" placeholder="Vidros, folgas, vedação..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-jan">
+    <h3 onclick="toggleSection('sec-jan')">
+      🪟 Janelas
+      <span class="section-summary" id="sum-jan"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Janelas fecham bem, sem folgas</div>
+        <select class="status-select" id="jan_fecham" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Vidros íntegros, sem trincas ou quebras</div>
+        <select class="status-select" id="jan_vidros" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Tela protetora sem furos (se houver)</div>
+        <select class="status-select" id="jan_tela" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+          <option value="N/A">N/A</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Janelas</label>
+        <textarea id="jan_obs" placeholder="Vidros, folgas, vedação..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 8. PISO -->
-  <div class="form-section">
-    <h3>🟫 Piso</h3>
-    <div class="checklist-item">
-      <div class="item-label">Revestimento sem trincas, lascas ou peças soltas</div>
-      <select class="status-select" id="pis_revestimento" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Rejunte íntegro e sem falhas</div>
-      <select class="status-select" id="pis_rejunte" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Refazer">🔴 Refazer</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Piso do banheiro sem irregularidades</div>
-      <select class="status-select" id="pis_banheiro" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Piso</label>
-      <textarea id="pis_obs" placeholder="Peças soltas, rejunte falho, localização..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-pis">
+    <h3 onclick="toggleSection('sec-pis')">
+      🟫 Piso
+      <span class="section-summary" id="sum-pis"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Revestimento sem trincas, lascas ou peças soltas</div>
+        <select class="status-select" id="pis_revestimento" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Rejunte íntegro e sem falhas</div>
+        <select class="status-select" id="pis_rejunte" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Refazer">🔴 Refazer</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Piso do banheiro sem irregularidades</div>
+        <select class="status-select" id="pis_banheiro" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Piso</label>
+        <textarea id="pis_obs" placeholder="Peças soltas, rejunte falho, localização..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 9. FORRO / TETO -->
-  <div class="form-section">
-    <h3>🔲 Forro / Teto</h3>
-    <div class="checklist-item">
-      <div class="item-label">Forro / laje sem manchas de umidade</div>
-      <select class="status-select" id="for_umidade" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Infiltração">🔴 Infiltração</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Sem rachaduras ou fissuras no teto</div>
-      <select class="status-select" id="for_rachaduras" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Luminárias fixas e sem danos</div>
-      <select class="status-select" id="for_luminarias" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Forro / Teto</label>
-      <textarea id="for_obs" placeholder="Manchas, goteiras, rachaduras, localização..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-for">
+    <h3 onclick="toggleSection('sec-for')">
+      🔲 Forro / Teto
+      <span class="section-summary" id="sum-for"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Forro / laje sem manchas de umidade</div>
+        <select class="status-select" id="for_umidade" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Infiltração">🔴 Infiltração</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Sem rachaduras ou fissuras no teto</div>
+        <select class="status-select" id="for_rachaduras" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Luminárias fixas e sem danos</div>
+        <select class="status-select" id="for_luminarias" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Forro / Teto</label>
+        <textarea id="for_obs" placeholder="Manchas, goteiras, rachaduras, localização..."></textarea>
+      </div>
     </div>
   </div>
 
   <!-- 10. PAREDES -->
-  <div class="form-section">
-    <h3>🖼️ Paredes</h3>
-    <div class="checklist-item">
-      <div class="item-label">Paredes sem manchas, bolor ou descascamento</div>
-      <select class="status-select" id="par_manchas" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Retocar">⚠️ Retocar</option>
-        <option value="🔴 Repintar">🔴 Repintar</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Sem rachaduras ou fissuras nas paredes</div>
-      <select class="status-select" id="par_rachaduras" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OK</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Azulejos do banheiro sem quebras ou trincas</div>
-      <select class="status-select" id="par_azulejos" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Substituir">🔴 Substituir</option>
-      </select>
-    </div>
-    <div class="checklist-item">
-      <div class="item-label">Rodapés fixos e sem danos</div>
-      <select class="status-select" id="par_rodapes" onchange="atualizarProgresso()">
-        <option value="">—</option>
-        <option value="✅ OK">✅ OL</option>
-        <option value="⚠️ Verificar">⚠️ Verificar</option>
-        <option value="🔴 Atenção">🔴 Atenção</option>
-      </select>
-    </div>
-    <div class="field" style="margin-top:12px;">
-      <label>Observações Paredes</label>
-      <textarea id="par_obs" placeholder="Manchas, rachaduras, localização específica..."></textarea>
+  <div class="form-section collapsible collapsed" id="sec-par">
+    <h3 onclick="toggleSection('sec-par')">
+      🖼️ Paredes
+      <span class="section-summary" id="sum-par"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="checklist-item">
+        <div class="item-label">Paredes sem manchas, bolor ou descascamento</div>
+        <select class="status-select" id="par_manchas" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Retocar">⚠️ Retocar</option>
+          <option value="🔴 Repintar">🔴 Repintar</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Sem rachaduras ou fissuras nas paredes</div>
+        <select class="status-select" id="par_rachaduras" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Azulejos do banheiro sem quebras ou trincas</div>
+        <select class="status-select" id="par_azulejos" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Substituir">🔴 Substituir</option>
+        </select>
+      </div>
+      <div class="checklist-item">
+        <div class="item-label">Rodapés fixos e sem danos</div>
+        <select class="status-select" id="par_rodapes" onchange="atualizarProgresso()">
+          <option value="">—</option>
+          <option value="✅ OK">✅ OK</option>
+          <option value="⚠️ Verificar">⚠️ Verificar</option>
+          <option value="🔴 Atenção">🔴 Atenção</option>
+        </select>
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <label>Observações Paredes</label>
+        <textarea id="par_obs" placeholder="Manchas, rachaduras, localização específica..."></textarea>
+      </div>
     </div>
   </div>
 
@@ -917,15 +1022,26 @@ function selecionarApt(num) {
     : `<span class="badge ok">✅ Em Dia (${apt.diasRestantes} dias)</span>`;
   badgesEl.innerHTML = `<span class="badge">🏨 ${apt.id}</span><span class="badge">${apt.andar}</span>${statusBadge}`;
 
-  // Preencher data de hoje
+  // Exibir data de hoje automaticamente (sem campo editável)
   const hoje = new Date();
-  const iso = hoje.toISOString().split('T')[0];
-  document.getElementById('data_revisao').value = iso;
+  const dia   = String(hoje.getDate()).padStart(2,'0');
+  const mes   = String(hoje.getMonth()+1).padStart(2,'0');
+  const ano   = hoje.getFullYear();
+  window._dataHoje = `${ano}-${mes}-${dia}`;
+  const elData = document.getElementById('data-display');
+  if (elData) elData.textContent = `${dia}/${mes}/${ano}`;
 
   document.getElementById('tela-selecao').style.display = 'none';
   document.getElementById('tela-form').style.display = 'block';
   document.getElementById('tela-sucesso').style.display = 'none';
   window.scrollTo(0, 0);
+
+  // Recolher todas as seções colapsáveis ao abrir novo formulário
+  ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('collapsed');
+    });
 
   // Resetar todos os selects e textareas
   const selects = document.querySelectorAll('#tela-form select');
@@ -935,6 +1051,9 @@ function selecionarApt(num) {
   document.getElementById('observacoes').value = '';
   ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  // Limpar sumários das seções
+  ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par']
+    .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
   atualizarProgresso();
 }
 
@@ -972,6 +1091,40 @@ function atualizarProgresso() {
     el.style.background = preenchidos === total ? '#E8F5E9' : '#EFF4FB';
     el.style.color = preenchidos === total ? '#2E7D32' : '#1F3864';
   }
+
+  // Atualizar sumário de cada seção colapsada
+  const secoes = [
+    { sumId: 'sum-hid',  ids: ['hid_torneiras','hid_chuveiro','hid_vaso','hid_umidade'] },
+    { sumId: 'sum-ele',  ids: ['ele_lampadas','ele_tomadas','ele_tv','ele_usb'] },
+    { sumId: 'sum-mob',  ids: ['mob_cama','mob_guarda','mob_mesas','mob_cortinas','mob_cofre'] },
+    { sumId: 'sum-ele2', ids: ['ele2_frigobar','ele2_secador','ele2_chaleira'] },
+    { sumId: 'sum-por',  ids: ['por_entrada','por_banheiro','por_internas'] },
+    { sumId: 'sum-jan',  ids: ['jan_fecham','jan_vidros','jan_tela'] },
+    { sumId: 'sum-pis',  ids: ['pis_revestimento','pis_rejunte','pis_banheiro'] },
+    { sumId: 'sum-for',  ids: ['for_umidade','for_rachaduras','for_luminarias'] },
+    { sumId: 'sum-par',  ids: ['par_manchas','par_rachaduras','par_azulejos','par_rodapes'] },
+  ];
+  secoes.forEach(({ sumId, ids }) => {
+    const el = document.getElementById(sumId);
+    if (!el) return;
+    const vals = ids.map(id => document.getElementById(id)?.value || '');
+    const preench = vals.filter(v => v).length;
+    if (preench === 0) { el.textContent = ''; el.className = 'section-summary'; return; }
+    if (vals.some(v => v.includes('🔴'))) {
+      el.textContent = '🔴 Atenção'; el.className = 'section-summary vermelho';
+    } else if (vals.some(v => v.includes('⚠️'))) {
+      el.textContent = '⚠️ Verificar'; el.className = 'section-summary atencao';
+    } else if (vals.every(v => v.includes('✅') || v === 'N/A')) {
+      el.textContent = '✅ OK'; el.className = 'section-summary ok';
+    } else {
+      el.textContent = `${preench}/${ids.length}`; el.className = 'section-summary';
+    }
+  });
+}
+
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('collapsed');
 }
 
 function resumoStatus(ids) {
@@ -987,17 +1140,12 @@ function enviarFormulario() {
   msgErro.style.display = 'none';
 
   const tecnico = document.getElementById('tecnico').value.trim();
-  const dataRevisao = document.getElementById('data_revisao').value;
+  const dataRevisao = window._dataHoje || new Date().toISOString().split('T')[0];
 
   if (!tecnico) {
     msgErro.textContent = '⚠️ Informe o nome do técnico.';
     msgErro.style.display = 'block';
     document.getElementById('tecnico').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  if (!dataRevisao) {
-    msgErro.textContent = '⚠️ Informe a data da revisão.';
-    msgErro.style.display = 'block';
     return;
   }
 
