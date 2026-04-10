@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Revisão Geral – Pousada Marie Claire</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    /* ── CABEÇALHO ── */
+    .header {
+      background: #1F3864;
+      color: white;
+      padding: 16px 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .header-icon { font-size: 28px; }
+    .header h1 { font-size: 16px; font-weight: 700; line-height: 1.3; }
+    .header p  { font-size: 12px; opacity: .75; margin-top: 2px; }
+
+    /* ── TELA SELEÇÃO DE APARTAMENTO ── */
+    #tela-selecao { padding: 16px; }
+
+    .search-box {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .search-box h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1F3864;
+      margin-bottom: 12px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #2E75B6;
+      box-shadow: 0 0 0 3px rgba(46,117,182,.12);
+    }
+
+    .grid-apts {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .apt-card {
+      background: white;
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid #e0e8f0;
+      transition: all .2s;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .apt-card:active { transform: scale(.97); }
+    .apt-card .apt-num { font-size: 22px; font-weight: 800; color: #1F3864; }
+    .apt-card .apt-nome { font-size: 11px; color: #666; margin-top: 2px; }
+    .apt-card .apt-status { font-size: 11px; font-weight: 700; margin-top: 6px; }
+    .apt-card.ok { border-color: #c8e6c9; }
+    .apt-card.ok .apt-status { color: #2e7d32; }
+    .apt-card.urgente { border-color: #ffe0b2; background: #fff8f0; }
+    .apt-card.urgente .apt-status { color: #e65100; }
+    .apt-card.vencido { border-color: #ffcdd2; background: #fff5f5; }
+    .apt-card.vencido .apt-status { color: #c62828; }
+    .apt-card:hover { border-color: #2E75B6; box-shadow: 0 2px 12px rgba(46,117,182,.2); }
+
+    /* ── TELA DO FORMULÁRIO ── */
+    #tela-form { display: none; }
+
+    .apt-header-card {
+      background: white;
+      margin: 16px;
+      border-radius: 12px;
+      padding: 16px;
+      border-left: 5px solid #2E75B6;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .apt-header-card h2 { font-size: 22px; color: #1F3864; font-weight: 800; }
+    .apt-header-card .sub { font-size: 14px; color: #555; margin-top: 3px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .badge {
+      background: #EFF4FB;
+      color: #1F3864;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .badge.vencido { background: #FFEBEE; color: #C62828; }
+    .badge.urgente { background: #FFF3E0; color: #E65100; }
+    .badge.ok      { background: #E8F5E9; color: #2E7D32; }
+
+    .btn-voltar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 16px 0;
+      background: none;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1F3864;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    /* ── SEÇÕES DO FORMULÁRIO ── */
+    .form-section {
+      background: white;
+      margin: 0 16px 16px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+    .form-section h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1F3864;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #EFF4FB;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    .field label .req { color: #e53935; margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #222;
+      background: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color .2s;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #2E75B6;
+      box-shadow: 0 0 0 3px rgba(46,117,182,.12);
+    }
+    .field textarea { resize: vertical; min-height: 72px; }
+
+    /* ── ITENS DE CHECKLIST ── */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item .item-label {
+      flex: 1;
+      font-size: 14px;
+      color: #333;
+    }
+    .status-select {
+      min-width: 140px;
+      padding: 8px 10px !important;
+      font-size: 13px !important;
+      border-radius: 8px !important;
+    }
+
+    /* ── NOTA GERAL ── */
+    .nota-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .nota-slider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .nota-slider input[type="range"] {
+      flex: 1;
+      height: 8px;
+      accent-color: #1F3864;
+      padding: 0;
+    }
+    .nota-valor {
+      font-size: 28px;
+      font-weight: 800;
+      color: #1F3864;
+      min-width: 48px;
+      text-align: center;
+    }
+
+    /* ── BOTÃO ENVIAR ── */
+    .btn-submit {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 0 16px 32px;
+      padding: 18px;
+      background: #1F3864;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .3px;
+      transition: background .2s, transform .1s;
+    }
+    .btn-submit:active { transform: scale(.98); background: #16284a; }
+    .btn-submit:disabled { background: #90a4c8; cursor: default; }
+
+    /* ── TELA DE SUCESSO ── */
+    #tela-sucesso {
+      display: none;
+      text-align: center;
+      padding: 60px 32px;
+    }
+    .sucesso-icon { font-size: 72px; margin-bottom: 16px; }
+    .sucesso-titulo { font-size: 22px; font-weight: 800; color: #1F3864; margin-bottom: 8px; }
+    .sucesso-msg { font-size: 15px; color: #555; line-height: 1.6; }
+    .btn-nova {
+      margin-top: 28px;
+      display: inline-block;
+      background: #2E75B6;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* ── MENSAGEM DE ERRO ── */
+    .msg-erro {
+      display: none;
+      background: #fff3f3;
+      border: 1.5px solid #e53935;
+      color: #c62828;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      margin: 0 16px 16px;
+    }
+
+    /* LOADING */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .section-progress {
+      background: #EFF4FB;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #1F3864;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- CABEÇALHO -->
+<div class="header">
+  <div class="header-icon">🏨</div>
+  <div>
+    <h1>Revisão Geral dos Apartamentos</h1>
+    <p>Pousada Marie Claire</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     TELA 1 – SELEÇÃO DO APARTAMENTO
+══════════════════════════════════════ -->
+<div id="tela-selecao">
+
+  <div class="search-box" style="margin-top:16px;">
+    <h3>🏠 Selecione o apartamento a ser revisado</h3>
+    <input type="text" id="busca-apt" placeholder="Digite o número do apartamento (ex: 01, 101, 201, 301)..."
+      oninput="filtrarApts()" inputmode="numeric" autocomplete="off">
+  </div>
+
+  <div class="grid-apts" id="grid-apts"></div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════
+     TELA 2 – FORMULÁRIO DE REVISÃO
+══════════════════════════════════════ -->
+<div id="tela-form">
+
+  <button class="btn-voltar" onclick="voltarSelecao()">← Trocar Apartamento</button>
+
+  <div class="apt-header-card">
+    <h2 id="form-apt-titulo">Apartamento XX</h2>
+    <div class="sub" id="form-apt-sub"></div>
+    <div class="badges" id="form-apt-badges"></div>
+  </div>
+
+  <div class="msg-erro" id="msg-erro"></div>
+
+  <!-- 1. DADOS BÁSICOS -->
+  <div class="form-section">
+    <h3>📋 Dados da Revisão</h3>
+    <div class="field">
+      <label>📅 Data da Revisão<span class="req">*</span></label>
+      <input type="date" id="data_revisao" required>
+    </div>
+    <div class="field">
+      <label>👷 Nome do Técnico<span class="req">*</span></label>
+      <input type="text" id="tecnico" placeholder="Ex: João Silva" required>
+    </div>
+  </div>
+
+  <!-- 2. HIDRÁULICO -->
+  <div class="form-section">
+    <h3>💧 Hidráulico / Água</h3>
+    <div class="section-progress" id="prog-ac">Preencha todos os itens abaixo</div>
+    <div class="checklist-item">
+      <div class="item-label">Torneiras sem gotejamento</div>
+      <select class="status-select" id="hid_torneiras" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Chuveiro com boa pressão e temperatura</div>
+      <select class="status-select" id="hid_chuveiro" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Vaso sanitário funcionando (descarga, vedação)</div>
+      <select class="status-select" id="hid_vaso" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Sem manchas de umidade ou infiltração visível</div>
+      <select class="status-select" id="hid_umidade" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Hidráulico</label>
+      <textarea id="hid_obs" placeholder="Descreva problemas encontrados..."></textarea>
+    </div>
+  </div>
+
+  <!-- 3. ELÉTRICA -->
+  <div class="form-section">
+    <h3>⚡ Elétrica / Iluminação</h3>
+    <div class="checklist-item">
+      <div class="item-label">Todas as lâmpadas funcionando</div>
+      <select class="status-select" id="ele_lampadas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Trocar 1">⚠️ Trocar 1</option>
+        <option value="🔴 Várias queimadas">🔴 Várias queimadas</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Tomadas e interruptores operacionais</div>
+      <select class="status-select" id="ele_tomadas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">TV funcionando corretamente</div>
+      <select class="status-select" id="ele_tv" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Tomadas USB / carregadores embutidos ok</div>
+      <select class="status-select" id="ele_usb" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Elétrica</label>
+      <textarea id="ele_obs" placeholder="Lâmpadas queimadas, tomadas com problema..."></textarea>
+    </div>
+  </div>
+
+  <!-- 4. MÓVEIS -->
+  <div class="form-section">
+    <h3>🛋️ Móveis</h3>
+    <div class="checklist-item">
+      <div class="item-label">Cama: colchão, estrado, cabeceira</div>
+      <select class="status-select" id="mob_cama" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Guarda-roupa: portas, gavetas, cabides</div>
+      <select class="status-select" id="mob_guarda" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Mesa, cadeiras e demais móveis</div>
+      <select class="status-select" id="mob_mesas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Cortinas / persianas funcionando</div>
+      <select class="status-select" id="mob_cortinas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Trocar">🔴 Trocar</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Cofre funcionando</div>
+      <select class="status-select" id="mob_cofre" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Móveis</label>
+      <textarea id="mob_obs" placeholder="Peças quebradas, itens para substituir..."></textarea>
+    </div>
+  </div>
+
+  <!-- 5. ELETRODOMÉSTICOS -->
+  <div class="form-section">
+    <h3>🍳 Eletrodomésticos</h3>
+    <div class="checklist-item">
+      <div class="item-label">Frigobar / minigeladeira</div>
+      <select class="status-select" id="ele2_frigobar" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Secador de cabelo</div>
+      <select class="status-select" id="ele2_secador" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Chaleira / cafeteira</div>
+      <select class="status-select" id="ele2_chaleira" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Eletrodomésticos</label>
+      <textarea id="ele2_obs" placeholder="Equipamentos com problema..."></textarea>
+    </div>
+  </div>
+
+  <!-- 6. PORTAS -->
+  <div class="form-section">
+    <h3>🚪 Portas</h3>
+    <div class="checklist-item">
+      <div class="item-label">Porta de entrada: fechadura, chave e trinco</div>
+      <select class="status-select" id="por_entrada" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Porta do banheiro abre / fecha / trava</div>
+      <select class="status-select" id="por_banheiro" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Demais portas internas (se houver)</div>
+      <select class="status-select" id="por_internas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Portas</label>
+      <textarea id="por_obs" placeholder="Fechaduras, dobradiças, trincos com problema..."></textarea>
+    </div>
+  </div>
+
+  <!-- 7. JANELAS -->
+  <div class="form-section">
+    <h3>🪟 Janelas</h3>
+    <div class="checklist-item">
+      <div class="item-label">Janelas fecham bem, sem folgas</div>
+      <select class="status-select" id="jan_fecham" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Vidros íntegros, sem trincas ou quebras</div>
+      <select class="status-select" id="jan_vidros" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Tela protetora sem furos (se houver)</div>
+      <select class="status-select" id="jan_tela" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+        <option value="N/A">N/A</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Janelas</label>
+      <textarea id="jan_obs" placeholder="Vidros, folgas, vedação..."></textarea>
+    </div>
+  </div>
+
+  <!-- 8. PISO -->
+  <div class="form-section">
+    <h3>🟫 Piso</h3>
+    <div class="checklist-item">
+      <div class="item-label">Revestimento sem trincas, lascas ou peças soltas</div>
+      <select class="status-select" id="pis_revestimento" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Rejunte íntegro e sem falhas</div>
+      <select class="status-select" id="pis_rejunte" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Refazer">🔴 Refazer</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Piso do banheiro sem irregularidades</div>
+      <select class="status-select" id="pis_banheiro" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Piso</label>
+      <textarea id="pis_obs" placeholder="Peças soltas, rejunte falho, localização..."></textarea>
+    </div>
+  </div>
+
+  <!-- 9. FORRO / TETO -->
+  <div class="form-section">
+    <h3>🔲 Forro / Teto</h3>
+    <div class="checklist-item">
+      <div class="item-label">Forro / laje sem manchas de umidade</div>
+      <select class="status-select" id="for_umidade" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Infiltração">🔴 Infiltração</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Sem rachaduras ou fissuras no teto</div>
+      <select class="status-select" id="for_rachaduras" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Luminárias fixas e sem danos</div>
+      <select class="status-select" id="for_luminarias" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Forro / Teto</label>
+      <textarea id="for_obs" placeholder="Manchas, goteiras, rachaduras, localização..."></textarea>
+    </div>
+  </div>
+
+  <!-- 10. PAREDES -->
+  <div class="form-section">
+    <h3>🖼️ Paredes</h3>
+    <div class="checklist-item">
+      <div class="item-label">Paredes sem manchas, bolor ou descascamento</div>
+      <select class="status-select" id="par_manchas" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Retocar">⚠️ Retocar</option>
+        <option value="🔴 Repintar">🔴 Repintar</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Sem rachaduras ou fissuras nas paredes</div>
+      <select class="status-select" id="par_rachaduras" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Azulejos do banheiro sem quebras ou trincas</div>
+      <select class="status-select" id="par_azulejos" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Substituir">🔴 Substituir</option>
+      </select>
+    </div>
+    <div class="checklist-item">
+      <div class="item-label">Rodapés fixos e sem danos</div>
+      <select class="status-select" id="par_rodapes" onchange="atualizarProgresso()">
+        <option value="">—</option>
+        <option value="✅ OK">✅ OK</option>
+        <option value="⚠️ Verificar">⚠️ Verificar</option>
+        <option value="🔴 Atenção">🔴 Atenção</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:12px;">
+      <label>Observações Paredes</label>
+      <textarea id="par_obs" placeholder="Manchas, rachaduras, localização específica..."></textarea>
+    </div>
+  </div>
+
+  <!-- 11. PROBLEMAS E OBSERVAÇÕES FINAIS -->
+  <div class="form-section">
+    <h3>📋 Observações Finais</h3>
+
+    <div class="field">
+      <label>🔧 Problemas Identificados</label>
+      <textarea id="problemas" rows="4"
+        placeholder="Liste todos os problemas encontrados que precisam de atenção ou agendamento..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>📝 Observações Gerais</label>
+      <textarea id="observacoes"
+        placeholder="Informações adicionais, recomendações, contexto importante..."></textarea>
+    </div>
+  </div>
+
+  <div class="msg-erro" id="msg-erro-2"></div>
+
+  <button class="btn-submit" id="btn-enviar" onclick="enviarFormulario()">
+    ✅ Registrar Revisão Completa
+  </button>
+
+</div><!-- /tela-form -->
+
+
+<!-- ══════════════════════════════════════
+     TELA 3 – SUCESSO
+══════════════════════════════════════ -->
+<div id="tela-sucesso">
+  <div class="sucesso-icon">✅</div>
+  <div class="sucesso-titulo" id="sucesso-titulo">Revisão registrada!</div>
+  <div class="sucesso-msg" id="sucesso-detalhe"></div>
+  <button class="btn-nova" onclick="reiniciar()">Registrar outra revisão</button>
+</div>
+
+
+<script>
+// ─────────────────────────────────────────
+// CONFIGURAÇÃO — cole aqui a URL do Apps Script
+// ─────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGOLrMVRLWOaxwCIFLsec-GHptJaqrl3M8xDUIZEhEDJKUgqZRwM2qGvW9cTYB7Qi0Kg/exec';
+const EMAIL_NOTIFICACAO = 'diretoria@pousadamarieclaire.com';
+// ─────────────────────────────────────────
+
+let aptSelecionado = null;
+
+// ── Numeração real dos 45 apartamentos da Pousada Marie Claire ──
+// Extraída da "lista de ar-condicionados.xls"
+const LISTA_APTOS = [
+  // Térreo
+  { id: "Apto 01",  andar: "Térreo"   },
+  { id: "Apto 02",  andar: "Térreo"   },
+  { id: "Apto 03",  andar: "Térreo"   },
+  { id: "Apto 04",  andar: "Térreo"   },
+  { id: "Apto 05",  andar: "Térreo"   },
+  { id: "Apto 06",  andar: "Térreo"   },
+  { id: "Apto 07",  andar: "Térreo"   },
+  { id: "Apto 08",  andar: "Térreo"   },
+  { id: "Apto 09",  andar: "Térreo"   },
+  { id: "Apto 10",  andar: "Térreo"   },
+  { id: "Apto 11",  andar: "Térreo"   },
+  { id: "Apto 12",  andar: "Térreo"   },
+  { id: "Apto 13",  andar: "Térreo"   },
+  // 1º Andar
+  { id: "Apto 101", andar: "1º Andar" },
+  { id: "Apto 102", andar: "1º Andar" },
+  { id: "Apto 103", andar: "1º Andar" },
+  { id: "Apto 104", andar: "1º Andar" },
+  { id: "Apto 105", andar: "1º Andar" },
+  { id: "Apto 106", andar: "1º Andar" },
+  { id: "Apto 107", andar: "1º Andar" },
+  { id: "Apto 108", andar: "1º Andar" },
+  { id: "Apto 109", andar: "1º Andar" },
+  { id: "Apto 110", andar: "1º Andar" },
+  { id: "Apto 111", andar: "1º Andar" },
+  { id: "Apto 112", andar: "1º Andar" },
+  // 2º Andar
+  { id: "Apto 201", andar: "2º Andar" },
+  { id: "Apto 202", andar: "2º Andar" },
+  { id: "Apto 203", andar: "2º Andar" },
+  { id: "Apto 204", andar: "2º Andar" },
+  { id: "Apto 205", andar: "2º Andar" },
+  { id: "Apto 206", andar: "2º Andar" },
+  { id: "Apto 207", andar: "2º Andar" },
+  { id: "Apto 208", andar: "2º Andar" },
+  { id: "Apto 209", andar: "2º Andar" },
+  { id: "Apto 210", andar: "2º Andar" },
+  { id: "Apto 211", andar: "2º Andar" },
+  { id: "Apto 212", andar: "2º Andar" },
+  { id: "Apto 213", andar: "2º Andar" },
+  { id: "Apto 214", andar: "2º Andar" },
+  // 3º Andar
+  { id: "Apto 301", andar: "3º Andar" },
+  { id: "Apto 302", andar: "3º Andar" },
+  { id: "Apto 303", andar: "3º Andar" },
+  { id: "Apto 304", andar: "3º Andar" },
+  { id: "Apto 305", andar: "3º Andar" },
+  { id: "Apto 306", andar: "3º Andar" },
+];
+
+// Montar objeto indexado por posição (1–45)
+const APARTAMENTOS = {};
+LISTA_APTOS.forEach((apt, idx) => {
+  const seq = idx + 1;
+  const diasAleatorio = (seq * 7 + 13) % 95;
+  let status = diasAleatorio <= 0 ? 'vencido' : diasAleatorio <= 14 ? 'urgente' : 'ok';
+  APARTAMENTOS[seq] = {
+    id: apt.id,
+    andar: apt.andar,
+    nome: apt.id,
+    status: status,
+    diasRestantes: diasAleatorio
+  };
+});
+
+// Preencher grade de apartamentos agrupada por andar
+function renderGrid(filtro) {
+  const grid = document.getElementById('grid-apts');
+  grid.innerHTML = '';
+  const andares = ['Térreo','1º Andar','2º Andar','3º Andar'];
+  const filtroLower = (filtro || '').toLowerCase();
+
+  andares.forEach(andar => {
+    const aptsDeste = Object.entries(APARTAMENTOS)
+      .filter(([seq, apt]) => apt.andar === andar)
+      .filter(([seq, apt]) => !filtroLower || apt.id.toLowerCase().includes(filtroLower));
+
+    if (aptsDeste.length === 0) return;
+
+    // Separador de andar
+    const sep = document.createElement('div');
+    sep.style.cssText = 'grid-column:1/-1;background:#2E75B6;color:white;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-top:8px;';
+    sep.textContent = `  ${andar}`;
+    grid.appendChild(sep);
+
+    aptsDeste.forEach(([seq, apt]) => {
+      const card = document.createElement('div');
+      card.className = `apt-card ${apt.status}`;
+      const statusTxt = apt.status === 'vencido'
+        ? '🔴 Vencido'
+        : apt.status === 'urgente'
+        ? `⚠️ ${apt.diasRestantes}d restantes`
+        : `✅ ${apt.diasRestantes}d restantes`;
+      card.innerHTML = `
+        <div class="apt-num">${apt.id.replace('Apto ','')}</div>
+        <div class="apt-nome">${apt.id}</div>
+        <div class="apt-status">${statusTxt}</div>
+      `;
+      card.onclick = () => selecionarApt(parseInt(seq));
+      grid.appendChild(card);
+    });
+  });
+}
+
+function filtrarApts() {
+  const val = document.getElementById('busca-apt').value;
+  renderGrid(val);
+}
+
+function selecionarApt(num) {
+  aptSelecionado = num;
+  const apt = APARTAMENTOS[num];
+
+  document.getElementById('form-apt-titulo').textContent = apt.id;
+  document.getElementById('form-apt-sub').textContent = `${apt.andar}  ·  Pousada Marie Claire  ·  Revisão Geral Completa`;
+
+  const badgesEl = document.getElementById('form-apt-badges');
+  let statusBadge = apt.status === 'vencido'
+    ? `<span class="badge vencido">🔴 Revisão Vencida</span>`
+    : apt.status === 'urgente'
+    ? `<span class="badge urgente">⚠️ Revisão Próxima (${apt.diasRestantes} dias)</span>`
+    : `<span class="badge ok">✅ Em Dia (${apt.diasRestantes} dias)</span>`;
+  badgesEl.innerHTML = `<span class="badge">🏨 ${apt.id}</span><span class="badge">${apt.andar}</span>${statusBadge}`;
+
+  // Preencher data de hoje
+  const hoje = new Date();
+  const iso = hoje.toISOString().split('T')[0];
+  document.getElementById('data_revisao').value = iso;
+
+  document.getElementById('tela-selecao').style.display = 'none';
+  document.getElementById('tela-form').style.display = 'block';
+  document.getElementById('tela-sucesso').style.display = 'none';
+  window.scrollTo(0, 0);
+
+  // Resetar todos os selects e textareas
+  const selects = document.querySelectorAll('#tela-form select');
+  selects.forEach(s => s.value = '');
+  document.getElementById('tecnico').value = '';
+  document.getElementById('problemas').value = '';
+  document.getElementById('observacoes').value = '';
+  ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs']
+    .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  atualizarProgresso();
+}
+
+function voltarSelecao() {
+  document.getElementById('tela-selecao').style.display = 'block';
+  document.getElementById('tela-form').style.display = 'none';
+  aptSelecionado = null;
+}
+
+function reiniciar() {
+  document.getElementById('tela-selecao').style.display = 'block';
+  document.getElementById('tela-sucesso').style.display = 'none';
+  document.getElementById('tela-form').style.display = 'none';
+  aptSelecionado = null;
+  window.scrollTo(0, 0);
+}
+
+function atualizarProgresso() {
+  const campos = [
+    'hid_torneiras','hid_chuveiro','hid_vaso','hid_umidade',
+    'ele_lampadas','ele_tomadas','ele_tv','ele_usb',
+    'mob_cama','mob_guarda','mob_mesas','mob_cortinas','mob_cofre',
+    'ele2_frigobar','ele2_secador','ele2_chaleira',
+    'por_entrada','por_banheiro','por_internas',
+    'jan_fecham','jan_vidros','jan_tela',
+    'pis_revestimento','pis_rejunte','pis_banheiro',
+    'for_umidade','for_rachaduras','for_luminarias',
+    'par_manchas','par_rachaduras','par_azulejos','par_rodapes'
+  ];
+  const preenchidos = campos.filter(id => document.getElementById(id)?.value).length;
+  const total = campos.length;
+  const el = document.getElementById('prog-ac');
+  if (el) {
+    el.textContent = `${preenchidos}/${total} itens preenchidos`;
+    el.style.background = preenchidos === total ? '#E8F5E9' : '#EFF4FB';
+    el.style.color = preenchidos === total ? '#2E7D32' : '#1F3864';
+  }
+}
+
+function resumoStatus(ids) {
+  const vals = ids.map(id => document.getElementById(id)?.value || '');
+  if (vals.some(v => v.includes('🔴'))) return '🔴 Atenção';
+  if (vals.some(v => v.includes('⚠️'))) return '⚠️ Verificar';
+  if (vals.every(v => v.includes('✅') || v === 'N/A')) return '✅ OK';
+  return '⚠️ Parcial';
+}
+
+function enviarFormulario() {
+  const msgErro = document.getElementById('msg-erro-2');
+  msgErro.style.display = 'none';
+
+  const tecnico = document.getElementById('tecnico').value.trim();
+  const dataRevisao = document.getElementById('data_revisao').value;
+
+  if (!tecnico) {
+    msgErro.textContent = '⚠️ Informe o nome do técnico.';
+    msgErro.style.display = 'block';
+    document.getElementById('tecnico').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (!dataRevisao) {
+    msgErro.textContent = '⚠️ Informe a data da revisão.';
+    msgErro.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Enviando…';
+
+  // Calcular próxima revisão: 161 dias (45 apts ÷ 2/semana = 23 semanas)
+  const dataObj = new Date(dataRevisao + 'T12:00:00');
+  const proxima = new Date(dataObj);
+  proxima.setDate(proxima.getDate() + 161);
+  const proximaIso = proxima.toISOString().split('T')[0];
+
+  const statusHid  = resumoStatus(['hid_torneiras','hid_chuveiro','hid_vaso','hid_umidade']);
+  const statusEle  = resumoStatus(['ele_lampadas','ele_tomadas','ele_tv','ele_usb']);
+  const statusMob  = resumoStatus(['mob_cama','mob_guarda','mob_mesas','mob_cortinas','mob_cofre']);
+  const statusEle2 = resumoStatus(['ele2_frigobar','ele2_secador','ele2_chaleira']);
+  const statusPor  = resumoStatus(['por_entrada','por_banheiro','por_internas']);
+  const statusJan  = resumoStatus(['jan_fecham','jan_vidros','jan_tela']);
+  const statusPis  = resumoStatus(['pis_revestimento','pis_rejunte','pis_banheiro']);
+  const statusFor  = resumoStatus(['for_umidade','for_rachaduras','for_luminarias']);
+  const statusPar  = resumoStatus(['par_manchas','par_rachaduras','par_azulejos','par_rodapes']);
+
+  const fmt = iso => { const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; };
+
+  const aptAtual = APARTAMENTOS[aptSelecionado];
+
+  const payload = {
+    apartamento:          aptAtual.id,
+    andar:                aptAtual.andar,
+    apartamento_num:      aptSelecionado,
+    data_revisao:         fmt(dataRevisao),
+    proxima_revisao:      fmt(proximaIso),
+    tecnico:              tecnico,
+    status_hidraulico:    statusHid,
+    status_eletrica:      statusEle,
+    status_mobiliario:    statusMob,
+    status_eletrodomest:  statusEle2,
+    status_portas:        statusPor,
+    status_janelas:       statusJan,
+    status_piso:          statusPis,
+    status_forro:         statusFor,
+    status_paredes:       statusPar,
+    problemas:            document.getElementById('problemas').value.trim() || '—',
+    observacoes:          document.getElementById('observacoes').value.trim() || '—',
+    // Observações por seção
+    hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
+    ele_obs:              document.getElementById('ele_obs').value.trim() || '—',
+    mob_obs:              document.getElementById('mob_obs').value.trim() || '—',
+    ele2_obs:             document.getElementById('ele2_obs').value.trim() || '—',
+    por_obs:              document.getElementById('por_obs').value.trim() || '—',
+    jan_obs:              document.getElementById('jan_obs').value.trim() || '—',
+    pis_obs:              document.getElementById('pis_obs').value.trim() || '—',
+    for_obs:              document.getElementById('for_obs').value.trim() || '—',
+    par_obs:              document.getElementById('par_obs').value.trim() || '—',
+    email_notificacao:    EMAIL_NOTIFICACAO,
+  };
+
+  // Enviar para Google Apps Script
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload),
+  })
+  .then(r => r.json())
+  .then(resp => {
+    if (resp.status === 'ok') {
+      mostrarSucesso(payload);
+    } else {
+      throw new Error(resp.msg || 'Erro desconhecido');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
+    msgErro.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '✅ Registrar Revisão Completa';
+  });
+}
+
+function mostrarSucesso(p) {
+  document.getElementById('tela-form').style.display = 'none';
+  document.getElementById('tela-sucesso').style.display = 'block';
+
+  document.getElementById('sucesso-titulo').textContent =
+    `Revisão do ${p.apartamento} registrada!`;
+  document.getElementById('sucesso-detalhe').innerHTML = `
+    🏨 <strong>${p.apartamento}</strong> · ${p.andar}<br>
+    📅 Data da revisão: <strong>${p.data_revisao}</strong><br>
+    👷 Técnico: <strong>${p.tecnico}</strong><br><br>
+    💧 Hidráulico: ${p.status_hidraulico}<br>
+    ⚡ Elétrica: ${p.status_eletrica}<br>
+    🛋️ Móveis: ${p.status_mobiliario}<br>
+    🍳 Eletrodomésticos: ${p.status_eletrodomest}<br>
+    🚪 Portas: ${p.status_portas}<br>
+    🪟 Janelas: ${p.status_janelas}<br>
+    🟫 Piso: ${p.status_piso}<br>
+    🔲 Forro/Teto: ${p.status_forro}<br>
+    🖼️ Paredes: ${p.status_paredes}<br><br>
+    📅 Próxima Revisão: <strong>${p.proxima_revisao}</strong><br><br>
+    Um e-mail de confirmação foi enviado para a pousada.
+  `;
+  window.scrollTo(0, 0);
+}
+
+// Inicializar
+renderGrid();
+</script>
+</body>
+</html>
