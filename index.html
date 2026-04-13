@@ -200,6 +200,72 @@
       border-radius: 20px;
     }
 
+    /* ── UPLOAD DE FOTOS ── */
+    .foto-upload-area {
+      margin-top: 10px;
+    }
+    .foto-upload-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #EFF4FB;
+      color: #1F3864;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1.5px dashed #2E75B6;
+      transition: background .2s;
+    }
+    .foto-upload-label:hover { background: #dde8f7; }
+    .foto-upload-label input[type="file"] { display: none; }
+    .fotos-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .foto-thumb {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #d0d8e4;
+      flex-shrink: 0;
+    }
+    .foto-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .foto-thumb .foto-remove {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(0,0,0,.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .foto-status {
+      font-size: 11px;
+      color: #8a9ab0;
+      margin-top: 4px;
+    }
+    .foto-status.enviando { color: #2E75B6; }
+    .foto-status.enviado  { color: #2e7d32; }
+    .foto-status.erro     { color: #e53935; }
+
     /* ── PENDÊNCIAS ── */
     .pendencias-box {
       background: white;
@@ -514,6 +580,14 @@
         <label>Observações Hidráulico</label>
         <textarea id="hid_obs" placeholder="Descreva problemas encontrados..." oninput="atualizarProgresso()"></textarea>
       </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'hid')">
+        </label>
+        <div class="fotos-preview" id="preview-hid"></div>
+        <div class="foto-status" id="status-hid"></div>
+      </div>
     </div>
   </div>
 
@@ -534,6 +608,14 @@
       <div class="field">
         <label>Observações Elétrica</label>
         <textarea id="ele_obs" placeholder="Lâmpadas queimadas, tomadas com problema..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele')">
+        </label>
+        <div class="fotos-preview" id="preview-ele"></div>
+        <div class="foto-status" id="status-ele"></div>
       </div>
     </div>
   </div>
@@ -557,6 +639,14 @@
         <label>Observações Móveis</label>
         <textarea id="mob_obs" placeholder="Peças quebradas, itens para substituir..." oninput="atualizarProgresso()"></textarea>
       </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'mob')">
+        </label>
+        <div class="fotos-preview" id="preview-mob"></div>
+        <div class="foto-status" id="status-mob"></div>
+      </div>
     </div>
   </div>
 
@@ -576,6 +666,14 @@
       <div class="field">
         <label>Observações Eletrodomésticos</label>
         <textarea id="ele2_obs" placeholder="Equipamentos com problema..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele2')">
+        </label>
+        <div class="fotos-preview" id="preview-ele2"></div>
+        <div class="foto-status" id="status-ele2"></div>
       </div>
     </div>
   </div>
@@ -597,6 +695,14 @@
         <label>Observações Portas</label>
         <textarea id="por_obs" placeholder="Fechaduras, dobradiças, trincos com problema..." oninput="atualizarProgresso()"></textarea>
       </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'por')">
+        </label>
+        <div class="fotos-preview" id="preview-por"></div>
+        <div class="foto-status" id="status-por"></div>
+      </div>
     </div>
   </div>
 
@@ -616,6 +722,14 @@
       <div class="field">
         <label>Observações Janelas</label>
         <textarea id="jan_obs" placeholder="Vidros, folgas, vedação..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'jan')">
+        </label>
+        <div class="fotos-preview" id="preview-jan"></div>
+        <div class="foto-status" id="status-jan"></div>
       </div>
     </div>
   </div>
@@ -637,6 +751,14 @@
         <label>Observações Piso</label>
         <textarea id="pis_obs" placeholder="Peças soltas, rejunte falho, localização..." oninput="atualizarProgresso()"></textarea>
       </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'pis')">
+        </label>
+        <div class="fotos-preview" id="preview-pis"></div>
+        <div class="foto-status" id="status-pis"></div>
+      </div>
     </div>
   </div>
 
@@ -656,6 +778,14 @@
       <div class="field">
         <label>Observações Forro / Teto</label>
         <textarea id="for_obs" placeholder="Manchas, goteiras, rachaduras, localização..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'for')">
+        </label>
+        <div class="fotos-preview" id="preview-for"></div>
+        <div class="foto-status" id="status-for"></div>
       </div>
     </div>
   </div>
@@ -677,6 +807,14 @@
       <div class="field">
         <label>Observações Paredes</label>
         <textarea id="par_obs" placeholder="Manchas, rachaduras, localização específica..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'par')">
+        </label>
+        <div class="fotos-preview" id="preview-par"></div>
+        <div class="foto-status" id="status-par"></div>
       </div>
     </div>
   </div>
@@ -897,6 +1035,15 @@ function selecionarApt(num) {
       if (el) el.classList.add('collapsed');
     });
 
+  // Limpar fotos do formulário anterior
+  ['hid','ele','mob','ele2','por','jan','pis','for','par'].forEach(s => {
+    delete _fotosLinks[s];
+    const prev = document.getElementById('preview-' + s);
+    if (prev) prev.innerHTML = '';
+    const stat = document.getElementById('status-' + s);
+    if (stat) { stat.textContent = ''; stat.className = 'foto-status'; }
+  });
+
   // Resetar textareas
   document.getElementById('tecnico').value = '';
   document.getElementById('problemas').value = '';
@@ -906,6 +1053,144 @@ function selecionarApt(num) {
   // Limpar sumários das seções
   ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
+}
+
+// ─────────────────────────────────────────
+// GERENCIAMENTO DE FOTOS
+// _fotosLinks[secao] = [link1, link2, ...]
+// _fotosResolucao[idPend] = [link1, ...]
+// ─────────────────────────────────────────
+const _fotosLinks     = {};
+const _fotosResolucao = {};
+
+function adicionarFotos(input, secao) {
+  const arquivos = Array.from(input.files);
+  if (!arquivos.length) return;
+  if (!_fotosLinks[secao]) _fotosLinks[secao] = [];
+
+  const preview = document.getElementById('preview-' + secao);
+  const statusEl = document.getElementById('status-' + secao);
+
+  arquivos.forEach((arquivo, i) => {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      // Miniatura
+      const thumb = document.createElement('div');
+      thumb.className = 'foto-thumb';
+      thumb.id = 'thumb-' + secao + '-' + Date.now() + i;
+      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="removerFoto('${secao}',this.parentElement,'${thumb.id}')">×</button>`;
+      preview.appendChild(thumb);
+
+      // Upload para o Drive
+      statusEl.textContent = '⏳ Enviando foto...';
+      statusEl.className = 'foto-status enviando';
+
+      const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action:       'upload_foto',
+          foto_base64:  ev.target.result,
+          mime_type:    arquivo.type,
+          nome_arquivo: arquivo.name,
+          apartamento:  aptNome,
+          secao:        secao,
+          tipo:         'pendencia',
+        }),
+      })
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.status === 'ok') {
+          _fotosLinks[secao].push(resp.link);
+          thumb.dataset.link = resp.link;
+          statusEl.textContent = `✅ ${_fotosLinks[secao].length} foto(s) enviada(s)`;
+          statusEl.className = 'foto-status enviado';
+        } else {
+          statusEl.textContent = '⚠️ Erro ao enviar foto. Verifique a configuração do Drive.';
+          statusEl.className = 'foto-status erro';
+          thumb.remove();
+        }
+      })
+      .catch(() => {
+        statusEl.textContent = '⚠️ Falha de conexão ao enviar foto.';
+        statusEl.className = 'foto-status erro';
+        thumb.remove();
+      });
+    };
+    reader.readAsDataURL(arquivo);
+  });
+  input.value = '';
+}
+
+function removerFoto(secao, thumbEl, thumbId) {
+  const link = thumbEl.dataset.link;
+  if (link && _fotosLinks[secao]) {
+    _fotosLinks[secao] = _fotosLinks[secao].filter(l => l !== link);
+  }
+  thumbEl.remove();
+  const statusEl = document.getElementById('status-' + secao);
+  const qtd = (_fotosLinks[secao] || []).length;
+  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) enviada(s)` : '';
+}
+
+function adicionarFotosResolucao(input, idPend) {
+  const arquivos = Array.from(input.files);
+  if (!arquivos.length) return;
+  if (!_fotosResolucao[idPend]) _fotosResolucao[idPend] = [];
+
+  const preview = document.getElementById('preview-res-' + idPend);
+  const statusEl = document.getElementById('status-res-' + idPend);
+
+  arquivos.forEach((arquivo, i) => {
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const thumb = document.createElement('div');
+      thumb.className = 'foto-thumb';
+      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="this.parentElement.remove()">×</button>`;
+      preview.appendChild(thumb);
+
+      statusEl.textContent = '⏳ Enviando foto...';
+      statusEl.className = 'foto-status enviando';
+
+      const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action:       'upload_foto',
+          foto_base64:  ev.target.result,
+          mime_type:    arquivo.type,
+          nome_arquivo: arquivo.name,
+          apartamento:  aptNome,
+          secao:        idPend,
+          tipo:         'resolucao',
+        }),
+      })
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.status === 'ok') {
+          _fotosResolucao[idPend].push(resp.link);
+          thumb.dataset.link = resp.link;
+          statusEl.textContent = `✅ ${_fotosResolucao[idPend].length} foto(s) enviada(s)`;
+          statusEl.className = 'foto-status enviado';
+        } else {
+          statusEl.textContent = '⚠️ Erro ao enviar foto.';
+          statusEl.className = 'foto-status erro';
+          thumb.remove();
+        }
+      })
+      .catch(() => {
+        statusEl.textContent = '⚠️ Falha de conexão.';
+        statusEl.className = 'foto-status erro';
+        thumb.remove();
+      });
+    };
+    reader.readAsDataURL(arquivo);
+  });
+  input.value = '';
 }
 
 // ── Carregar pendências do apartamento ──────────────────────────────────
@@ -927,10 +1212,21 @@ function carregarPendencias(nomeApto) {
         const div = document.createElement('div');
         div.className = 'pendencia-item';
         div.id = 'pend-' + p.id;
+        const fotosLinks = p.fotos && p.fotos !== '—'
+          ? p.fotos.split('\n').map(l => `<a href="${l}" target="_blank" style="font-size:11px;color:#2E75B6;">📷 Ver foto</a>`).join(' ')
+          : '';
         div.innerHTML = `
           <div class="pendencia-secao">${p.secao}</div>
           <div class="pendencia-desc">${p.descricao}</div>
-          <div class="pendencia-meta">📅 Aberta em ${p.data_abertura} · 👷 ${p.tecnico_abre}</div>
+          <div class="pendencia-meta">📅 Aberta em ${p.data_abertura} · 👷 ${p.tecnico_abre}${fotosLinks ? ' · ' + fotosLinks : ''}</div>
+          <div class="foto-upload-area" style="margin-bottom:10px;">
+            <label class="foto-upload-label" style="font-size:12px;padding:6px 10px;">
+              📷 Fotos da resolução
+              <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucao(this,'${p.id}')">
+            </label>
+            <div class="fotos-preview" id="preview-res-${p.id}"></div>
+            <div class="foto-status" id="status-res-${p.id}"></div>
+          </div>
           <div class="pendencia-resolver">
             <input type="text" placeholder="Nome de quem resolveu" id="tec-${p.id}">
             <button class="btn-resolver" onclick="resolverPendencia('${p.id}', ${p.linha_planilha})">✅ Resolver</button>
@@ -959,9 +1255,10 @@ function resolverPendencia(idPend, linhaPlanilha) {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({
-      action: 'resolver_pendencia',
-      linha_planilha: linhaPlanilha,
-      tecnico_resolve: tecnico,
+      action:           'resolver_pendencia',
+      linha_planilha:   linhaPlanilha,
+      tecnico_resolve:  tecnico,
+      fotos_resolucao:  _fotosResolucao[idPend] || [],
     }),
   })
   .then(r => r.json())
@@ -1107,6 +1404,16 @@ function enviarFormulario() {
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
+    // Links de fotos por seção (já foram enviados ao Drive)
+    fotos_hid:  _fotosLinks['hid']  || [],
+    fotos_ele:  _fotosLinks['ele']  || [],
+    fotos_mob:  _fotosLinks['mob']  || [],
+    fotos_ele2: _fotosLinks['ele2'] || [],
+    fotos_por:  _fotosLinks['por']  || [],
+    fotos_jan:  _fotosLinks['jan']  || [],
+    fotos_pis:  _fotosLinks['pis']  || [],
+    fotos_for:  _fotosLinks['for']  || [],
+    fotos_par:  _fotosLinks['par']  || [],
   };
 
   // Enviar para Google Apps Script
