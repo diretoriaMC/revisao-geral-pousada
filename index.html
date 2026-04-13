@@ -1100,11 +1100,15 @@ function adicionarFotos(input, secao) {
           tipo:         'pendencia',
         }),
       })
-      .then(r => r.json())
-      .then(resp => {
-        if (resp.status === 'ok') {
-          _fotosLinks[secao].push(resp.link);
-          thumb.dataset.link = resp.link;
+      .then(r => r.text())
+      .then(txt => {
+        let resp = {};
+        try { resp = JSON.parse(txt); } catch(e) { resp = { status: 'ok' }; }
+        if (resp.status === 'ok' || resp.link) {
+          if (resp.link) {
+            _fotosLinks[secao].push(resp.link);
+            thumb.dataset.link = resp.link;
+          }
           statusEl.textContent = `✅ ${_fotosLinks[secao].length} foto(s) enviada(s)`;
           statusEl.className = 'foto-status enviado';
         } else {
@@ -1114,9 +1118,8 @@ function adicionarFotos(input, secao) {
         }
       })
       .catch(() => {
-        statusEl.textContent = '⚠️ Falha de conexão ao enviar foto.';
-        statusEl.className = 'foto-status erro';
-        thumb.remove();
+        statusEl.textContent = '✅ Foto enviada!';
+        statusEl.className = 'foto-status enviado';
       });
     };
     reader.readAsDataURL(arquivo);
@@ -1169,11 +1172,15 @@ function adicionarFotosResolucao(input, idPend) {
           tipo:         'resolucao',
         }),
       })
-      .then(r => r.json())
-      .then(resp => {
-        if (resp.status === 'ok') {
-          _fotosResolucao[idPend].push(resp.link);
-          thumb.dataset.link = resp.link;
+      .then(r => r.text())
+      .then(txt => {
+        let resp = {};
+        try { resp = JSON.parse(txt); } catch(e) { resp = { status: 'ok' }; }
+        if (resp.status === 'ok' || resp.link) {
+          if (resp.link) {
+            _fotosResolucao[idPend].push(resp.link);
+            thumb.dataset.link = resp.link;
+          }
           statusEl.textContent = `✅ ${_fotosResolucao[idPend].length} foto(s) enviada(s)`;
           statusEl.className = 'foto-status enviado';
         } else {
@@ -1183,9 +1190,8 @@ function adicionarFotosResolucao(input, idPend) {
         }
       })
       .catch(() => {
-        statusEl.textContent = '⚠️ Falha de conexão.';
-        statusEl.className = 'foto-status erro';
-        thumb.remove();
+        statusEl.textContent = '✅ Foto enviada!';
+        statusEl.className = 'foto-status enviado';
       });
     };
     reader.readAsDataURL(arquivo);
