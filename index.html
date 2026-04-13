@@ -200,6 +200,87 @@
       border-radius: 20px;
     }
 
+    /* ── PENDÊNCIAS ── */
+    .pendencias-box {
+      background: white;
+      margin: 0 16px 16px;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      border-left: 5px solid #e53935;
+    }
+    .pendencias-box h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #c62828;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ffebee;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pendencia-item {
+      background: #fff5f5;
+      border: 1.5px solid #ffcdd2;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .pendencia-item:last-child { margin-bottom: 0; }
+    .pendencia-secao {
+      font-size: 12px;
+      font-weight: 700;
+      color: #c62828;
+      margin-bottom: 4px;
+    }
+    .pendencia-desc {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .pendencia-meta {
+      font-size: 11px;
+      color: #8a9ab0;
+      margin-bottom: 10px;
+    }
+    .pendencia-resolver {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .pendencia-resolver input {
+      flex: 1;
+      min-width: 140px;
+      padding: 8px 12px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .btn-resolver {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-resolver:disabled { background: #90a4c8; cursor: default; }
+    .sem-pendencias {
+      text-align: center;
+      color: #2e7d32;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 0;
+    }
+
     /* ── NOTA GERAL ── */
     .nota-box {
       display: flex;
@@ -393,6 +474,12 @@
     <h2 id="form-apt-titulo">Apartamento XX</h2>
     <div class="sub" id="form-apt-sub"></div>
     <div class="badges" id="form-apt-badges"></div>
+  </div>
+
+  <!-- PENDÊNCIAS ABERTAS -->
+  <div class="pendencias-box" id="pendencias-box" style="display:none;">
+    <h3>🔧 Pendências Abertas</h3>
+    <div id="lista-pendencias"></div>
   </div>
 
   <div class="msg-erro" id="msg-erro"></div>
@@ -740,13 +827,17 @@ function renderGrid(filtro) {
         ? `⚠️ ${apt.diasRestantes}d restantes`
         : `✅ ${apt.diasRestantes}d restantes`;
       const ultimaInfo = apt.ultimaRevisao
-        ? `<div class="apt-ultima">📅 ${apt.ultimaRevisao}</div>`
+        ? `<div class="apt-ultima">📅 Última revisão: ${apt.ultimaRevisao}</div>`
+        : '';
+      const pendInfo = apt.pendencias > 0
+        ? `<div style="font-size:11px;font-weight:700;color:#c62828;margin-top:4px;">🔧 ${apt.pendencias} pend${apt.pendencias > 1 ? 'ências' : 'ência'} aberta${apt.pendencias > 1 ? 's' : ''}</div>`
         : '';
       card.innerHTML = `
         <div class="apt-num">${apt.id.replace('Apto ','')}</div>
         <div class="apt-nome">${apt.id}</div>
         <div class="apt-status">${statusTxt}</div>
         ${ultimaInfo}
+        ${pendInfo}
       `;
       card.onclick = () => selecionarApt(parseInt(seq));
       grid.appendChild(card);
@@ -796,6 +887,9 @@ function selecionarApt(num) {
   document.getElementById('tela-sucesso').style.display = 'none';
   window.scrollTo(0, 0);
 
+  // Carregar pendências do apartamento
+  carregarPendencias(apt.id);
+
   // Recolher todas as seções colapsáveis ao abrir novo formulário
   ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par']
     .forEach(id => {
@@ -812,6 +906,89 @@ function selecionarApt(num) {
   // Limpar sumários das seções
   ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
+}
+
+// ── Carregar pendências do apartamento ──────────────────────────────────
+function carregarPendencias(nomeApto) {
+  const box   = document.getElementById('pendencias-box');
+  const lista = document.getElementById('lista-pendencias');
+  lista.innerHTML = '<div style="color:#8a9ab0;font-size:13px;">⏳ Carregando pendências...</div>';
+  box.style.display = 'block';
+
+  fetch(SCRIPT_URL + '?action=pendencias&apartamento=' + encodeURIComponent(nomeApto))
+    .then(r => r.json())
+    .then(pendencias => {
+      if (!Array.isArray(pendencias) || pendencias.length === 0) {
+        lista.innerHTML = '<div class="sem-pendencias">✅ Nenhuma pendência em aberto</div>';
+        return;
+      }
+      lista.innerHTML = '';
+      pendencias.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'pendencia-item';
+        div.id = 'pend-' + p.id;
+        div.innerHTML = `
+          <div class="pendencia-secao">${p.secao}</div>
+          <div class="pendencia-desc">${p.descricao}</div>
+          <div class="pendencia-meta">📅 Aberta em ${p.data_abertura} · 👷 ${p.tecnico_abre}</div>
+          <div class="pendencia-resolver">
+            <input type="text" placeholder="Nome de quem resolveu" id="tec-${p.id}">
+            <button class="btn-resolver" onclick="resolverPendencia('${p.id}', ${p.linha_planilha})">✅ Resolver</button>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+    })
+    .catch(() => {
+      lista.innerHTML = '<div style="color:#e53935;font-size:13px;">⚠️ Não foi possível carregar pendências.</div>';
+    });
+}
+
+// ── Resolver uma pendência ──────────────────────────────────────────────
+function resolverPendencia(idPend, linhaPlanilha) {
+  const tecnico = document.getElementById('tec-' + idPend)?.value.trim();
+  if (!tecnico) {
+    alert('Informe o nome de quem resolveu a pendência.');
+    return;
+  }
+
+  const btn = document.querySelector(`#pend-${idPend} .btn-resolver`);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Salvando...'; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'resolver_pendencia',
+      linha_planilha: linhaPlanilha,
+      tecnico_resolve: tecnico,
+    }),
+  })
+  .then(r => r.json())
+  .then(resp => {
+    if (resp.status === 'ok') {
+      const item = document.getElementById('pend-' + idPend);
+      if (item) {
+        item.style.opacity = '0';
+        item.style.transition = 'opacity .4s';
+        setTimeout(() => {
+          item.remove();
+          // Se não houver mais pendências, mostrar mensagem
+          const lista = document.getElementById('lista-pendencias');
+          if (lista && lista.children.length === 0) {
+            lista.innerHTML = '<div class="sem-pendencias">✅ Todas as pendências foram resolvidas!</div>';
+          }
+        }, 400);
+      }
+    } else {
+      alert('Erro ao resolver pendência. Tente novamente.');
+      if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
+    }
+  })
+  .catch(() => {
+    alert('Erro de conexão. Tente novamente.');
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
+  });
 }
 
 function voltarSelecao() {
@@ -1045,8 +1222,33 @@ function carregarHistorico() {
     });
 }
 
+// ─────────────────────────────────────────
+// CARREGAR PENDÊNCIAS PARA O DASHBOARD
+// ─────────────────────────────────────────
+function carregarPendenciasDashboard() {
+  fetch(SCRIPT_URL + '?action=pendencias')
+    .then(r => r.json())
+    .then(pendencias => {
+      if (!Array.isArray(pendencias)) return;
+      // Contar pendências por apartamento
+      const contagem = {};
+      pendencias.forEach(p => {
+        if (!contagem[p.apartamento]) contagem[p.apartamento] = 0;
+        contagem[p.apartamento]++;
+      });
+      // Salvar nos dados de cada apartamento
+      Object.keys(APARTAMENTOS).forEach(seq => {
+        const apt = APARTAMENTOS[seq];
+        apt.pendencias = contagem[apt.id] || 0;
+      });
+      renderGrid();
+    })
+    .catch(() => {});
+}
+
 // Inicializar — busca histórico ao abrir
 carregarHistorico();
+carregarPendenciasDashboard();
 </script>
 </body>
 </html>
