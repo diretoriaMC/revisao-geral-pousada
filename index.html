@@ -265,6 +265,15 @@
     .foto-status.enviando { color: #2E75B6; }
     .foto-status.enviado  { color: #2e7d32; }
     .foto-status.erro     { color: #e53935; }
+    .foto-upload-spinner {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
 
     /* ── PENDÊNCIAS ── */
     .pendencias-box {
@@ -1057,18 +1066,14 @@ function selecionarApt(num) {
 
 // ─────────────────────────────────────────
 // GERENCIAMENTO DE FOTOS
-// Fotos ficam em base64 e são enviadas junto com o formulário
-// _fotosBase64[secao] = [{base64, mime, nome}, ...]
-// _fotosBase64Resolucao[idPend] = [{base64, mime, nome}, ...]
+// Fotos são enviadas ao Drive IMEDIATAMENTE ao selecionar.
+// _fotosLinks[secao]     = [ { link, thumbId } ]   ← links já no Drive
+// _fotosLinksRes[idPend] = [ { link, thumbId } ]   ← links resolução já no Drive
 // ─────────────────────────────────────────
-const _fotosBase64         = {};
-const _fotosBase64Resolucao = {};
+const _fotosLinks    = {};
+const _fotosLinksRes = {};
 
-// Mantidos para compatibilidade com o payload (serão arrays vazios, o Apps Script faz o upload)
-const _fotosLinks     = {};
-const _fotosResolucao = {};
-
-// Redimensiona e comprime imagem via canvas, retorna base64
+// Redimensiona e comprime imagem via canvas, retorna base64 via callback
 function _comprimirImagem(arquivo, cb) {
   const reader = new FileReader();
   reader.onload = function(ev) {
@@ -1083,84 +1088,138 @@ function _comprimirImagem(arquivo, cb) {
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const base64 = canvas.toDataURL('image/jpeg', 0.75);
-      cb(base64);
+      cb(canvas.toDataURL('image/jpeg', 0.75));
     };
     img.src = ev.target.result;
   };
   reader.readAsDataURL(arquivo);
 }
 
+// Faz upload de uma foto comprimida para o Drive via Apps Script
+// Retorna Promise<link|null>
+function _uploadFoto(base64, nomeArquivo, apartamento, tipo) {
+  return fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action:        'upload_foto',
+      foto_base64:   base64,
+      nome_arquivo:  nomeArquivo,
+      apartamento:   apartamento || 'Geral',
+      tipo:          tipo || 'pendencia',
+    }),
+  })
+  .then(r => r.text().catch(() => '{}'))
+  .then(txt => {
+    try {
+      const resp = JSON.parse(txt);
+      if (resp.link) return resp.link;
+    } catch(e) {}
+    return null;
+  })
+  .catch(() => null);
+}
+
 function adicionarFotos(input, secao) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
-  if (!_fotosBase64[secao]) _fotosBase64[secao] = [];
+  if (!_fotosLinks[secao]) _fotosLinks[secao] = [];
 
-  const preview = document.getElementById('preview-' + secao);
+  const preview  = document.getElementById('preview-' + secao);
   const statusEl = document.getElementById('status-' + secao);
+  const aptNome  = (aptSelecionado && APARTAMENTOS[aptSelecionado]) ? APARTAMENTOS[aptSelecionado].nome : 'Geral';
 
   arquivos.forEach((arquivo, i) => {
+    const thumbId = 'thumb-' + secao + '-' + Date.now() + i;
+
+    // 1. Mostra preview local imediatamente
     _comprimirImagem(arquivo, function(base64) {
-      const thumbId = 'thumb-' + secao + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
       thumb.id = thumbId;
-      thumb.innerHTML = `<img src="${base64}"><button class="foto-remove" onclick="removerFoto('${secao}','${thumbId}')">×</button>`;
+      thumb.innerHTML = `<img src="${base64}"><div class="foto-upload-spinner">⏳</div><button class="foto-remove" onclick="removerFoto('${secao}','${thumbId}')">×</button>`;
       preview.appendChild(thumb);
+      statusEl.textContent = '⏳ Enviando foto para o Drive...';
+      statusEl.className = 'foto-status';
 
-      _fotosBase64[secao].push({ base64: base64, mime: 'image/jpeg', nome: arquivo.name, thumbId });
-      statusEl.textContent = `✅ ${_fotosBase64[secao].length} foto(s) selecionada(s)`;
-      statusEl.className = 'foto-status enviado';
+      // 2. Faz upload para o Drive
+      _uploadFoto(base64, arquivo.name, aptNome, 'pendencia').then(link => {
+        const spinner = thumb.querySelector('.foto-upload-spinner');
+        if (spinner) spinner.remove();
+        if (link) {
+          _fotosLinks[secao].push({ link, thumbId });
+          statusEl.textContent = `✅ ${_fotosLinks[secao].length} foto(s) salva(s) no Drive`;
+          statusEl.className = 'foto-status enviado';
+        } else {
+          thumb.style.opacity = '0.5';
+          statusEl.textContent = '⚠️ Erro ao salvar foto. Tente novamente.';
+          statusEl.className = 'foto-status';
+        }
+      });
     });
   });
   input.value = '';
 }
 
 function removerFoto(secao, thumbId) {
-  if (_fotosBase64[secao]) {
-    _fotosBase64[secao] = _fotosBase64[secao].filter(f => f.thumbId !== thumbId);
+  if (_fotosLinks[secao]) {
+    _fotosLinks[secao] = _fotosLinks[secao].filter(f => f.thumbId !== thumbId);
   }
   const el = document.getElementById(thumbId);
   if (el) el.remove();
   const statusEl = document.getElementById('status-' + secao);
-  const qtd = (_fotosBase64[secao] || []).length;
-  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) selecionada(s)` : '';
+  const qtd = (_fotosLinks[secao] || []).length;
+  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) salva(s) no Drive` : '';
 }
 
 function adicionarFotosResolucao(input, idPend) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
-  if (!_fotosBase64Resolucao[idPend]) _fotosBase64Resolucao[idPend] = [];
+  if (!_fotosLinksRes[idPend]) _fotosLinksRes[idPend] = [];
 
-  const preview = document.getElementById('preview-res-' + idPend);
+  const preview  = document.getElementById('preview-res-' + idPend);
   const statusEl = document.getElementById('status-res-' + idPend);
+  const aptNome  = (aptSelecionado && APARTAMENTOS[aptSelecionado]) ? APARTAMENTOS[aptSelecionado].nome : 'Geral';
 
   arquivos.forEach((arquivo, i) => {
+    const thumbId = 'thumb-res-' + idPend + '-' + Date.now() + i;
+
     _comprimirImagem(arquivo, function(base64) {
-      const thumbId = 'thumb-res-' + idPend + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
       thumb.id = thumbId;
-      thumb.innerHTML = `<img src="${base64}"><button class="foto-remove" onclick="removerFotoResolucao('${idPend}','${thumbId}')">×</button>`;
+      thumb.innerHTML = `<img src="${base64}"><div class="foto-upload-spinner">⏳</div><button class="foto-remove" onclick="removerFotoResolucao('${idPend}','${thumbId}')">×</button>`;
       preview.appendChild(thumb);
+      statusEl.textContent = '⏳ Enviando foto para o Drive...';
+      statusEl.className = 'foto-status';
 
-      _fotosBase64Resolucao[idPend].push({ base64: base64, mime: 'image/jpeg', nome: arquivo.name, thumbId });
-      statusEl.textContent = `✅ ${_fotosBase64Resolucao[idPend].length} foto(s) selecionada(s)`;
-      statusEl.className = 'foto-status enviado';
+      _uploadFoto(base64, arquivo.name, aptNome, 'resolucao').then(link => {
+        const spinner = thumb.querySelector('.foto-upload-spinner');
+        if (spinner) spinner.remove();
+        if (link) {
+          _fotosLinksRes[idPend].push({ link, thumbId });
+          statusEl.textContent = `✅ ${_fotosLinksRes[idPend].length} foto(s) salva(s) no Drive`;
+          statusEl.className = 'foto-status enviado';
+        } else {
+          thumb.style.opacity = '0.5';
+          statusEl.textContent = '⚠️ Erro ao salvar foto. Tente novamente.';
+          statusEl.className = 'foto-status';
+        }
+      });
     });
   });
   input.value = '';
 }
 
 function removerFotoResolucao(idPend, thumbId) {
-  if (_fotosBase64Resolucao[idPend]) {
-    _fotosBase64Resolucao[idPend] = _fotosBase64Resolucao[idPend].filter(f => f.thumbId !== thumbId);
+  if (_fotosLinksRes[idPend]) {
+    _fotosLinksRes[idPend] = _fotosLinksRes[idPend].filter(f => f.thumbId !== thumbId);
   }
   const el = document.getElementById(thumbId);
   if (el) el.remove();
   const statusEl = document.getElementById('status-res-' + idPend);
-  const qtd = (_fotosBase64Resolucao[idPend] || []).length;
-  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) selecionada(s)` : '';
+  const qtd = (_fotosLinksRes[idPend] || []).length;
+  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) salva(s) no Drive` : '';
 }
 
 // ── Carregar pendências do apartamento ──────────────────────────────────
@@ -1243,7 +1302,7 @@ function resolverPendencia(idPend, linhaPlanilha) {
       action:           'resolver_pendencia',
       linha_planilha:   linhaPlanilha,
       tecnico_resolve:  tecnico,
-      fotos_resolucao:  (_fotosBase64Resolucao[idPend] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+      fotos_resolucao:  (_fotosLinksRes[idPend] || []).map(f => f.link),
     }),
   })
   .then(r => r.text().catch(() => '{}'))
@@ -1394,16 +1453,16 @@ function enviarFormulario() {
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
-    // Fotos em base64 — o Apps Script faz o upload e salva os links
-    fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_ele:  (_fotosBase64['ele']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_mob:  (_fotosBase64['mob']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_ele2: (_fotosBase64['ele2'] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_por:  (_fotosBase64['por']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_jan:  (_fotosBase64['jan']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    // Links das fotos já enviadas ao Drive antes do submit
+    fotos_hid:  (_fotosLinks['hid']  || []).map(f => f.link),
+    fotos_ele:  (_fotosLinks['ele']  || []).map(f => f.link),
+    fotos_mob:  (_fotosLinks['mob']  || []).map(f => f.link),
+    fotos_ele2: (_fotosLinks['ele2'] || []).map(f => f.link),
+    fotos_por:  (_fotosLinks['por']  || []).map(f => f.link),
+    fotos_jan:  (_fotosLinks['jan']  || []).map(f => f.link),
+    fotos_pis:  (_fotosLinks['pis']  || []).map(f => f.link),
+    fotos_for:  (_fotosLinks['for']  || []).map(f => f.link),
+    fotos_par:  (_fotosLinks['par']  || []).map(f => f.link),
   };
 
   // Enviar para Google Apps Script
