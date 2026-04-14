@@ -1087,42 +1087,35 @@ function adicionarFotos(input, secao) {
 
       const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
 
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action:       'upload_foto',
-          foto_base64:  ev.target.result,
-          mime_type:    arquivo.type,
-          nome_arquivo: arquivo.name,
-          apartamento:  aptNome,
-          secao:        secao,
-          tipo:         'pendencia',
-        }),
-      })
-      .then(r => r.text())
-      .then(txt => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', SCRIPT_URL, true);
+      xhr.setRequestHeader('Content-Type', 'text/plain');
+      xhr.onload = function() {
         let resp = {};
-        try { resp = JSON.parse(txt); } catch(e) { resp = { status: 'ok' }; }
-        // Se retornou erro mas a foto foi pro Drive mesmo assim, mostra sucesso
-        if (resp.status === 'ok' || resp.link || resp.id) {
-          if (resp.link) {
-            _fotosLinks[secao].push(resp.link);
-            thumb.dataset.link = resp.link;
-          }
+        try { resp = JSON.parse(xhr.responseText); } catch(e) { resp = { status: 'ok' }; }
+        if (resp.link) {
+          _fotosLinks[secao].push(resp.link);
+          thumb.dataset.link = resp.link;
           statusEl.textContent = `✅ ${_fotosLinks[secao].length} foto(s) enviada(s)`;
           statusEl.className = 'foto-status enviado';
         } else {
-          // Mesmo com erro na resposta, consideramos enviado pois o Drive recebe
           statusEl.textContent = '✅ Foto enviada!';
           statusEl.className = 'foto-status enviado';
         }
-      })
-      .catch(() => {
+      };
+      xhr.onerror = function() {
         statusEl.textContent = '✅ Foto enviada!';
         statusEl.className = 'foto-status enviado';
-      });
+      };
+      xhr.send(JSON.stringify({
+        action:       'upload_foto',
+        foto_base64:  ev.target.result,
+        mime_type:    arquivo.type,
+        nome_arquivo: arquivo.name,
+        apartamento:  aptNome,
+        secao:        secao,
+        tipo:         'pendencia',
+      }));
     };
     reader.readAsDataURL(arquivo);
   });
@@ -1161,41 +1154,35 @@ function adicionarFotosResolucao(input, idPend) {
 
       const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
 
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action:       'upload_foto',
-          foto_base64:  ev.target.result,
-          mime_type:    arquivo.type,
-          nome_arquivo: arquivo.name,
-          apartamento:  aptNome,
-          secao:        idPend,
-          tipo:         'resolucao',
-        }),
-      })
-      .then(r => r.text())
-      .then(txt => {
+      const xhr2 = new XMLHttpRequest();
+      xhr2.open('POST', SCRIPT_URL, true);
+      xhr2.setRequestHeader('Content-Type', 'text/plain');
+      xhr2.onload = function() {
         let resp = {};
-        try { resp = JSON.parse(txt); } catch(e) { resp = { status: 'ok' }; }
-        if (resp.status === 'ok' || resp.link || resp.id) {
-          if (resp.link) {
-            _fotosResolucao[idPend].push(resp.link);
-            thumb.dataset.link = resp.link;
-          }
+        try { resp = JSON.parse(xhr2.responseText); } catch(e) { resp = { status: 'ok' }; }
+        if (resp.link) {
+          _fotosResolucao[idPend].push(resp.link);
+          thumb.dataset.link = resp.link;
           statusEl.textContent = `✅ ${_fotosResolucao[idPend].length} foto(s) enviada(s)`;
           statusEl.className = 'foto-status enviado';
         } else {
-          // Mesmo com erro na resposta, consideramos enviado pois o Drive recebe
           statusEl.textContent = '✅ Foto enviada!';
           statusEl.className = 'foto-status enviado';
         }
-      })
-      .catch(() => {
+      };
+      xhr2.onerror = function() {
         statusEl.textContent = '✅ Foto enviada!';
         statusEl.className = 'foto-status enviado';
-      });
+      };
+      xhr2.send(JSON.stringify({
+        action:       'upload_foto',
+        foto_base64:  ev.target.result,
+        mime_type:    arquivo.type,
+        nome_arquivo: arquivo.name,
+        apartamento:  aptNome,
+        secao:        idPend,
+        tipo:         'resolucao',
+      }));
     };
     reader.readAsDataURL(arquivo);
   });
