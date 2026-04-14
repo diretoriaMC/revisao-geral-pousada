@@ -1057,16 +1057,21 @@ function selecionarApt(num) {
 
 // ─────────────────────────────────────────
 // GERENCIAMENTO DE FOTOS
-// _fotosLinks[secao] = [link1, link2, ...]
-// _fotosResolucao[idPend] = [link1, ...]
+// Fotos ficam em base64 e são enviadas junto com o formulário
+// _fotosBase64[secao] = [{base64, mime, nome}, ...]
+// _fotosBase64Resolucao[idPend] = [{base64, mime, nome}, ...]
 // ─────────────────────────────────────────
+const _fotosBase64         = {};
+const _fotosBase64Resolucao = {};
+
+// Mantidos para compatibilidade com o payload (serão arrays vazios, o Apps Script faz o upload)
 const _fotosLinks     = {};
 const _fotosResolucao = {};
 
 function adicionarFotos(input, secao) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
-  if (!_fotosLinks[secao]) _fotosLinks[secao] = [];
+  if (!_fotosBase64[secao]) _fotosBase64[secao] = [];
 
   const preview = document.getElementById('preview-' + secao);
   const statusEl = document.getElementById('status-' + secao);
@@ -1074,69 +1079,37 @@ function adicionarFotos(input, secao) {
   arquivos.forEach((arquivo, i) => {
     const reader = new FileReader();
     reader.onload = function(ev) {
-      // Miniatura
+      const thumbId = 'thumb-' + secao + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
-      thumb.id = 'thumb-' + secao + '-' + Date.now() + i;
-      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="removerFoto('${secao}',this.parentElement,'${thumb.id}')">×</button>`;
+      thumb.id = thumbId;
+      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="removerFoto('${secao}','${thumbId}')">×</button>`;
       preview.appendChild(thumb);
 
-      // Upload para o Drive
-      statusEl.textContent = '⏳ Enviando foto...';
-      statusEl.className = 'foto-status enviando';
-
-      const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', SCRIPT_URL, true);
-      xhr.setRequestHeader('Content-Type', 'text/plain');
-      xhr.onload = function() {
-        let resp = {};
-        try { resp = JSON.parse(xhr.responseText); } catch(e) { resp = { status: 'ok' }; }
-        if (resp.link) {
-          _fotosLinks[secao].push(resp.link);
-          thumb.dataset.link = resp.link;
-          statusEl.textContent = `✅ ${_fotosLinks[secao].length} foto(s) enviada(s)`;
-          statusEl.className = 'foto-status enviado';
-        } else {
-          statusEl.textContent = '✅ Foto enviada!';
-          statusEl.className = 'foto-status enviado';
-        }
-      };
-      xhr.onerror = function() {
-        statusEl.textContent = '✅ Foto enviada!';
-        statusEl.className = 'foto-status enviado';
-      };
-      xhr.send(JSON.stringify({
-        action:       'upload_foto',
-        foto_base64:  ev.target.result,
-        mime_type:    arquivo.type,
-        nome_arquivo: arquivo.name,
-        apartamento:  aptNome,
-        secao:        secao,
-        tipo:         'pendencia',
-      }));
+      _fotosBase64[secao].push({ base64: ev.target.result, mime: arquivo.type, nome: arquivo.name, thumbId });
+      statusEl.textContent = `✅ ${_fotosBase64[secao].length} foto(s) selecionada(s)`;
+      statusEl.className = 'foto-status enviado';
     };
     reader.readAsDataURL(arquivo);
   });
   input.value = '';
 }
 
-function removerFoto(secao, thumbEl, thumbId) {
-  const link = thumbEl.dataset.link;
-  if (link && _fotosLinks[secao]) {
-    _fotosLinks[secao] = _fotosLinks[secao].filter(l => l !== link);
+function removerFoto(secao, thumbId) {
+  if (_fotosBase64[secao]) {
+    _fotosBase64[secao] = _fotosBase64[secao].filter(f => f.thumbId !== thumbId);
   }
-  thumbEl.remove();
+  const el = document.getElementById(thumbId);
+  if (el) el.remove();
   const statusEl = document.getElementById('status-' + secao);
-  const qtd = (_fotosLinks[secao] || []).length;
-  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) enviada(s)` : '';
+  const qtd = (_fotosBase64[secao] || []).length;
+  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) selecionada(s)` : '';
 }
 
 function adicionarFotosResolucao(input, idPend) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
-  if (!_fotosResolucao[idPend]) _fotosResolucao[idPend] = [];
+  if (!_fotosBase64Resolucao[idPend]) _fotosBase64Resolucao[idPend] = [];
 
   const preview = document.getElementById('preview-res-' + idPend);
   const statusEl = document.getElementById('status-res-' + idPend);
@@ -1144,49 +1117,31 @@ function adicionarFotosResolucao(input, idPend) {
   arquivos.forEach((arquivo, i) => {
     const reader = new FileReader();
     reader.onload = function(ev) {
+      const thumbId = 'thumb-res-' + idPend + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
-      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="this.parentElement.remove()">×</button>`;
+      thumb.id = thumbId;
+      thumb.innerHTML = `<img src="${ev.target.result}"><button class="foto-remove" onclick="removerFotoResolucao('${idPend}','${thumbId}')">×</button>`;
       preview.appendChild(thumb);
 
-      statusEl.textContent = '⏳ Enviando foto...';
-      statusEl.className = 'foto-status enviando';
-
-      const aptNome = aptSelecionado ? APARTAMENTOS[aptSelecionado]?.id || '' : '';
-
-      const xhr2 = new XMLHttpRequest();
-      xhr2.open('POST', SCRIPT_URL, true);
-      xhr2.setRequestHeader('Content-Type', 'text/plain');
-      xhr2.onload = function() {
-        let resp = {};
-        try { resp = JSON.parse(xhr2.responseText); } catch(e) { resp = { status: 'ok' }; }
-        if (resp.link) {
-          _fotosResolucao[idPend].push(resp.link);
-          thumb.dataset.link = resp.link;
-          statusEl.textContent = `✅ ${_fotosResolucao[idPend].length} foto(s) enviada(s)`;
-          statusEl.className = 'foto-status enviado';
-        } else {
-          statusEl.textContent = '✅ Foto enviada!';
-          statusEl.className = 'foto-status enviado';
-        }
-      };
-      xhr2.onerror = function() {
-        statusEl.textContent = '✅ Foto enviada!';
-        statusEl.className = 'foto-status enviado';
-      };
-      xhr2.send(JSON.stringify({
-        action:       'upload_foto',
-        foto_base64:  ev.target.result,
-        mime_type:    arquivo.type,
-        nome_arquivo: arquivo.name,
-        apartamento:  aptNome,
-        secao:        idPend,
-        tipo:         'resolucao',
-      }));
+      _fotosBase64Resolucao[idPend].push({ base64: ev.target.result, mime: arquivo.type, nome: arquivo.name, thumbId });
+      statusEl.textContent = `✅ ${_fotosBase64Resolucao[idPend].length} foto(s) selecionada(s)`;
+      statusEl.className = 'foto-status enviado';
     };
     reader.readAsDataURL(arquivo);
   });
   input.value = '';
+}
+
+function removerFotoResolucao(idPend, thumbId) {
+  if (_fotosBase64Resolucao[idPend]) {
+    _fotosBase64Resolucao[idPend] = _fotosBase64Resolucao[idPend].filter(f => f.thumbId !== thumbId);
+  }
+  const el = document.getElementById(thumbId);
+  if (el) el.remove();
+  const statusEl = document.getElementById('status-res-' + idPend);
+  const qtd = (_fotosBase64Resolucao[idPend] || []).length;
+  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) selecionada(s)` : '';
 }
 
 // ── Carregar pendências do apartamento ──────────────────────────────────
@@ -1269,7 +1224,7 @@ function resolverPendencia(idPend, linhaPlanilha) {
       action:           'resolver_pendencia',
       linha_planilha:   linhaPlanilha,
       tecnico_resolve:  tecnico,
-      fotos_resolucao:  _fotosResolucao[idPend] || [],
+      fotos_resolucao:  (_fotosBase64Resolucao[idPend] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     }),
   })
   .then(r => r.json())
@@ -1415,16 +1370,16 @@ function enviarFormulario() {
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
-    // Links de fotos por seção (já foram enviados ao Drive)
-    fotos_hid:  _fotosLinks['hid']  || [],
-    fotos_ele:  _fotosLinks['ele']  || [],
-    fotos_mob:  _fotosLinks['mob']  || [],
-    fotos_ele2: _fotosLinks['ele2'] || [],
-    fotos_por:  _fotosLinks['por']  || [],
-    fotos_jan:  _fotosLinks['jan']  || [],
-    fotos_pis:  _fotosLinks['pis']  || [],
-    fotos_for:  _fotosLinks['for']  || [],
-    fotos_par:  _fotosLinks['par']  || [],
+    // Fotos em base64 — o Apps Script faz o upload e salva os links
+    fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_ele:  (_fotosBase64['ele']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_mob:  (_fotosBase64['mob']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_ele2: (_fotosBase64['ele2'] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_por:  (_fotosBase64['por']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_jan:  (_fotosBase64['jan']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   };
 
   // Enviar para Google Apps Script
