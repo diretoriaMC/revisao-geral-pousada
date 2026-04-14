@@ -1399,59 +1399,86 @@ function enviarFormulario() {
     pis_obs:              document.getElementById('pis_obs').value.trim() || '—',
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
-    email_notificacao:    EMAIL_NOTIFICACAO,
-    // Fotos comprimidas em base64 — Apps Script faz upload e salva links
-    fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_ele:  (_fotosBase64['ele']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_mob:  (_fotosBase64['mob']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_ele2: (_fotosBase64['ele2'] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_por:  (_fotosBase64['por']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_jan:  (_fotosBase64['jan']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    email_notificacao: EMAIL_NOTIFICACAO,
   };
 
-  // Enviar para Google Apps Script
-  // Nota: Apps Script retorna redirect 302 — o fetch segue o redirect mas não consegue
-  // ler o JSON da resposta (CORS opaco). Tratamos qualquer resposta como sucesso
-  // e erros de rede como falha real.
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify(payload),
-  })
-  .then(r => {
-    // Apps Script pode retornar opaque response (status 0) ou JSON
-    if (r.ok || r.status === 0 || r.type === 'opaque' || r.type === 'opaqueredirect') {
-      // Tenta ler JSON, mas não falha se não conseguir
-      return r.text().catch(() => '{}');
-    }
-    throw new Error('HTTP ' + r.status);
-  })
-  .then(text => {
-    let resp = {};
-    try { resp = JSON.parse(text); } catch(e) { /* ignora se não for JSON */ }
-    // Se o servidor retornou erro explícito, mostra mensagem
-    if (resp.status === 'erro') {
-      throw new Error(resp.msg || 'Erro no servidor');
-    }
-    // Qualquer outro caso = sucesso (dado foi salvo)
-    mostrarSucesso(payload);
-  })
-  .catch(err => {
-    // Erros de rede reais (offline, timeout)
-    // Se foi erro de parse de JSON (CORS opaco), também consideramos sucesso
-    const errStr = String(err);
-    if (errStr.includes('JSON') || errStr.includes('SyntaxError') || errStr.includes('Failed to fetch') === false) {
+  // Descobre quantas linhas a planilha de Pendências tem ANTES de enviar
+  // para calcular as linhas que serão criadas
+  const secoes = ['hid','ele','mob','ele2','por','jan','pis','for','par'];
+  const secoesComFoto = secoes.filter(s => (_fotosBase64[s] || []).length > 0);
+
+  // Pré-calcula as pendências que serão criadas (só seções com observação não vazia)
+  const obsPorSecao = {
+    hid:  document.getElementById('hid_obs').value.trim(),
+    ele:  document.getElementById('ele_obs').value.trim(),
+    mob:  document.getElementById('mob_obs').value.trim(),
+    ele2: document.getElementById('ele2_obs').value.trim(),
+    por:  document.getElementById('por_obs').value.trim(),
+    jan:  document.getElementById('jan_obs').value.trim(),
+    pis:  document.getElementById('pis_obs').value.trim(),
+    for:  document.getElementById('for_obs').value.trim(),
+    par:  document.getElementById('par_obs').value.trim(),
+  };
+
+  // Busca a última linha atual da planilha de Pendências via GET
+  // para saber de qual linha as novas pendências vão partir
+  fetch(SCRIPT_URL + '?action=contar_pendencias')
+  .then(r => r.json().catch(() => ({ total: null })))
+  .then(info => {
+    // info.total = número de linhas de dados (sem cabeçalho)
+    // Se CORS bloquear, info.total será null — enviamos sem saber as linhas (sem upload de foto)
+    const totalAtual = (info && typeof info.total === 'number') ? info.total : null;
+
+    // ── Enviar revisão
+    return _postarScript(payload).then(function() {
       mostrarSucesso(payload);
-      return;
-    }
+
+      if (totalAtual === null || secoesComFoto.length === 0) return;
+
+      // Calcula a linha de cada pendência criada
+      let offset = 0;
+      secoes.forEach(function(s) {
+        const obs = obsPorSecao[s];
+        if (!obs || obs === '') return; // não criou pendência
+        const linhaNum = totalAtual + 2 + offset; // +1 cabeçalho, +1 base-1
+        offset++;
+
+        const fotos = _fotosBase64[s] || [];
+        fotos.forEach(function(f) {
+          _postarScript({
+            action:         'upload_foto_pendencia',
+            linha_planilha: linhaNum,
+            foto_base64:    f.base64,
+            nome_arquivo:   f.nome,
+            apartamento:    aptAtual.nome,
+          }).catch(function() {});
+        });
+      });
+    });
+  })
+  .catch(function(err) {
     console.error(err);
     msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
     msgErro.style.display = 'block';
     btn.disabled = false;
     btn.innerHTML = '✅ Registrar Revisão Completa';
+  });
+}
+
+// POST para o Apps Script — retorna JSON ou {} se CORS opaco
+function _postarScript(dados) {
+  return fetch(SCRIPT_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify(dados),
+  })
+  .then(function(r) {
+    if (r.type === 'opaque' || r.type === 'opaqueredirect' || r.status === 0) return {};
+    return r.json().catch(function() { return {}; });
+  })
+  .then(function(resp) {
+    if (resp && resp.status === 'erro') throw new Error(resp.msg || 'Erro no servidor');
+    return resp || {};
   });
 }
 
