@@ -1371,6 +1371,8 @@ function enviarFormulario() {
 
   const aptAtual = APARTAMENTOS[aptSelecionado];
 
+  // Incluir fotos de cada seção diretamente no payload principal
+  // O servidor processa tudo em uma única chamada — sem segunda requisição
   const payload = {
     apartamento:          aptAtual.id,
     andar:                aptAtual.andar,
@@ -1389,7 +1391,6 @@ function enviarFormulario() {
     status_paredes:       statusPar,
     problemas:            document.getElementById('problemas').value.trim() || '—',
     observacoes:          document.getElementById('observacoes').value.trim() || '—',
-    // Observações por seção
     hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
     ele_obs:              document.getElementById('ele_obs').value.trim() || '—',
     mob_obs:              document.getElementById('mob_obs').value.trim() || '—',
@@ -1399,51 +1400,23 @@ function enviarFormulario() {
     pis_obs:              document.getElementById('pis_obs').value.trim() || '—',
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
-    email_notificacao: EMAIL_NOTIFICACAO,
+    email_notificacao:    EMAIL_NOTIFICACAO,
+    // Fotos de cada seção — processadas pelo servidor ao criar cada pendência
+    fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_ele:  (_fotosBase64['ele']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_mob:  (_fotosBase64['mob']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_ele2: (_fotosBase64['ele2'] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_por:  (_fotosBase64['por']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_jan:  (_fotosBase64['jan']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   };
 
-  // Descobre quantas linhas a planilha de Pendências tem ANTES de enviar
-  // para calcular as linhas que serão criadas
-  const secoes = ['hid','ele','mob','ele2','por','jan','pis','for','par'];
-  const secoesComFoto = secoes.filter(s => (_fotosBase64[s] || []).length > 0);
-
-  // Pré-calcula as pendências que serão criadas (só seções com observação não vazia)
-  const obsPorSecao = {
-    hid:  document.getElementById('hid_obs').value.trim(),
-    ele:  document.getElementById('ele_obs').value.trim(),
-    mob:  document.getElementById('mob_obs').value.trim(),
-    ele2: document.getElementById('ele2_obs').value.trim(),
-    por:  document.getElementById('por_obs').value.trim(),
-    jan:  document.getElementById('jan_obs').value.trim(),
-    pis:  document.getElementById('pis_obs').value.trim(),
-    for:  document.getElementById('for_obs').value.trim(),
-    par:  document.getElementById('par_obs').value.trim(),
-  };
-
-  // ── Enviar revisão — o servidor retorna as linhas reais de cada pendência criada
-  _postarScript(payload).then(function(resposta) {
+  // ── Envio único — sem segunda chamada para fotos
+  _postarScript(payload)
+  .then(function() {
     mostrarSucesso(payload);
-
-    // resposta.linhas_pendencias = { hid: 5, ele: 6, ... } com as linhas reais
-    const linhasPendencias = (resposta && resposta.linhas_pendencias) ? resposta.linhas_pendencias : null;
-    if (!linhasPendencias || secoesComFoto.length === 0) return;
-
-    // Envia as fotos usando as linhas reais retornadas pelo servidor
-    secoes.forEach(function(s) {
-      const linhaNum = linhasPendencias[s];
-      if (!linhaNum) return; // essa seção não criou pendência
-
-      const fotos = _fotosBase64[s] || [];
-      fotos.forEach(function(f) {
-        _postarScript({
-          action:         'upload_foto_pendencia',
-          linha_planilha: linhaNum,
-          foto_base64:    f.base64,
-          nome_arquivo:   f.nome,
-          apartamento:    aptAtual.nome,
-        }, true); // true = fire-and-forget, sem precisar ler resposta
-      });
-    });
   })
   .catch(function(err) {
     console.error(err);
@@ -1454,20 +1427,8 @@ function enviarFormulario() {
   });
 }
 
-// POST para o Apps Script — usa no-cors para evitar bloqueio CORS no envio principal
-// Para o envio principal (sem action) usamos mode:'cors' para ler a resposta com linhas_pendencias
-// Para uploads de foto (fire-and-forget) usamos no-cors pois não precisamos da resposta
-function _postarScript(dados, semResposta) {
-  if (semResposta) {
-    // Fire-and-forget: não precisa ler resposta (upload de foto)
-    return fetch(SCRIPT_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body:    JSON.stringify(dados),
-    }).catch(function() {});
-  }
-  // Envio principal: precisa ler a resposta JSON com linhas_pendencias
+// POST para o Apps Script
+function _postarScript(dados) {
   return fetch(SCRIPT_URL, {
     method:  'POST',
     headers: { 'Content-Type': 'text/plain' },
