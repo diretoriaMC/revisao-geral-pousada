@@ -1420,39 +1420,28 @@ function enviarFormulario() {
     par:  document.getElementById('par_obs').value.trim(),
   };
 
-  // Busca a última linha atual da planilha de Pendências via GET
-  // para saber de qual linha as novas pendências vão partir
-  fetch(SCRIPT_URL + '?action=contar_pendencias')
-  .then(r => r.json().catch(() => ({ total: null })))
-  .then(info => {
-    // info.total = número de linhas de dados (sem cabeçalho)
-    // Se CORS bloquear, info.total será null — enviamos sem saber as linhas (sem upload de foto)
-    const totalAtual = (info && typeof info.total === 'number') ? info.total : null;
+  // ── Enviar revisão — o servidor retorna as linhas reais de cada pendência criada
+  _postarScript(payload).then(function(resposta) {
+    mostrarSucesso(payload);
 
-    // ── Enviar revisão
-    return _postarScript(payload).then(function() {
-      mostrarSucesso(payload);
+    // resposta.linhas_pendencias = { hid: 5, ele: 6, ... } com as linhas reais
+    const linhasPendencias = (resposta && resposta.linhas_pendencias) ? resposta.linhas_pendencias : null;
+    if (!linhasPendencias || secoesComFoto.length === 0) return;
 
-      if (totalAtual === null || secoesComFoto.length === 0) return;
+    // Envia as fotos usando as linhas reais retornadas pelo servidor
+    secoes.forEach(function(s) {
+      const linhaNum = linhasPendencias[s];
+      if (!linhaNum) return; // essa seção não criou pendência
 
-      // Calcula a linha de cada pendência criada
-      let offset = 0;
-      secoes.forEach(function(s) {
-        const obs = obsPorSecao[s];
-        if (!obs || obs === '') return; // não criou pendência
-        const linhaNum = totalAtual + 2 + offset; // +1 cabeçalho, +1 base-1
-        offset++;
-
-        const fotos = _fotosBase64[s] || [];
-        fotos.forEach(function(f) {
-          _postarScript({
-            action:         'upload_foto_pendencia',
-            linha_planilha: linhaNum,
-            foto_base64:    f.base64,
-            nome_arquivo:   f.nome,
-            apartamento:    aptAtual.nome,
-          }).catch(function() {});
-        });
+      const fotos = _fotosBase64[s] || [];
+      fotos.forEach(function(f) {
+        _postarScript({
+          action:         'upload_foto_pendencia',
+          linha_planilha: linhaNum,
+          foto_base64:    f.base64,
+          nome_arquivo:   f.nome,
+          apartamento:    aptAtual.nome,
+        }, true); // true = fire-and-forget, sem precisar ler resposta
       });
     });
   })
@@ -1465,8 +1454,20 @@ function enviarFormulario() {
   });
 }
 
-// POST para o Apps Script — retorna JSON ou {} se CORS opaco
-function _postarScript(dados) {
+// POST para o Apps Script — usa no-cors para evitar bloqueio CORS no envio principal
+// Para o envio principal (sem action) usamos mode:'cors' para ler a resposta com linhas_pendencias
+// Para uploads de foto (fire-and-forget) usamos no-cors pois não precisamos da resposta
+function _postarScript(dados, semResposta) {
+  if (semResposta) {
+    // Fire-and-forget: não precisa ler resposta (upload de foto)
+    return fetch(SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body:    JSON.stringify(dados),
+    }).catch(function() {});
+  }
+  // Envio principal: precisa ler a resposta JSON com linhas_pendencias
   return fetch(SCRIPT_URL, {
     method:  'POST',
     headers: { 'Content-Type': 'text/plain' },
