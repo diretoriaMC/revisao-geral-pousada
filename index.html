@@ -185,9 +185,7 @@
     .field textarea { resize: vertical; min-height: 72px; }
 
     /* ── UPLOAD DE FOTOS ── */
-    .foto-upload-area {
-      margin-top: 10px;
-    }
+    .foto-upload-area { margin-top: 10px; }
     .foto-upload-label {
       display: inline-flex;
       align-items: center;
@@ -219,11 +217,7 @@
       border: 2px solid #d0d8e4;
       flex-shrink: 0;
     }
-    .foto-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    .foto-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .foto-thumb .foto-remove {
       position: absolute;
       top: 2px;
@@ -241,23 +235,10 @@
       justify-content: center;
       line-height: 1;
     }
-    .foto-status {
-      font-size: 11px;
-      color: #8a9ab0;
-      margin-top: 4px;
-    }
+    .foto-status { font-size: 11px; color: #8a9ab0; margin-top: 4px; }
     .foto-status.enviando { color: #2E75B6; }
     .foto-status.enviado  { color: #2e7d32; }
     .foto-status.erro     { color: #e53935; }
-    .foto-upload-spinner {
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
 
     /* ── PENDÊNCIAS ── */
     .pendencias-box {
@@ -289,29 +270,10 @@
       margin-bottom: 10px;
     }
     .pendencia-item:last-child { margin-bottom: 0; }
-    .pendencia-secao {
-      font-size: 12px;
-      font-weight: 700;
-      color: #c62828;
-      margin-bottom: 4px;
-    }
-    .pendencia-desc {
-      font-size: 14px;
-      color: #333;
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-    .pendencia-meta {
-      font-size: 11px;
-      color: #8a9ab0;
-      margin-bottom: 10px;
-    }
-    .pendencia-resolver {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+    .pendencia-secao { font-size: 12px; font-weight: 700; color: #c62828; margin-bottom: 4px; }
+    .pendencia-desc { font-size: 14px; color: #333; margin-bottom: 8px; line-height: 1.5; }
+    .pendencia-meta { font-size: 11px; color: #8a9ab0; margin-bottom: 10px; }
+    .pendencia-resolver { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .pendencia-resolver input {
       flex: 1;
       min-width: 140px;
@@ -332,38 +294,13 @@
       white-space: nowrap;
     }
     .btn-resolver:disabled { background: #90a4c8; cursor: default; }
-    .sem-pendencias {
-      text-align: center;
-      color: #2e7d32;
-      font-size: 14px;
-      font-weight: 600;
-      padding: 8px 0;
-    }
+    .sem-pendencias { text-align: center; color: #2e7d32; font-size: 14px; font-weight: 600; padding: 8px 0; }
 
     /* ── NOTA GERAL ── */
-    .nota-box {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .nota-slider {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .nota-slider input[type="range"] {
-      flex: 1;
-      height: 8px;
-      accent-color: #1F3864;
-      padding: 0;
-    }
-    .nota-valor {
-      font-size: 28px;
-      font-weight: 800;
-      color: #1F3864;
-      min-width: 48px;
-      text-align: center;
-    }
+    .nota-box { display: flex; flex-direction: column; gap: 12px; }
+    .nota-slider { display: flex; align-items: center; gap: 16px; }
+    .nota-slider input[type="range"] { flex: 1; height: 8px; accent-color: #1F3864; padding: 0; }
+    .nota-valor { font-size: 28px; font-weight: 800; color: #1F3864; min-width: 48px; text-align: center; }
 
     /* ── BOTÃO ENVIAR ── */
     .btn-submit {
@@ -385,11 +322,7 @@
     .btn-submit:disabled { background: #90a4c8; cursor: default; }
 
     /* ── TELA DE SUCESSO ── */
-    #tela-sucesso {
-      display: none;
-      text-align: center;
-      padding: 60px 32px;
-    }
+    #tela-sucesso { display: none; text-align: center; padding: 60px 32px; }
     .sucesso-icon { font-size: 72px; margin-bottom: 16px; }
     .sucesso-titulo { font-size: 22px; font-weight: 800; color: #1F3864; margin-bottom: 8px; }
     .sucesso-msg { font-size: 15px; color: #555; line-height: 1.6; }
@@ -418,7 +351,6 @@
       margin: 0 16px 16px;
     }
 
-    /* LOADING */
     .spinner {
       display: inline-block;
       width: 18px; height: 18px;
@@ -459,12 +391,8 @@
       margin-left: 8px;
       flex-shrink: 0;
     }
-    .form-section.collapsible.collapsed h3 {
-      border-bottom: none;
-    }
-    .form-section.collapsible.collapsed h3 .section-toggle {
-      transform: rotate(-90deg);
-    }
+    .form-section.collapsible.collapsed h3 { border-bottom: none; }
+    .form-section.collapsible.collapsed h3 .section-toggle { transform: rotate(-90deg); }
     .section-body {
       overflow: hidden;
       transition: max-height .3s ease, opacity .3s ease, padding-top .3s ease;
@@ -496,7 +424,6 @@
 </head>
 <body>
 
-<!-- CABEÇALHO -->
 <div class="header">
   <div class="header-icon">🏨</div>
   <div>
@@ -505,26 +432,15 @@
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     TELA 1 – SELEÇÃO DO APARTAMENTO
-══════════════════════════════════════ -->
 <div id="tela-selecao">
-
   <div class="search-box" style="margin-top:16px;">
     <h3>🏠 Selecione o apartamento a ser revisado</h3>
     <input type="text" id="busca-apt" placeholder="Digite o número do apartamento (ex: 01, 101, 201, 301)..."
       oninput="filtrarApts()" inputmode="numeric" autocomplete="off">
   </div>
-
   <div class="grid-apts" id="grid-apts"></div>
-
 </div>
 
-
-<!-- ══════════════════════════════════════
-     TELA 2 – FORMULÁRIO DE REVISÃO
-══════════════════════════════════════ -->
 <div id="tela-form">
 
   <button class="btn-voltar" onclick="voltarSelecao()">← Trocar Apartamento</button>
@@ -535,7 +451,6 @@
     <div class="badges" id="form-apt-badges"></div>
   </div>
 
-  <!-- PENDÊNCIAS ABERTAS -->
   <div class="pendencias-box" id="pendencias-box" style="display:none;">
     <h3>🔧 Pendências Abertas</h3>
     <div id="lista-pendencias"></div>
@@ -762,16 +677,14 @@
     </div>
   </div>
 
-  <!-- 11. PROBLEMAS E OBSERVAÇÕES FINAIS -->
+  <!-- 11. OBSERVAÇÕES FINAIS -->
   <div class="form-section">
     <h3>📋 Observações Finais</h3>
-
     <div class="field">
       <label>🔧 Problemas Identificados</label>
       <textarea id="problemas" rows="4"
         placeholder="Liste todos os problemas encontrados que precisam de atenção ou agendamento..."></textarea>
     </div>
-
     <div class="field">
       <label>📝 Observações Gerais</label>
       <textarea id="observacoes"
@@ -785,12 +698,8 @@
     ✅ Registrar Revisão Completa
   </button>
 
-</div><!-- /tela-form -->
+</div>
 
-
-<!-- ══════════════════════════════════════
-     TELA 3 – SUCESSO
-══════════════════════════════════════ -->
 <div id="tela-sucesso">
   <div class="sucesso-icon">✅</div>
   <div class="sucesso-titulo" id="sucesso-titulo">Revisão registrada!</div>
@@ -798,21 +707,13 @@
   <button class="btn-nova" onclick="reiniciar()">Registrar outra revisão</button>
 </div>
 
-
 <script>
-// ─────────────────────────────────────────
-// CONFIGURAÇÃO — cole aqui a URL do Apps Script
-// ─────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwISc4dkQlTsM5roKD0Td1u60rFguXHtZpojbKel0Fp9_KlwW_TfFzehO70czL8r8Q1gQ/exec';
 const EMAIL_NOTIFICACAO = 'diretoria@pousadamarieclaire.com';
-// ─────────────────────────────────────────
 
 let aptSelecionado = null;
 
-// ── Numeração real dos 45 apartamentos da Pousada Marie Claire ──
-// Extraída da "lista de ar-condicionados.xls"
 const LISTA_APTOS = [
-  // Térreo
   { id: "Apto 01",  andar: "Térreo"   },
   { id: "Apto 02",  andar: "Térreo"   },
   { id: "Apto 03",  andar: "Térreo"   },
@@ -826,7 +727,6 @@ const LISTA_APTOS = [
   { id: "Apto 11",  andar: "Térreo"   },
   { id: "Apto 12",  andar: "Térreo"   },
   { id: "Apto 13",  andar: "Térreo"   },
-  // 1º Andar
   { id: "Apto 101", andar: "1º Andar" },
   { id: "Apto 102", andar: "1º Andar" },
   { id: "Apto 103", andar: "1º Andar" },
@@ -839,7 +739,6 @@ const LISTA_APTOS = [
   { id: "Apto 110", andar: "1º Andar" },
   { id: "Apto 111", andar: "1º Andar" },
   { id: "Apto 112", andar: "1º Andar" },
-  // 2º Andar
   { id: "Apto 201", andar: "2º Andar" },
   { id: "Apto 202", andar: "2º Andar" },
   { id: "Apto 203", andar: "2º Andar" },
@@ -854,7 +753,6 @@ const LISTA_APTOS = [
   { id: "Apto 212", andar: "2º Andar" },
   { id: "Apto 213", andar: "2º Andar" },
   { id: "Apto 214", andar: "2º Andar" },
-  // 3º Andar
   { id: "Apto 301", andar: "3º Andar" },
   { id: "Apto 302", andar: "3º Andar" },
   { id: "Apto 303", andar: "3º Andar" },
@@ -863,21 +761,12 @@ const LISTA_APTOS = [
   { id: "Apto 306", andar: "3º Andar" },
 ];
 
-// Montar objeto indexado por posição (1–45)
-// Status inicial: todos sem revisão – a contagem começa só após o técnico registrar
 const APARTAMENTOS = {};
 LISTA_APTOS.forEach((apt, idx) => {
   const seq = idx + 1;
-  APARTAMENTOS[seq] = {
-    id: apt.id,
-    andar: apt.andar,
-    nome: apt.id,
-    status: 'sem-revisao',   // sem histórico ainda
-    diasRestantes: null      // sem contagem até primeira revisão
-  };
+  APARTAMENTOS[seq] = { id: apt.id, andar: apt.andar, nome: apt.id, status: 'sem-revisao', diasRestantes: null };
 });
 
-// Preencher grade de apartamentos agrupada por andar
 function renderGrid(filtro) {
   const grid = document.getElementById('grid-apts');
   grid.innerHTML = '';
@@ -891,7 +780,6 @@ function renderGrid(filtro) {
 
     if (aptsDeste.length === 0) return;
 
-    // Separador de andar
     const sep = document.createElement('div');
     sep.style.cssText = 'grid-column:1/-1;background:#2E75B6;color:white;padding:8px 14px;border-radius:8px;font-weight:700;font-size:13px;margin-top:8px;';
     sep.textContent = `  ${andar}`;
@@ -900,16 +788,11 @@ function renderGrid(filtro) {
     aptsDeste.forEach(([seq, apt]) => {
       const card = document.createElement('div');
       card.className = `apt-card ${apt.status}`;
-      const statusTxt = apt.status === 'sem-revisao'
-        ? '⬜ Sem revisão'
-        : apt.status === 'vencido'
-        ? '🔴 Vencido'
-        : apt.status === 'urgente'
-        ? `⚠️ ${apt.diasRestantes}d restantes`
+      const statusTxt = apt.status === 'sem-revisao' ? '⬜ Sem revisão'
+        : apt.status === 'vencido' ? '🔴 Vencido'
+        : apt.status === 'urgente' ? `⚠️ ${apt.diasRestantes}d restantes`
         : `✅ ${apt.diasRestantes}d restantes`;
-      const ultimaInfo = apt.ultimaRevisao
-        ? `<div class="apt-ultima">📅 Última revisão: ${apt.ultimaRevisao}</div>`
-        : '';
+      const ultimaInfo = apt.ultimaRevisao ? `<div class="apt-ultima">📅 Última revisão: ${apt.ultimaRevisao}</div>` : '';
       const pendInfo = apt.pendencias > 0
         ? `<div style="font-size:11px;font-weight:700;color:#c62828;margin-top:4px;">🔧 ${apt.pendencias} pend${apt.pendencias > 1 ? 'ências' : 'ência'} aberta${apt.pendencias > 1 ? 's' : ''}</div>`
         : '';
@@ -917,8 +800,7 @@ function renderGrid(filtro) {
         <div class="apt-num">${apt.id.replace('Apto ','')}</div>
         <div class="apt-nome">${apt.id}</div>
         <div class="apt-status">${statusTxt}</div>
-        ${ultimaInfo}
-        ${pendInfo}
+        ${ultimaInfo}${pendInfo}
       `;
       card.onclick = () => selecionarApt(parseInt(seq));
       grid.appendChild(card);
@@ -927,8 +809,7 @@ function renderGrid(filtro) {
 }
 
 function filtrarApts() {
-  const val = document.getElementById('busca-apt').value;
-  renderGrid(val);
+  renderGrid(document.getElementById('busca-apt').value);
 }
 
 function selecionarApt(num) {
@@ -939,26 +820,18 @@ function selecionarApt(num) {
   document.getElementById('form-apt-sub').textContent = `${apt.andar}  ·  Pousada Marie Claire  ·  Revisão Geral Completa`;
 
   const badgesEl = document.getElementById('form-apt-badges');
-  let statusBadge = apt.status === 'sem-revisao'
-    ? `<span class="badge">⬜ Sem revisão registrada</span>`
-    : apt.status === 'vencido'
-    ? `<span class="badge vencido">🔴 Revisão Vencida</span>`
-    : apt.status === 'urgente'
-    ? `<span class="badge urgente">⚠️ Revisão Próxima (${apt.diasRestantes} dias)</span>`
+  let statusBadge = apt.status === 'sem-revisao' ? `<span class="badge">⬜ Sem revisão registrada</span>`
+    : apt.status === 'vencido' ? `<span class="badge vencido">🔴 Revisão Vencida</span>`
+    : apt.status === 'urgente' ? `<span class="badge urgente">⚠️ Revisão Próxima (${apt.diasRestantes} dias)</span>`
     : `<span class="badge ok">✅ Em Dia (${apt.diasRestantes} dias)</span>`;
-  const ultimaBadge = apt.ultimaRevisao
-    ? `<span class="badge">📅 Última: ${apt.ultimaRevisao}</span>`
-    : '';
-  const tecnicoBadge = apt.ultimoTecnico
-    ? `<span class="badge">👷 ${apt.ultimoTecnico}</span>`
-    : '';
+  const ultimaBadge = apt.ultimaRevisao ? `<span class="badge">📅 Última: ${apt.ultimaRevisao}</span>` : '';
+  const tecnicoBadge = apt.ultimoTecnico ? `<span class="badge">👷 ${apt.ultimoTecnico}</span>` : '';
   badgesEl.innerHTML = `<span class="badge">🏨 ${apt.id}</span><span class="badge">${apt.andar}</span>${statusBadge}${ultimaBadge}${tecnicoBadge}`;
 
-  // Exibir data de hoje automaticamente (sem campo editável)
   const hoje = new Date();
-  const dia   = String(hoje.getDate()).padStart(2,'0');
-  const mes   = String(hoje.getMonth()+1).padStart(2,'0');
-  const ano   = hoje.getFullYear();
+  const dia = String(hoje.getDate()).padStart(2,'0');
+  const mes = String(hoje.getMonth()+1).padStart(2,'0');
+  const ano = hoje.getFullYear();
   window._dataHoje = `${ano}-${mes}-${dia}`;
   const elData = document.getElementById('data-display');
   if (elData) elData.textContent = `${dia}/${mes}/${ano}`;
@@ -968,17 +841,11 @@ function selecionarApt(num) {
   document.getElementById('tela-sucesso').style.display = 'none';
   window.scrollTo(0, 0);
 
-  // Carregar pendências do apartamento
   carregarPendencias(apt.id);
 
-  // Recolher todas as seções colapsáveis ao abrir novo formulário
   ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par']
-    .forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('collapsed');
-    });
+    .forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('collapsed'); });
 
-  // Limpar fotos do formulário anterior
   ['hid','ele','mob','ele2','por','jan','pis','for','par'].forEach(s => {
     delete _fotosLinks[s];
     const prev = document.getElementById('preview-' + s);
@@ -987,37 +854,26 @@ function selecionarApt(num) {
     if (stat) { stat.textContent = ''; stat.className = 'foto-status'; }
   });
 
-  // Resetar textareas
   document.getElementById('tecnico').value = '';
   document.getElementById('problemas').value = '';
   document.getElementById('observacoes').value = '';
   ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  // Limpar sumários das seções
   ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
 }
 
-// ─────────────────────────────────────────
-// GERENCIAMENTO DE FOTOS
-// Fotos ficam armazenadas comprimidas em base64 e são enviadas junto com o formulário.
-// _fotosBase64[secao]         = [{base64, mime, nome, thumbId}, ...]
-// _fotosBase64Resolucao[id]   = [{base64, mime, nome, thumbId}, ...]
-// ─────────────────────────────────────────
-const _fotosBase64         = {};
+const _fotosBase64 = {};
 const _fotosBase64Resolucao = {};
-
-// Alias usados no payload (mantidos para não quebrar nada)
-const _fotosLinks    = _fotosBase64;
+const _fotosLinks = _fotosBase64;
 const _fotosLinksRes = _fotosBase64Resolucao;
 
-// Redimensiona e comprime imagem via canvas, retorna base64 via callback
 function _comprimirImagem(arquivo, cb) {
   const reader = new FileReader();
   reader.onload = function(ev) {
     const img = new Image();
     img.onload = function() {
-      const MAX = 800; // max 800px — ~30-60KB por foto em base64
+      const MAX = 800;
       let w = img.width, h = img.height;
       if (w > MAX || h > MAX) {
         if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -1037,10 +893,8 @@ function adicionarFotos(input, secao) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
   if (!_fotosBase64[secao]) _fotosBase64[secao] = [];
-
   const preview  = document.getElementById('preview-' + secao);
   const statusEl = document.getElementById('status-' + secao);
-
   arquivos.forEach((arquivo, i) => {
     _comprimirImagem(arquivo, function(base64) {
       const thumbId = 'thumb-' + secao + '-' + Date.now() + i;
@@ -1058,9 +912,7 @@ function adicionarFotos(input, secao) {
 }
 
 function removerFoto(secao, thumbId) {
-  if (_fotosBase64[secao]) {
-    _fotosBase64[secao] = _fotosBase64[secao].filter(f => f.thumbId !== thumbId);
-  }
+  if (_fotosBase64[secao]) _fotosBase64[secao] = _fotosBase64[secao].filter(f => f.thumbId !== thumbId);
   const el = document.getElementById(thumbId);
   if (el) el.remove();
   const statusEl = document.getElementById('status-' + secao);
@@ -1072,10 +924,8 @@ function adicionarFotosResolucao(input, idPend) {
   const arquivos = Array.from(input.files);
   if (!arquivos.length) return;
   if (!_fotosBase64Resolucao[idPend]) _fotosBase64Resolucao[idPend] = [];
-
   const preview  = document.getElementById('preview-res-' + idPend);
   const statusEl = document.getElementById('status-res-' + idPend);
-
   arquivos.forEach((arquivo, i) => {
     _comprimirImagem(arquivo, function(base64) {
       const thumbId = 'thumb-res-' + idPend + '-' + Date.now() + i;
@@ -1093,9 +943,7 @@ function adicionarFotosResolucao(input, idPend) {
 }
 
 function removerFotoResolucao(idPend, thumbId) {
-  if (_fotosBase64Resolucao[idPend]) {
-    _fotosBase64Resolucao[idPend] = _fotosBase64Resolucao[idPend].filter(f => f.thumbId !== thumbId);
-  }
+  if (_fotosBase64Resolucao[idPend]) _fotosBase64Resolucao[idPend] = _fotosBase64Resolucao[idPend].filter(f => f.thumbId !== thumbId);
   const el = document.getElementById(thumbId);
   if (el) el.remove();
   const statusEl = document.getElementById('status-res-' + idPend);
@@ -1103,7 +951,6 @@ function removerFotoResolucao(idPend, thumbId) {
   if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) pronta(s) — será(ão) salva(s) ao resolver` : '';
 }
 
-// ── Carregar pendências do apartamento ──────────────────────────────────
 function carregarPendencias(nomeApto) {
   const box   = document.getElementById('pendencias-box');
   const lista = document.getElementById('lista-pendencias');
@@ -1122,23 +969,22 @@ function carregarPendencias(nomeApto) {
         const div = document.createElement('div');
         div.className = 'pendencia-item';
         div.id = 'pend-' + p.id;
-        const fotosArr = p.fotos && p.fotos !== '—'
-          ? p.fotos.split('\n').filter(l => l.trim() !== '')
+
+        const fotosArr = p.fotos && p.fotos !== '—' && !p.fotos.startsWith('ERRO')
+          ? p.fotos.split('\n').filter(l => l.trim().startsWith('http'))
           : [];
+
         const fotosHtml = fotosArr.length > 0
-          ? `<div style="margin:8px 0 4px 0;">
-               <div style="font-size:11px;color:#8a9ab0;margin-bottom:4px;">📷 Fotos do ocorrido:</div>
+          ? `<div style="margin:8px 0 10px 0;">
+               <div style="font-size:11px;color:#8a9ab0;margin-bottom:6px;">📷 Fotos do ocorrido:</div>
                <div style="display:flex;flex-wrap:wrap;gap:6px;">
-                 ${fotosArr.map(l => {
-                   const fileId = l.match(/\/d\/([^/]+)\//)?.[1] || '';
-                   const thumb = fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w120` : '';
-                   return thumb
-                     ? `<a href="${l}" target="_blank"><img src="${thumb}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #dde3ef;cursor:pointer;" title="Ver foto"></a>`
-                     : `<a href="${l}" target="_blank" style="font-size:11px;color:#2E75B6;">📷 Ver foto</a>`;
-                 }).join('')}
+                 ${fotosArr.map((l, i) =>
+                   `<a href="${l}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#EFF4FB;color:#1F3864;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;text-decoration:none;border:1.5px solid #2E75B6;">📷 Ver foto ${i + 1}</a>`
+                 ).join('')}
                </div>
              </div>`
           : '';
+
         div.innerHTML = `
           <div class="pendencia-secao">${p.secao}</div>
           <div class="pendencia-desc">${p.descricao}</div>
@@ -1165,13 +1011,9 @@ function carregarPendencias(nomeApto) {
     });
 }
 
-// ── Resolver uma pendência ──────────────────────────────────────────────
 function resolverPendencia(idPend, linhaPlanilha) {
   const tecnico = document.getElementById('tec-' + idPend)?.value.trim();
-  if (!tecnico) {
-    alert('Informe o nome de quem resolveu a pendência.');
-    return;
-  }
+  if (!tecnico) { alert('Informe o nome de quem resolveu a pendência.'); return; }
 
   const btn = document.querySelector(`#pend-${idPend} .btn-resolver`);
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Salvando...'; }
@@ -1189,13 +1031,12 @@ function resolverPendencia(idPend, linhaPlanilha) {
   .then(r => r.text().catch(() => '{}'))
   .then(text => {
     let resp = {};
-    try { resp = JSON.parse(text); } catch(e) { /* CORS opaco — trata como sucesso */ }
+    try { resp = JSON.parse(text); } catch(e) {}
     if (resp.status === 'erro') {
       alert('Erro ao resolver pendência: ' + (resp.msg || 'Tente novamente.'));
       if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
       return;
     }
-    // Sucesso (incluindo resposta opaca do Apps Script)
     const item = document.getElementById('pend-' + idPend);
     if (item) {
       item.style.opacity = '0';
@@ -1203,15 +1044,12 @@ function resolverPendencia(idPend, linhaPlanilha) {
       setTimeout(() => {
         item.remove();
         const lista = document.getElementById('lista-pendencias');
-        if (lista && lista.children.length === 0) {
+        if (lista && lista.children.length === 0)
           lista.innerHTML = '<div class="sem-pendencias">✅ Todas as pendências foram resolvidas!</div>';
-        }
       }, 400);
     }
   })
   .catch(() => {
-    // Mesmo em caso de erro de rede, pode ter funcionado (opaque response)
-    // Recarrega pendências para confirmar
     const item = document.getElementById('pend-' + idPend);
     if (item) item.remove();
     if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
@@ -1233,7 +1071,6 @@ function reiniciar() {
 }
 
 function atualizarProgresso() {
-  // Atualizar sumário de cada seção conforme obs preenchidas
   const secoes = [
     { sumId: 'sum-hid',  obsId: 'hid_obs'  },
     { sumId: 'sum-ele',  obsId: 'ele_obs'  },
@@ -1249,11 +1086,8 @@ function atualizarProgresso() {
     const el = document.getElementById(sumId);
     const obs = document.getElementById(obsId);
     if (!el || !obs) return;
-    if (obs.value.trim()) {
-      el.textContent = '📝 Com obs.'; el.className = 'section-summary atencao';
-    } else {
-      el.textContent = ''; el.className = 'section-summary';
-    }
+    if (obs.value.trim()) { el.textContent = '📝 Com obs.'; el.className = 'section-summary atencao'; }
+    else { el.textContent = ''; el.className = 'section-summary'; }
   });
 }
 
@@ -1285,44 +1119,30 @@ function enviarFormulario() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Enviando…';
 
-  // Calcular próxima revisão: 161 dias (45 apts ÷ 2/semana = 23 semanas)
   const dataObj = new Date(dataRevisao + 'T12:00:00');
   const proxima = new Date(dataObj);
   proxima.setDate(proxima.getDate() + 161);
   const proximaIso = proxima.toISOString().split('T')[0];
 
-  const statusHid  = resumoObs('hid_obs');
-  const statusEle  = resumoObs('ele_obs');
-  const statusMob  = resumoObs('mob_obs');
-  const statusEle2 = resumoObs('ele2_obs');
-  const statusPor  = resumoObs('por_obs');
-  const statusJan  = resumoObs('jan_obs');
-  const statusPis  = resumoObs('pis_obs');
-  const statusFor  = resumoObs('for_obs');
-  const statusPar  = resumoObs('par_obs');
-
   const fmt = iso => { const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; };
-
   const aptAtual = APARTAMENTOS[aptSelecionado];
 
-  // Incluir fotos de cada seção diretamente no payload principal
-  // O servidor processa tudo em uma única chamada — sem segunda requisição
   const payload = {
     apartamento:          aptAtual.id,
     andar:                aptAtual.andar,
     apartamento_num:      aptSelecionado,
     data_revisao:         fmt(dataRevisao),
     proxima_revisao:      fmt(proximaIso),
-    tecnico:              tecnico,
-    status_hidraulico:    statusHid,
-    status_eletrica:      statusEle,
-    status_mobiliario:    statusMob,
-    status_eletrodomest:  statusEle2,
-    status_portas:        statusPor,
-    status_janelas:       statusJan,
-    status_piso:          statusPis,
-    status_forro:         statusFor,
-    status_paredes:       statusPar,
+    tecnico,
+    status_hidraulico:    resumoObs('hid_obs'),
+    status_eletrica:      resumoObs('ele_obs'),
+    status_mobiliario:    resumoObs('mob_obs'),
+    status_eletrodomest:  resumoObs('ele2_obs'),
+    status_portas:        resumoObs('por_obs'),
+    status_janelas:       resumoObs('jan_obs'),
+    status_piso:          resumoObs('pis_obs'),
+    status_forro:         resumoObs('for_obs'),
+    status_paredes:       resumoObs('par_obs'),
     problemas:            document.getElementById('problemas').value.trim() || '—',
     observacoes:          document.getElementById('observacoes').value.trim() || '—',
     hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
@@ -1335,7 +1155,6 @@ function enviarFormulario() {
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
-    // Fotos de cada seção — processadas pelo servidor ao criar cada pendência
     fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_ele:  (_fotosBase64['ele']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_mob:  (_fotosBase64['mob']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
@@ -1347,12 +1166,9 @@ function enviarFormulario() {
     fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   };
 
-  // ── Envio único — sem segunda chamada para fotos
   _postarScript(payload)
-  .then(function() {
-    mostrarSucesso(payload);
-  })
-  .catch(function(err) {
+  .then(() => mostrarSucesso(payload))
+  .catch(err => {
     console.error(err);
     msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
     msgErro.style.display = 'block';
@@ -1361,25 +1177,23 @@ function enviarFormulario() {
   });
 }
 
-// POST para o Apps Script
 function _postarScript(dados) {
   return fetch(SCRIPT_URL, {
-    method:  'POST',
+    method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
-    body:    JSON.stringify(dados),
+    body: JSON.stringify(dados),
   })
-  .then(function(r) {
+  .then(r => {
     if (r.type === 'opaque' || r.type === 'opaqueredirect' || r.status === 0) return {};
-    return r.json().catch(function() { return {}; });
+    return r.json().catch(() => ({}));
   })
-  .then(function(resp) {
+  .then(resp => {
     if (resp && resp.status === 'erro') throw new Error(resp.msg || 'Erro no servidor');
     return resp || {};
   });
 }
 
 function mostrarSucesso(p) {
-  // Atualizar o status local do apartamento imediatamente
   const seq = aptSelecionado;
   if (seq && APARTAMENTOS[seq]) {
     const partes = (p.proxima_revisao || '').split('/');
@@ -1391,15 +1205,11 @@ function mostrarSucesso(p) {
       APARTAMENTOS[seq].diasRestantes = dias;
       APARTAMENTOS[seq].ultimaRevisao = p.data_revisao;
       APARTAMENTOS[seq].ultimoTecnico = p.tecnico;
-      APARTAMENTOS[seq].proximaRevisao = p.proxima_revisao;
     }
   }
-
   document.getElementById('tela-form').style.display = 'none';
   document.getElementById('tela-sucesso').style.display = 'block';
-
-  document.getElementById('sucesso-titulo').textContent =
-    `Revisão do ${p.apartamento} registrada!`;
+  document.getElementById('sucesso-titulo').textContent = `Revisão do ${p.apartamento} registrada!`;
   document.getElementById('sucesso-detalhe').innerHTML = `
     🏨 <strong>${p.apartamento}</strong> · ${p.andar}<br>
     📅 Data da revisão: <strong>${p.data_revisao}</strong><br>
@@ -1419,9 +1229,6 @@ function mostrarSucesso(p) {
   window.scrollTo(0, 0);
 }
 
-// ─────────────────────────────────────────
-// CARREGAR HISTÓRICO DA PLANILHA
-// ─────────────────────────────────────────
 function carregarHistorico() {
   const grid = document.getElementById('grid-apts');
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:#2E75B6;font-size:14px;font-weight:600;">⏳ Carregando histórico...</div>';
@@ -1429,70 +1236,43 @@ function carregarHistorico() {
   fetch(SCRIPT_URL + '?action=historico')
     .then(r => r.json())
     .then(dados => {
-      // dados esperado: [ { apartamento: "Apto 01", data_revisao: "10/04/2026", proxima_revisao: "18/09/2026", tecnico: "..." }, ... ]
-      // Se retornou erro ou não é array, apenas exibe a grade sem histórico
       if (!Array.isArray(dados)) { renderGrid(); return; }
-      const hoje = new Date();
-      hoje.setHours(0,0,0,0);
-
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
       dados.forEach(row => {
-        // Encontrar qual seq corresponde a esse apartamento
         const seq = Object.keys(APARTAMENTOS).find(k => APARTAMENTOS[k].id === row.apartamento);
         if (!seq) return;
-
-        // Calcular dias restantes até a próxima revisão
-        // proxima_revisao vem no formato dd/mm/yyyy
         const partes = (row.proxima_revisao || '').split('/');
         if (partes.length !== 3) return;
         const proxima = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T00:00:00`);
-        const diffMs = proxima - hoje;
-        const dias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-        let status;
-        if (dias < 0)       status = 'vencido';
-        else if (dias <= 30) status = 'urgente';
-        else                status = 'ok';
-
-        APARTAMENTOS[seq].status        = status;
+        const dias = Math.ceil((proxima - hoje) / (1000 * 60 * 60 * 24));
+        APARTAMENTOS[seq].status        = dias < 0 ? 'vencido' : dias <= 30 ? 'urgente' : 'ok';
         APARTAMENTOS[seq].diasRestantes = dias;
         APARTAMENTOS[seq].ultimoTecnico = row.tecnico || '';
         APARTAMENTOS[seq].ultimaRevisao = row.data_revisao || '';
-        APARTAMENTOS[seq].proximaRevisao = row.proxima_revisao || '';
       });
-
       renderGrid();
     })
-    .catch(() => {
-      // Se falhar (offline, etc.), exibe a grade no estado padrão
-      renderGrid();
-    });
+    .catch(() => renderGrid());
 }
 
-// ─────────────────────────────────────────
-// CARREGAR PENDÊNCIAS PARA O DASHBOARD
-// ─────────────────────────────────────────
 function carregarPendenciasDashboard() {
   fetch(SCRIPT_URL + '?action=pendencias')
     .then(r => r.json())
     .then(pendencias => {
       if (!Array.isArray(pendencias)) return;
-      // Contar pendências por apartamento
       const contagem = {};
       pendencias.forEach(p => {
         if (!contagem[p.apartamento]) contagem[p.apartamento] = 0;
         contagem[p.apartamento]++;
       });
-      // Salvar nos dados de cada apartamento
       Object.keys(APARTAMENTOS).forEach(seq => {
-        const apt = APARTAMENTOS[seq];
-        apt.pendencias = contagem[apt.id] || 0;
+        APARTAMENTOS[seq].pendencias = contagem[APARTAMENTOS[seq].id] || 0;
       });
       renderGrid();
     })
     .catch(() => {});
 }
 
-// Inicializar — busca histórico ao abrir
 carregarHistorico();
 carregarPendenciasDashboard();
 </script>
