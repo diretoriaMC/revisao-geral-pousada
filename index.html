@@ -492,6 +492,95 @@
     .section-summary.ok { color: #2e7d32; }
     .section-summary.atencao { color: #e65100; }
     .section-summary.vermelho { color: #c62828; }
+
+    /* ── LIGHTBOX GALERIA DE FOTOS ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.93);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.ativo { display: flex; }
+    #lightbox .lb-img {
+      max-width: 92vw;
+      max-height: 78vh;
+      border-radius: 8px;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    #lightbox .lb-loading {
+      color: #aaa;
+      font-size: 14px;
+      padding: 40px;
+    }
+    #lightbox .lb-contador {
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 14px;
+      letter-spacing: .5px;
+    }
+    #lightbox .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,.18);
+      border: none;
+      color: white;
+      font-size: 30px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+    }
+    #lightbox .lb-nav:hover { background: rgba(255,255,255,.32); }
+    #lightbox .lb-prev { left: 10px; }
+    #lightbox .lb-next { right: 10px; }
+    #lightbox .lb-fechar {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255,255,255,.18);
+      border: none;
+      color: white;
+      font-size: 20px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .foto-galeria-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2.5px solid #e65100;
+      flex-shrink: 0;
+      cursor: pointer;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .foto-galeria-thumb:active { transform: scale(.93); }
+    .foto-galeria-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
@@ -799,6 +888,15 @@
 </div>
 
 
+<!-- LIGHTBOX -->
+<div id="lightbox" onclick="fecharLightboxFundo(event)">
+  <button class="lb-fechar" onclick="fecharLightbox()">✕</button>
+  <button class="lb-nav lb-prev" id="lb-prev" onclick="navegarLightbox(-1);event.stopPropagation()">‹</button>
+  <img class="lb-img" id="lb-img" src="" alt="Foto da pendência">
+  <div class="lb-contador" id="lb-contador"></div>
+  <button class="lb-nav lb-next" id="lb-next" onclick="navegarLightbox(1);event.stopPropagation()">›</button>
+</div>
+
 <script>
 // ─────────────────────────────────────────
 // CONFIGURAÇÃO — cole aqui a URL do Apps Script
@@ -808,6 +906,72 @@ const EMAIL_NOTIFICACAO = 'diretoria@pousadamarieclaire.com';
 // ─────────────────────────────────────────
 
 let aptSelecionado = null;
+
+// ─────────────────────────────────────────
+// LIGHTBOX
+// ─────────────────────────────────────────
+const _pendFotos = {};
+let _lbFotos = [];
+let _lbIdx   = 0;
+let _lbTouchX = null;
+
+function _driveThumbUrl(url, sz) {
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=${sz || 'w1200'}` : url;
+}
+
+function abrirLightbox(pendId, idx) {
+  _lbFotos = _pendFotos[pendId] || [];
+  _lbIdx   = idx;
+  _renderLightbox();
+  document.getElementById('lightbox').classList.add('ativo');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharLightbox() {
+  document.getElementById('lightbox').classList.remove('ativo');
+  document.body.style.overflow = '';
+  document.getElementById('lb-img').src = '';
+}
+
+function fecharLightboxFundo(e) {
+  if (e.target === document.getElementById('lightbox')) fecharLightbox();
+}
+
+function navegarLightbox(dir) {
+  _lbIdx = (_lbIdx + dir + _lbFotos.length) % _lbFotos.length;
+  _renderLightbox();
+}
+
+function _renderLightbox() {
+  const img      = document.getElementById('lb-img');
+  const contador = document.getElementById('lb-contador');
+  const prev     = document.getElementById('lb-prev');
+  const next     = document.getElementById('lb-next');
+  img.src = _driveThumbUrl(_lbFotos[_lbIdx], 'w1200');
+  contador.textContent = `Foto ${_lbIdx + 1} de ${_lbFotos.length}`;
+  const multi = _lbFotos.length > 1;
+  prev.style.display = multi ? '' : 'none';
+  next.style.display = multi ? '' : 'none';
+}
+
+// Swipe no mobile
+(function() {
+  const lb = document.getElementById('lightbox');
+  lb.addEventListener('touchstart', e => { _lbTouchX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend',   e => {
+    if (_lbTouchX === null || _lbFotos.length < 2) return;
+    const dx = e.changedTouches[0].clientX - _lbTouchX;
+    if (Math.abs(dx) > 50) navegarLightbox(dx < 0 ? 1 : -1);
+    _lbTouchX = null;
+  }, { passive: true });
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('ativo')) return;
+    if (e.key === 'ArrowLeft')  navegarLightbox(-1);
+    if (e.key === 'ArrowRight') navegarLightbox(1);
+    if (e.key === 'Escape')     fecharLightbox();
+  });
+})();
 
 // ── Numeração real dos 45 apartamentos da Pousada Marie Claire ──
 // Extraída da "lista de ar-condicionados.xls"
@@ -1125,12 +1289,16 @@ function carregarPendencias(nomeApto) {
         const fotosArr = p.fotos && p.fotos !== '—'
           ? p.fotos.split('\n').filter(l => l.trim() !== '')
           : [];
+        _pendFotos[p.id] = fotosArr;
         const fotosHtml = fotosArr.length > 0
           ? `<div style="background:#fff8e1;border:1.5px solid #f9a825;border-radius:10px;padding:12px;margin:10px 0;">
-               <div style="font-size:12px;font-weight:700;color:#e65100;margin-bottom:8px;">📷 Fotos do problema registrado (${fotosArr.length} foto${fotosArr.length > 1 ? 's' : ''}):</div>
+               <div style="font-size:12px;font-weight:700;color:#e65100;margin-bottom:8px;">📷 Fotos do problema (${fotosArr.length} foto${fotosArr.length > 1 ? 's' : ''}) — toque para ampliar:</div>
                <div style="display:flex;flex-wrap:wrap;gap:8px;">
                  ${fotosArr.map((l, i) =>
-                   `<a href="${l}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#e65100;color:white;font-size:13px;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">📷 Ver foto ${i + 1}</a>`
+                   `<div class="foto-galeria-thumb" onclick="abrirLightbox('${p.id}',${i})">
+                      <img src="${_driveThumbUrl(l,'w200')}" alt="Foto ${i+1}"
+                           onerror="this.outerHTML='<div style=font-size:11px;text-align:center;padding:6px;color:#e65100;line-height:1.3>📷<br>Foto ${i+1}</div>'">
+                    </div>`
                  ).join('')}
                </div>
              </div>`
