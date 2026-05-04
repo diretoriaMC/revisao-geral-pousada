@@ -851,20 +851,26 @@
     </div>
   </div>
 
-  <!-- 11. PROBLEMAS E OBSERVAÇÕES FINAIS -->
+  <!-- 11. OBSERVAÇÕES FINAIS -->
   <div class="form-section">
     <h3>📋 Observações Finais</h3>
-
-    <div class="field">
-      <label>🔧 Problemas Identificados</label>
-      <textarea id="problemas" rows="4"
-        placeholder="Liste todos os problemas encontrados que precisam de atenção ou agendamento..."></textarea>
-    </div>
 
     <div class="field">
       <label>📝 Observações Gerais</label>
       <textarea id="observacoes"
         placeholder="Informações adicionais, recomendações, contexto importante..."></textarea>
+    </div>
+
+    <div class="foto-upload-area" style="margin-top:4px;">
+      <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">
+        📷 Fotos adicionais <span style="font-weight:400;color:#8a9ab0;">(pendências que não se encaixaram nos itens acima)</span>
+      </label>
+      <label class="foto-upload-label">
+        📷 Adicionar fotos
+        <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'obs')">
+      </label>
+      <div class="fotos-preview" id="preview-obs"></div>
+      <div class="foto-status" id="status-obs"></div>
     </div>
   </div>
 
@@ -1143,7 +1149,7 @@ function selecionarApt(num) {
     });
 
   // Limpar fotos do formulário anterior
-  ['hid','ele','mob','ele2','por','jan','pis','for','par'].forEach(s => {
+  ['hid','ele','mob','ele2','por','jan','pis','for','par','obs'].forEach(s => {
     delete _fotosLinks[s];
     const prev = document.getElementById('preview-' + s);
     if (prev) prev.innerHTML = '';
@@ -1153,7 +1159,6 @@ function selecionarApt(num) {
 
   // Resetar textareas
   document.getElementById('tecnico').value = '';
-  document.getElementById('problemas').value = '';
   document.getElementById('observacoes').value = '';
   ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
@@ -1500,7 +1505,6 @@ function enviarFormulario() {
     status_piso:          statusPis,
     status_forro:         statusFor,
     status_paredes:       statusPar,
-    problemas:            document.getElementById('problemas').value.trim() || '—',
     observacoes:          document.getElementById('observacoes').value.trim() || '—',
     hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
     ele_obs:              document.getElementById('ele_obs').value.trim() || '—',
@@ -1522,6 +1526,7 @@ function enviarFormulario() {
     fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_obs:  (_fotosBase64['obs']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   };
 
   // ── Envio único — sem segunda chamada para fotos
