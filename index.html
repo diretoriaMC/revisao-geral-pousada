@@ -851,9 +851,9 @@
     </div>
   </div>
 
-  <!-- 11. OBSERVAÇÕES FINAIS -->
+  <!-- 11. OBSERVAÇÕES GERAIS -->
   <div class="form-section">
-    <h3>📋 Observações Finais</h3>
+    <h3>📋 Observações Gerais</h3>
 
     <div class="field">
       <label>📝 Observações Gerais</label>
@@ -1448,7 +1448,17 @@ function enviarFormulario() {
     return;
   }
 
-  // Fotos obrigatórias para seções com problema registrado
+  // Pelo menos 1 foto em alguma seção ou em observações gerais
+  const todasChaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','obs'];
+  const totalFotos = todasChaves.reduce((acc, c) => acc + (_fotosBase64[c] || []).length, 0);
+  if (totalFotos === 0) {
+    msgErro.textContent = '⚠️ Adicione ao menos 1 foto antes de registrar a revisão.';
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Fotos obrigatórias para cada seção que tem problema descrito
   const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes' };
   const secoesSemFoto = [];
   Object.entries(mapaSecoes).forEach(([chave, nome]) => {
