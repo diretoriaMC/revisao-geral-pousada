@@ -851,6 +851,29 @@
     </div>
   </div>
 
+  <!-- 10b. INTERNET -->
+  <div class="form-section collapsible collapsed" id="sec-int">
+    <h3 onclick="toggleSection('sec-int')">
+      🌐 Internet
+      <span class="section-summary" id="sum-int"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="field">
+        <label>Observações Internet</label>
+        <textarea id="int_obs" placeholder="Sinal fraco, sem conexão, equipamento com problema..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'int')">
+        </label>
+        <div class="fotos-preview" id="preview-int"></div>
+        <div class="foto-status" id="status-int"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 11. OBSERVAÇÕES GERAIS -->
   <div class="form-section">
     <h3>📋 Observações Gerais</h3>
@@ -1142,14 +1165,14 @@ function selecionarApt(num) {
   carregarPendencias(apt.id);
 
   // Recolher todas as seções colapsáveis ao abrir novo formulário
-  ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par']
+  ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par','sec-int']
     .forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add('collapsed');
     });
 
   // Limpar fotos do formulário anterior
-  ['hid','ele','mob','ele2','por','jan','pis','for','par','obs'].forEach(s => {
+  ['hid','ele','mob','ele2','por','jan','pis','for','par','int','obs'].forEach(s => {
     delete _fotosLinks[s];
     const prev = document.getElementById('preview-' + s);
     if (prev) prev.innerHTML = '';
@@ -1160,10 +1183,10 @@ function selecionarApt(num) {
   // Resetar textareas
   document.getElementById('tecnico').value = '';
   document.getElementById('observacoes').value = '';
-  ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs']
+  ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs','int_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   // Limpar sumários das seções
-  ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par']
+  ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par','sum-int']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
 }
 
@@ -1416,6 +1439,7 @@ function atualizarProgresso() {
     { sumId: 'sum-pis',  obsId: 'pis_obs'  },
     { sumId: 'sum-for',  obsId: 'for_obs'  },
     { sumId: 'sum-par',  obsId: 'par_obs'  },
+    { sumId: 'sum-int',  obsId: 'int_obs'  },
   ];
   secoes.forEach(({ sumId, obsId }) => {
     const el = document.getElementById(sumId);
@@ -1464,7 +1488,7 @@ function enviarFormulario() {
   }
 
   // Fotos obrigatórias para cada seção que tem problema descrito
-  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes' };
+  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes', int: 'Internet' };
   const secoesSemFoto = [];
   Object.entries(mapaSecoes).forEach(([chave, nome]) => {
     const obs = document.getElementById(chave + '_obs')?.value.trim();
@@ -1497,6 +1521,7 @@ function enviarFormulario() {
   const statusPis  = resumoObs('pis_obs');
   const statusFor  = resumoObs('for_obs');
   const statusPar  = resumoObs('par_obs');
+  const statusInt  = resumoObs('int_obs');
 
   const fmt = iso => { const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; };
 
@@ -1520,6 +1545,7 @@ function enviarFormulario() {
     status_piso:          statusPis,
     status_forro:         statusFor,
     status_paredes:       statusPar,
+    status_internet:      statusInt,
     observacoes:          document.getElementById('observacoes').value.trim() || '—',
     hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
     ele_obs:              document.getElementById('ele_obs').value.trim() || '—',
@@ -1530,6 +1556,7 @@ function enviarFormulario() {
     pis_obs:              document.getElementById('pis_obs').value.trim() || '—',
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
+    int_obs:              document.getElementById('int_obs').value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
     // Fotos de cada seção — processadas pelo servidor ao criar cada pendência
     fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
@@ -1541,6 +1568,7 @@ function enviarFormulario() {
     fotos_pis:  (_fotosBase64['pis']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_int:  (_fotosBase64['int']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_obs:  (_fotosBase64['obs']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   };
 
@@ -1609,7 +1637,8 @@ function mostrarSucesso(p) {
     🪟 Janelas: ${p.status_janelas}<br>
     🟫 Piso: ${p.status_piso}<br>
     🔲 Forro/Teto: ${p.status_forro}<br>
-    🖼️ Paredes: ${p.status_paredes}<br><br>
+    🖼️ Paredes: ${p.status_paredes}<br>
+    🌐 Internet: ${p.status_internet}<br><br>
     📅 Próxima Revisão: <strong>${p.proxima_revisao}</strong><br><br>
     Um e-mail de confirmação foi enviado para a pousada.
   `;
