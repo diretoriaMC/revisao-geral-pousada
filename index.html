@@ -1321,6 +1321,10 @@ function carregarPendencias(nomeApto) {
             <div class="fotos-preview" id="preview-res-${p.id}"></div>
             <div class="foto-status" id="status-res-${p.id}"></div>
           </div>
+          <div style="margin-bottom:8px;">
+            <textarea id="obs-res-${p.id}" placeholder="Observação da resolução (opcional)..."
+              style="width:100%;padding:8px 12px;border:1.5px solid #d0d8e4;border-radius:8px;font-size:13px;min-height:56px;resize:vertical;box-sizing:border-box;"></textarea>
+          </div>
           <div class="pendencia-resolver">
             <input type="text" placeholder="Nome de quem resolveu" id="tec-${p.id}">
             <button class="btn-resolver" onclick="resolverPendencia('${p.id}', ${p.linha_planilha})">✅ Resolver</button>
@@ -1350,6 +1354,7 @@ function resolverPendencia(idPend, linhaPlanilha) {
       action:           'resolver_pendencia',
       linha_planilha:   linhaPlanilha,
       tecnico_resolve:  tecnico,
+      obs_resolucao:    document.getElementById('obs-res-' + idPend)?.value.trim() || '',
       fotos_resolucao:  (_fotosBase64Resolucao[idPend] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     }),
   })
