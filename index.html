@@ -843,6 +843,44 @@
       font-size: 14px;
     }
 
+    /* ── DIRETRIZES (TOPO FIXO) ── */
+    #diretrizes-topo {
+      background: linear-gradient(180deg, #fff8e1 0%, #fff 100%);
+      border-bottom: 2px solid #f9a825;
+    }
+    .diretrizes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .diretrizes-header-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #e65100;
+      letter-spacing: .3px;
+    }
+    .diretrizes-toggle {
+      font-size: 14px;
+      color: #e65100;
+      transition: transform .25s;
+    }
+    #diretrizes-topo.recolhido .diretrizes-toggle { transform: rotate(-90deg); }
+    .diretrizes-body {
+      max-height: 800px;
+      overflow: hidden;
+      transition: max-height .3s ease, opacity .3s ease, padding .3s ease;
+      padding: 0 16px 16px;
+      opacity: 1;
+    }
+    #diretrizes-topo.recolhido .diretrizes-body {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
     /* ── DIRETRIZES ── */
     .diretrizes-wrap {
       padding: 16px;
@@ -999,7 +1037,20 @@
 <div class="main-tabs">
   <button class="main-tab active" id="tab-apartamentos" onclick="abrirAbaPrincipal('apartamentos')">🏠 Apartamentos</button>
   <button class="main-tab" id="tab-pendencias" onclick="abrirAbaPrincipal('pendencias')">🔧 Pendências</button>
-  <button class="main-tab" id="tab-diretrizes" onclick="abrirAbaPrincipal('diretrizes')">📖 Diretrizes</button>
+</div>
+
+<!-- DIRETRIZES NO TOPO (visível em todas as abas) -->
+<div id="diretrizes-topo">
+  <div class="diretrizes-header" onclick="toggleDiretrizesTopo()">
+    <div class="diretrizes-header-label">📖 <span>Diretrizes Gerais</span></div>
+    <span class="diretrizes-toggle">▼</span>
+  </div>
+  <div class="diretrizes-body" id="diretrizes-body">
+    <button class="btn-nova-diretriz" onclick="abrirModalDiretriz()">➕ Nova Diretriz</button>
+    <div id="diretrizes-lista">
+      <div class="pend-vazio" style="padding:16px;">⏳ Carregando...</div>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════
@@ -1346,19 +1397,6 @@
   </div>
   <div id="pend-geral-lista">
     <div class="pend-vazio">⏳ Carregando pendências...</div>
-  </div>
-</div>
-
-
-<!-- ══════════════════════════════════════
-     ABA 3 — DIRETRIZES
-══════════════════════════════════════ -->
-<div class="aba-principal" id="aba-diretrizes">
-  <div class="diretrizes-wrap">
-    <button class="btn-nova-diretriz" onclick="abrirModalDiretriz()">➕ Nova Diretriz</button>
-    <div id="diretrizes-lista">
-      <div class="pend-vazio">⏳ Carregando diretrizes...</div>
-    </div>
   </div>
 </div>
 
@@ -2188,6 +2226,7 @@ function carregarPendenciasDashboard() {
 // Inicializar — busca histórico ao abrir
 carregarHistorico();
 carregarPendenciasDashboard();
+carregarDiretrizes();
 
 // ═════════════════════════════════════════════════════════════════
 // ABAS PRINCIPAIS
@@ -2195,7 +2234,7 @@ carregarPendenciasDashboard();
 let _abaAtiva = 'apartamentos';
 function abrirAbaPrincipal(aba) {
   _abaAtiva = aba;
-  ['apartamentos','pendencias','diretrizes'].forEach(a => {
+  ['apartamentos','pendencias'].forEach(a => {
     const tabBtn = document.getElementById('tab-' + a);
     const tabContent = document.getElementById('aba-' + a);
     if (tabBtn) tabBtn.classList.toggle('active', a === aba);
@@ -2203,7 +2242,12 @@ function abrirAbaPrincipal(aba) {
   });
   window.scrollTo(0, 0);
   if (aba === 'pendencias') carregarPendenciasGeral();
-  if (aba === 'diretrizes') carregarDiretrizes();
+}
+
+// Diretrizes ficam no topo — pode recolher/expandir
+function toggleDiretrizesTopo() {
+  const el = document.getElementById('diretrizes-topo');
+  if (el) el.classList.toggle('recolhido');
 }
 
 // ═════════════════════════════════════════════════════════════════
@@ -2457,9 +2501,8 @@ function carregarDiretrizes() {
   fetch(SCRIPT_URL + '?action=diretrizes&t=' + Date.now())
     .then(r => r.json())
     .then(dados => {
-      if (!Array.isArray(dados)) { lista.innerHTML = '<div class="pend-vazio">⚠️ Erro ao carregar.</div>'; return; }
-      if (dados.length === 0) {
-        lista.innerHTML = '<div class="pend-vazio">📖 Nenhuma diretriz cadastrada ainda. Clique em "Nova Diretriz" para começar.</div>';
+      if (!Array.isArray(dados) || dados.length === 0) {
+        lista.innerHTML = '<div style="padding:10px 4px;text-align:center;color:#8a9ab0;font-size:13px;">📖 Nenhuma diretriz cadastrada ainda.</div>';
         return;
       }
       Object.keys(_diretrizesCache).forEach(k => delete _diretrizesCache[k]);
