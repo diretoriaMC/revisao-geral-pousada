@@ -581,6 +581,407 @@
       height: 100%;
       object-fit: cover;
     }
+
+    /* ── ABAS PRINCIPAIS ── */
+    .main-tabs {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid #e0e8f0;
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+      box-shadow: 0 2px 6px rgba(0,0,0,.05);
+    }
+    .main-tab {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      background: none;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      color: #8a9ab0;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all .2s;
+    }
+    .main-tab.active { color: #1F3864; border-bottom-color: #2E75B6; }
+    .main-tab:hover { color: #1F3864; }
+    .aba-principal { display: none; }
+    .aba-principal.active { display: block; }
+
+    /* ── PENDÊNCIAS GERAL ── */
+    .pend-toolbar {
+      background: white;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .pend-toolbar h2 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #1F3864;
+      margin-bottom: 10px;
+    }
+    .pend-filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .pend-filtro {
+      padding: 7px 14px;
+      background: #EFF4FB;
+      border: 1.5px solid transparent;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1F3864;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .pend-filtro.active {
+      background: #1F3864;
+      color: white;
+    }
+    .pend-categoria {
+      margin: 0 16px 16px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .pend-categoria-header {
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+      padding: 11px 16px;
+      background: #2E75B6;
+      letter-spacing: .3px;
+    }
+    .pend-card {
+      padding: 14px 16px;
+      border-bottom: 1px solid #eef2f7;
+    }
+    .pend-card:last-child { border-bottom: none; }
+    .pend-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .pend-apto-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      background: #1F3864;
+      padding: 4px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pend-desc-text {
+      font-size: 14px;
+      color: #222;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .pend-data-abertura {
+      font-size: 11px;
+      color: #8a9ab0;
+      margin-bottom: 6px;
+    }
+    .pend-fotos-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 8px 0;
+    }
+    .pend-foto-mini {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid #e65100;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: #f0f0f0;
+    }
+    .pend-foto-mini img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .destinacao-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      padding: 8px;
+      background: #f7f9fb;
+      border-radius: 8px;
+    }
+    .destinacao-row select {
+      padding: 6px 10px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 6px;
+      font-size: 12px;
+      background: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .destinacao-row input {
+      flex: 1;
+      min-width: 120px;
+      padding: 6px 10px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .destinacao-row button {
+      padding: 6px 12px;
+      background: #2E75B6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .destinacao-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 6px;
+    }
+    .destinacao-tag.interno { background: #e8f5e9; color: #2e7d32; }
+    .destinacao-tag.terceirizado { background: #fff3e0; color: #e65100; }
+    .destinacao-tag.sem { background: #eceff1; color: #607d8b; }
+
+    .btn-historico-toggle {
+      background: none;
+      border: 1.5px solid #d0d8e4;
+      color: #1F3864;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-historico-toggle:hover { background: #EFF4FB; }
+    .historico-container {
+      display: none;
+      margin-top: 10px;
+      padding: 12px;
+      background: #f7f9fb;
+      border-radius: 10px;
+      border-left: 3px solid #2E75B6;
+    }
+    .historico-container.aberto { display: block; }
+    .historico-loading { font-size: 12px; color: #8a9ab0; }
+    .historico-item {
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      border-left: 3px solid #2E75B6;
+    }
+    .historico-item:last-child { margin-bottom: 0; }
+    .historico-data {
+      font-size: 10px;
+      color: #8a9ab0;
+      margin-bottom: 3px;
+      font-weight: 600;
+    }
+    .historico-desc {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.4;
+    }
+    .historico-autor {
+      font-size: 11px;
+      color: #2E75B6;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+    .add-comentario {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+    .add-comentario input {
+      flex: 1;
+      min-width: 120px;
+      padding: 7px 10px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .add-comentario input.autor { flex: 0 0 100px; }
+    .add-comentario button {
+      background: #2E75B6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .pend-vazio {
+      text-align: center;
+      padding: 40px 20px;
+      color: #8a9ab0;
+      font-size: 14px;
+    }
+
+    /* ── DIRETRIZES ── */
+    .diretrizes-wrap {
+      padding: 16px;
+    }
+    .btn-nova-diretriz {
+      background: #1F3864;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: block;
+      margin: 0 auto 16px;
+      width: 100%;
+      max-width: 280px;
+    }
+    .diretriz-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      border-left: 5px solid #2E75B6;
+    }
+    .diretriz-titulo {
+      font-size: 17px;
+      font-weight: 800;
+      color: #1F3864;
+      margin-bottom: 4px;
+    }
+    .diretriz-subtitulo {
+      font-size: 13px;
+      color: #6b7c93;
+      font-weight: 600;
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .diretriz-conteudo {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .diretriz-meta {
+      font-size: 11px;
+      color: #8a9ab0;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed #e0e8f0;
+    }
+    .diretriz-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn-edit-diretriz, .btn-del-diretriz {
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid;
+    }
+    .btn-edit-diretriz {
+      background: #EFF4FB;
+      color: #1F3864;
+      border-color: #2E75B6;
+    }
+    .btn-del-diretriz {
+      background: #ffebee;
+      color: #c62828;
+      border-color: #e57373;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 800;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.ativo { display: flex; }
+    .modal-content {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-content h3 {
+      font-size: 18px;
+      color: #1F3864;
+      margin-bottom: 16px;
+    }
+    .modal-content label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    .modal-content input,
+    .modal-content textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #d0d8e4;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .modal-content textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .modal-actions button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-modal-salvar { background: #1F3864; color: white; }
+    .btn-modal-cancelar { background: #f0f4f8; color: #555; }
   </style>
 </head>
 <body>
@@ -594,6 +995,17 @@
   </div>
 </div>
 
+<!-- ABAS PRINCIPAIS -->
+<div class="main-tabs">
+  <button class="main-tab active" id="tab-apartamentos" onclick="abrirAbaPrincipal('apartamentos')">🏠 Apartamentos</button>
+  <button class="main-tab" id="tab-pendencias" onclick="abrirAbaPrincipal('pendencias')">🔧 Pendências</button>
+  <button class="main-tab" id="tab-diretrizes" onclick="abrirAbaPrincipal('diretrizes')">📖 Diretrizes</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     ABA 1 — APARTAMENTOS (telas 1, 2, 3)
+══════════════════════════════════════ -->
+<div class="aba-principal active" id="aba-apartamentos">
 
 <!-- ══════════════════════════════════════
      TELA 1 – SELEÇÃO DO APARTAMENTO
@@ -914,6 +1326,61 @@
   <div class="sucesso-titulo" id="sucesso-titulo">Revisão registrada!</div>
   <div class="sucesso-msg" id="sucesso-detalhe"></div>
   <button class="btn-nova" onclick="reiniciar()">Registrar outra revisão</button>
+</div>
+
+</div><!-- /aba-apartamentos -->
+
+
+<!-- ══════════════════════════════════════
+     ABA 2 — PENDÊNCIAS (visão sintética)
+══════════════════════════════════════ -->
+<div class="aba-principal" id="aba-pendencias">
+  <div class="pend-toolbar">
+    <h2>🔧 Todas as Pendências</h2>
+    <div class="pend-filtros" id="pend-filtros">
+      <div class="pend-filtro active" data-filtro="todas" onclick="filtrarPendenciasGeral('todas')">Todas</div>
+      <div class="pend-filtro" data-filtro="sem" onclick="filtrarPendenciasGeral('sem')">⏳ Sem destinação</div>
+      <div class="pend-filtro" data-filtro="interno" onclick="filtrarPendenciasGeral('interno')">🏨 Internas</div>
+      <div class="pend-filtro" data-filtro="terceirizado" onclick="filtrarPendenciasGeral('terceirizado')">🛠️ Terceirizadas</div>
+    </div>
+  </div>
+  <div id="pend-geral-lista">
+    <div class="pend-vazio">⏳ Carregando pendências...</div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     ABA 3 — DIRETRIZES
+══════════════════════════════════════ -->
+<div class="aba-principal" id="aba-diretrizes">
+  <div class="diretrizes-wrap">
+    <button class="btn-nova-diretriz" onclick="abrirModalDiretriz()">➕ Nova Diretriz</button>
+    <div id="diretrizes-lista">
+      <div class="pend-vazio">⏳ Carregando diretrizes...</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL DIRETRIZ -->
+<div class="modal-overlay" id="modal-diretriz">
+  <div class="modal-content">
+    <h3 id="modal-diretriz-titulo">Nova Diretriz</h3>
+    <input type="hidden" id="dir-id" value="">
+    <label>Título</label>
+    <input type="text" id="dir-titulo" placeholder="Ex: Procedimento de manutenção">
+    <label>Subtítulo</label>
+    <input type="text" id="dir-subtitulo" placeholder="Ex: Como agir em casos de emergência">
+    <label>Conteúdo</label>
+    <textarea id="dir-conteudo" placeholder="Escreva o conteúdo da diretriz..."></textarea>
+    <label>Atualizado por</label>
+    <input type="text" id="dir-autor" placeholder="Seu nome">
+    <div class="modal-actions">
+      <button class="btn-modal-cancelar" onclick="fecharModalDiretriz()">Cancelar</button>
+      <button class="btn-modal-salvar" onclick="salvarDiretriz()">Salvar</button>
+    </div>
+  </div>
 </div>
 
 
@@ -1721,6 +2188,370 @@ function carregarPendenciasDashboard() {
 // Inicializar — busca histórico ao abrir
 carregarHistorico();
 carregarPendenciasDashboard();
+
+// ═════════════════════════════════════════════════════════════════
+// ABAS PRINCIPAIS
+// ═════════════════════════════════════════════════════════════════
+let _abaAtiva = 'apartamentos';
+function abrirAbaPrincipal(aba) {
+  _abaAtiva = aba;
+  ['apartamentos','pendencias','diretrizes'].forEach(a => {
+    const tabBtn = document.getElementById('tab-' + a);
+    const tabContent = document.getElementById('aba-' + a);
+    if (tabBtn) tabBtn.classList.toggle('active', a === aba);
+    if (tabContent) tabContent.classList.toggle('active', a === aba);
+  });
+  window.scrollTo(0, 0);
+  if (aba === 'pendencias') carregarPendenciasGeral();
+  if (aba === 'diretrizes') carregarDiretrizes();
+}
+
+// ═════════════════════════════════════════════════════════════════
+// PENDÊNCIAS GERAL (visão sintética)
+// ═════════════════════════════════════════════════════════════════
+let _pendGeralCache = [];
+let _filtroPendGeral = 'todas';
+const _historicoCache = {};
+
+function carregarPendenciasGeral() {
+  const lista = document.getElementById('pend-geral-lista');
+  lista.innerHTML = '<div class="pend-vazio">⏳ Carregando pendências...</div>';
+  fetch(SCRIPT_URL + '?action=pendencias_geral&t=' + Date.now())
+    .then(r => r.json())
+    .then(dados => {
+      if (!Array.isArray(dados)) { lista.innerHTML = '<div class="pend-vazio">⚠️ Erro ao carregar.</div>'; return; }
+      _pendGeralCache = dados;
+      renderPendenciasGeral();
+    })
+    .catch(() => {
+      lista.innerHTML = '<div class="pend-vazio">⚠️ Erro ao carregar pendências.</div>';
+    });
+}
+
+function filtrarPendenciasGeral(filtro) {
+  _filtroPendGeral = filtro;
+  document.querySelectorAll('.pend-filtro').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-filtro') === filtro);
+  });
+  renderPendenciasGeral();
+}
+
+function renderPendenciasGeral() {
+  const lista = document.getElementById('pend-geral-lista');
+  const filtradas = _pendGeralCache.filter(p => {
+    const dest = (p.destinacao || '').toLowerCase();
+    if (_filtroPendGeral === 'todas') return true;
+    if (_filtroPendGeral === 'sem') return !dest || dest === '—' || dest === '';
+    if (_filtroPendGeral === 'interno') return dest === 'interno';
+    if (_filtroPendGeral === 'terceirizado') return dest === 'terceirizado';
+    return true;
+  });
+
+  if (filtradas.length === 0) {
+    lista.innerHTML = '<div class="pend-vazio">✅ Nenhuma pendência neste filtro.</div>';
+    return;
+  }
+
+  // Agrupar por seção
+  const grupos = {};
+  filtradas.forEach(p => {
+    const sec = p.secao || 'Outras';
+    if (!grupos[sec]) grupos[sec] = [];
+    grupos[sec].push(p);
+  });
+
+  const ordemSecoes = ['💧 Hidráulico','⚡ Elétrica','🛋️ Móveis','🍳 Eletrodomésticos','🚪 Portas','🪟 Janelas','🟫 Piso','🔲 Forro/Teto','🖼️ Paredes','🌐 Internet','📋 Observações Gerais'];
+  let html = '';
+  ordemSecoes.concat(Object.keys(grupos).filter(s => ordemSecoes.indexOf(s) === -1)).forEach(secao => {
+    if (!grupos[secao]) return;
+    html += `<div class="pend-categoria"><div class="pend-categoria-header">${secao} (${grupos[secao].length})</div>`;
+    grupos[secao].forEach(p => {
+      const fotosArr = p.fotos && p.fotos !== '—'
+        ? p.fotos.split('\n').filter(l => l.trim() !== '')
+        : [];
+      _pendFotos[p.id] = fotosArr;
+
+      const fotosHtml = fotosArr.length > 0
+        ? `<div class="pend-fotos-mini">${fotosArr.map((l, i) =>
+            `<div class="pend-foto-mini" onclick="abrirLightbox('${p.id}',${i})">
+              <img src="${_driveThumbUrl(l,'w200')}" alt="${i+1}"
+                   onerror="this.outerHTML='<div style=font-size:10px;text-align:center;padding:4px;color:#e65100>📷</div>'">
+            </div>`).join('')}</div>`
+        : '';
+
+      const dest = (p.destinacao || '').toLowerCase();
+      const responsavel = p.responsavel || '';
+      const tagDest = dest === 'interno'
+        ? '<span class="destinacao-tag interno">🏨 Interno</span>'
+        : dest === 'terceirizado'
+        ? '<span class="destinacao-tag terceirizado">🛠️ Terceirizado</span>'
+        : '<span class="destinacao-tag sem">⏳ Sem destinação</span>';
+
+      html += `
+        <div class="pend-card" id="pendg-${_escHtml(p.id)}">
+          <div class="pend-card-top">
+            <div class="pend-desc-text">${_escHtml(p.descricao) || '—'}</div>
+            <div class="pend-apto-badge">${_escHtml(p.apartamento) || '?'}</div>
+          </div>
+          <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}</div>
+          ${fotosHtml}
+          <div style="margin-top:6px;">${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}</div>
+          <div class="destinacao-row">
+            <select id="dest-${_escHtml(p.id)}">
+              <option value="">Selecione...</option>
+              <option value="interno" ${dest === 'interno' ? 'selected' : ''}>🏨 Interno</option>
+              <option value="terceirizado" ${dest === 'terceirizado' ? 'selected' : ''}>🛠️ Terceirizado</option>
+            </select>
+            <input type="text" id="resp-${_escHtml(p.id)}" placeholder="Responsável" value="${_escHtml(responsavel)}">
+            <button onclick="salvarDestinacao('${_escHtml(p.id)}', ${p.linha_planilha})">Salvar</button>
+          </div>
+          <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">
+            📜 Ver histórico
+          </button>
+          <div class="historico-container" id="hist-${_escHtml(p.id)}">
+            <div class="historico-loading">Carregando...</div>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  lista.innerHTML = html;
+}
+
+function salvarDestinacao(idPend, linhaPlanilha) {
+  const destinacao = document.getElementById('dest-' + idPend)?.value || '';
+  const responsavel = document.getElementById('resp-' + idPend)?.value.trim() || '';
+  if (!destinacao) { alert('Selecione Interno ou Terceirizado.'); return; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'atualizar_destinacao',
+      id_pendencia: idPend,
+      linha_planilha: linhaPlanilha,
+      destinacao: destinacao,
+      responsavel: responsavel,
+    }),
+  })
+  .then(r => r.text().catch(() => '{}'))
+  .then(() => {
+    // Atualiza cache local
+    const p = _pendGeralCache.find(x => x.id === idPend);
+    if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
+    delete _historicoCache[idPend]; // invalida histórico
+    renderPendenciasGeral();
+  })
+  .catch(() => {
+    const p = _pendGeralCache.find(x => x.id === idPend);
+    if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
+    renderPendenciasGeral();
+  });
+}
+
+function toggleHistorico(idPend) {
+  const cont = document.getElementById('hist-' + idPend);
+  if (!cont) return;
+  if (cont.classList.contains('aberto')) {
+    cont.classList.remove('aberto');
+    return;
+  }
+  cont.classList.add('aberto');
+  carregarHistoricoPendencia(idPend);
+}
+
+function carregarHistoricoPendencia(idPend) {
+  const cont = document.getElementById('hist-' + idPend);
+  if (!cont) return;
+  cont.innerHTML = '<div class="historico-loading">⏳ Carregando histórico...</div>';
+  fetch(SCRIPT_URL + '?action=historico_pendencia&id=' + encodeURIComponent(idPend) + '&t=' + Date.now())
+    .then(r => r.json())
+    .then(hist => {
+      _historicoCache[idPend] = Array.isArray(hist) ? hist : [];
+      renderHistoricoPendencia(idPend);
+    })
+    .catch(() => {
+      cont.innerHTML = renderAddComentarioForm(idPend, '⚠️ Erro ao carregar histórico.');
+    });
+}
+
+function renderHistoricoPendencia(idPend) {
+  const cont = document.getElementById('hist-' + idPend);
+  if (!cont) return;
+  const hist = _historicoCache[idPend] || [];
+  let html = '';
+  if (hist.length === 0) {
+    html = '<div style="font-size:12px;color:#8a9ab0;margin-bottom:8px;">Nenhum registro ainda.</div>';
+  } else {
+    hist.forEach(h => {
+      html += `<div class="historico-item">
+        <div class="historico-data">📅 ${_escHtml(h.data)}</div>
+        <div class="historico-desc">${_escHtml(h.descricao)}</div>
+        ${h.autor ? `<div class="historico-autor">— ${_escHtml(h.autor)}</div>` : ''}
+      </div>`;
+    });
+  }
+  html += renderAddComentarioForm(idPend, '');
+  cont.innerHTML = html;
+}
+
+function renderAddComentarioForm(idPend, msg) {
+  return `
+    ${msg ? `<div style="font-size:12px;color:#c62828;margin-bottom:8px;">${msg}</div>` : ''}
+    <div class="add-comentario">
+      <input type="text" class="autor" placeholder="Seu nome" id="hist-autor-${idPend}">
+      <input type="text" placeholder="Adicionar atualização..." id="hist-msg-${idPend}">
+      <button onclick="adicionarComentarioPendencia('${idPend}')">Salvar</button>
+    </div>`;
+}
+
+function adicionarComentarioPendencia(idPend) {
+  const autor = document.getElementById('hist-autor-' + idPend)?.value.trim() || '';
+  const msg = document.getElementById('hist-msg-' + idPend)?.value.trim() || '';
+  if (!autor) { alert('Informe seu nome.'); return; }
+  if (!msg) { alert('Escreva a atualização.'); return; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'adicionar_comentario_pendencia',
+      id_pendencia: idPend,
+      autor: autor,
+      descricao: msg,
+    }),
+  })
+  .then(r => r.text().catch(() => '{}'))
+  .then(() => {
+    // adiciona localmente para feedback imediato
+    const agora = new Date();
+    const dataFmt = String(agora.getDate()).padStart(2,'0') + '/' + String(agora.getMonth()+1).padStart(2,'0') + '/' + agora.getFullYear() + ' ' + String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0');
+    if (!_historicoCache[idPend]) _historicoCache[idPend] = [];
+    _historicoCache[idPend].push({ data: dataFmt, descricao: msg, autor: autor, tipo: 'comentario' });
+    renderHistoricoPendencia(idPend);
+  })
+  .catch(() => {
+    const agora = new Date();
+    const dataFmt = String(agora.getDate()).padStart(2,'0') + '/' + String(agora.getMonth()+1).padStart(2,'0') + '/' + agora.getFullYear() + ' ' + String(agora.getHours()).padStart(2,'0') + ':' + String(agora.getMinutes()).padStart(2,'0');
+    if (!_historicoCache[idPend]) _historicoCache[idPend] = [];
+    _historicoCache[idPend].push({ data: dataFmt, descricao: msg, autor: autor, tipo: 'comentario' });
+    renderHistoricoPendencia(idPend);
+  });
+}
+
+// ═════════════════════════════════════════════════════════════════
+// DIRETRIZES
+// ═════════════════════════════════════════════════════════════════
+const _diretrizesCache = {};
+
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function carregarDiretrizes() {
+  const lista = document.getElementById('diretrizes-lista');
+  lista.innerHTML = '<div class="pend-vazio">⏳ Carregando diretrizes...</div>';
+  fetch(SCRIPT_URL + '?action=diretrizes&t=' + Date.now())
+    .then(r => r.json())
+    .then(dados => {
+      if (!Array.isArray(dados)) { lista.innerHTML = '<div class="pend-vazio">⚠️ Erro ao carregar.</div>'; return; }
+      if (dados.length === 0) {
+        lista.innerHTML = '<div class="pend-vazio">📖 Nenhuma diretriz cadastrada ainda. Clique em "Nova Diretriz" para começar.</div>';
+        return;
+      }
+      Object.keys(_diretrizesCache).forEach(k => delete _diretrizesCache[k]);
+      let html = '';
+      dados.forEach(d => {
+        _diretrizesCache[d.id] = d;
+        html += `<div class="diretriz-card">
+          <div class="diretriz-titulo">${_escHtml(d.titulo) || '—'}</div>
+          ${d.subtitulo ? `<div class="diretriz-subtitulo">${_escHtml(d.subtitulo)}</div>` : ''}
+          <div class="diretriz-conteudo">${_escHtml(d.conteudo)}</div>
+          <div class="diretriz-meta">📅 Atualizada em ${_escHtml(d.data_atualizacao) || '—'} ${d.autor ? '· 👤 ' + _escHtml(d.autor) : ''}</div>
+          <div class="diretriz-actions">
+            <button class="btn-edit-diretriz" onclick="editarDiretriz('${_escHtml(d.id)}')">✏️ Editar</button>
+            <button class="btn-del-diretriz" onclick="excluirDiretriz('${_escHtml(d.id)}')">🗑️ Excluir</button>
+          </div>
+        </div>`;
+      });
+      lista.innerHTML = html;
+    })
+    .catch(() => { lista.innerHTML = '<div class="pend-vazio">⚠️ Erro ao carregar.</div>'; });
+}
+
+function abrirModalDiretriz() {
+  document.getElementById('modal-diretriz-titulo').textContent = 'Nova Diretriz';
+  document.getElementById('dir-id').value = '';
+  document.getElementById('dir-titulo').value = '';
+  document.getElementById('dir-subtitulo').value = '';
+  document.getElementById('dir-conteudo').value = '';
+  document.getElementById('dir-autor').value = '';
+  document.getElementById('modal-diretriz').classList.add('ativo');
+}
+
+function editarDiretriz(id) {
+  const d = _diretrizesCache[id];
+  if (!d) return;
+  document.getElementById('modal-diretriz-titulo').textContent = 'Editar Diretriz';
+  document.getElementById('dir-id').value = d.id || '';
+  document.getElementById('dir-titulo').value = d.titulo || '';
+  document.getElementById('dir-subtitulo').value = d.subtitulo || '';
+  document.getElementById('dir-conteudo').value = d.conteudo || '';
+  document.getElementById('dir-autor').value = '';
+  document.getElementById('modal-diretriz').classList.add('ativo');
+}
+
+function fecharModalDiretriz() {
+  document.getElementById('modal-diretriz').classList.remove('ativo');
+}
+
+function salvarDiretriz() {
+  const id = document.getElementById('dir-id').value;
+  const titulo = document.getElementById('dir-titulo').value.trim();
+  const subtitulo = document.getElementById('dir-subtitulo').value.trim();
+  const conteudo = document.getElementById('dir-conteudo').value.trim();
+  const autor = document.getElementById('dir-autor').value.trim();
+
+  if (!titulo) { alert('Informe o título.'); return; }
+  if (!conteudo) { alert('Escreva o conteúdo.'); return; }
+  if (!autor) { alert('Informe seu nome.'); return; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'salvar_diretriz',
+      id: id,
+      titulo: titulo,
+      subtitulo: subtitulo,
+      conteudo: conteudo,
+      autor: autor,
+    }),
+  })
+  .then(r => r.text().catch(() => '{}'))
+  .then(() => {
+    fecharModalDiretriz();
+    setTimeout(carregarDiretrizes, 500);
+  })
+  .catch(() => {
+    fecharModalDiretriz();
+    setTimeout(carregarDiretrizes, 500);
+  });
+}
+
+function excluirDiretriz(id) {
+  if (!confirm('Excluir esta diretriz?')) return;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'excluir_diretriz', id: id }),
+  })
+  .then(() => setTimeout(carregarDiretrizes, 500))
+  .catch(() => setTimeout(carregarDiretrizes, 500));
+}
 </script>
 </body>
 </html>
