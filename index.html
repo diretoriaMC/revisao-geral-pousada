@@ -79,6 +79,8 @@
     .apt-card:active { transform: scale(.97); }
     .apt-card .apt-num { font-size: 22px; font-weight: 800; color: #1F3864; }
     .apt-card .apt-nome { font-size: 11px; color: #666; margin-top: 2px; }
+    .apt-card.area-comum .apt-num { font-size: 30px; line-height: 1; }
+    .apt-card.area-comum .apt-nome { font-size: 14px; font-weight: 700; color: #1F3864; margin-top: 6px; }
     .apt-card .apt-status { font-size: 11px; font-weight: 700; margin-top: 6px; }
     .apt-card.sem-revisao { border-color: #dde3ea; background: #f7f9fb; }
     .apt-card.sem-revisao .apt-status { color: #8a9ab0; }
@@ -716,7 +718,68 @@
       letter-spacing: .3px;
       border-top: 1px solid #dde8f7;
       border-bottom: 2px solid #2E75B6;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+    .pend-sub-categoria-header .sub-arrow {
+      font-size: 13px;
+      color: #2E75B6;
+      transition: transform .25s;
+    }
+    .pend-sub-categoria.recolhido .pend-sub-categoria-header .sub-arrow { transform: rotate(-90deg); }
+    .pend-sub-categoria-body {
+      max-height: 9999px;
+      overflow: hidden;
+      transition: max-height .3s ease, opacity .25s ease;
+      opacity: 1;
+    }
+    .pend-sub-categoria.recolhido .pend-sub-categoria-body {
+      max-height: 0;
+      opacity: 0;
+    }
+
+    /* ── PENDÊNCIA URGENTE ── */
+    .pend-card.urgente {
+      background: #fff5f5;
+      border-left: 4px solid #c62828;
+      padding-left: 12px;
+    }
+    .urgente-badge {
+      display: inline-block;
+      background: #c62828;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-right: 8px;
+      letter-spacing: .5px;
+      animation: pulseUrg 1.6s ease-in-out infinite;
+    }
+    @keyframes pulseUrg {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(198,40,40,.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(198,40,40,0); }
+    }
+    .btn-urgente-toggle {
+      background: #fff;
+      border: 1.5px solid #c62828;
+      color: #c62828;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+    .btn-urgente-toggle.ativo {
+      background: #c62828;
+      color: white;
+    }
+    .pend-filtro.urg { border-color: #c62828; }
+    .pend-filtro.urg.active { background: #c62828; }
     .pend-sub-categoria:first-child .pend-sub-categoria-header { border-top: none; }
     .pend-card {
       padding: 14px 16px;
@@ -981,9 +1044,9 @@
       font-style: italic;
     }
     .diretriz-conteudo {
-      font-size: 14px;
-      color: #333;
-      line-height: 1.5;
+      font-size: 16px;
+      color: #222;
+      line-height: 1.55;
       white-space: pre-wrap;
     }
     .diretriz-meta {
@@ -1420,6 +1483,13 @@
     </div>
   </div>
 
+  <div style="margin:0 16px 14px;background:#fff5f5;border:1.5px solid #c62828;border-radius:10px;padding:14px;">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:700;color:#c62828;">
+      <input type="checkbox" id="marcar-urgente" style="width:20px;height:20px;cursor:pointer;accent-color:#c62828;">
+      🚨 Marcar todas as pendências desta revisão como URGENTES
+    </label>
+  </div>
+
   <div class="msg-erro" id="msg-erro-2"></div>
 
   <button class="btn-submit" id="btn-enviar" onclick="enviarFormulario()">
@@ -1450,6 +1520,7 @@
     <h2>🔧 Todas as Pendências</h2>
     <div class="pend-filtros" id="pend-filtros">
       <div class="pend-filtro active" data-filtro="todas" onclick="filtrarPendenciasGeral('todas')">Todas</div>
+      <div class="pend-filtro urg" data-filtro="urgente" onclick="filtrarPendenciasGeral('urgente')">🚨 Urgentes</div>
       <div class="pend-filtro" data-filtro="sem" onclick="filtrarPendenciasGeral('sem')">⏳ Sem destinação</div>
       <div class="pend-filtro" data-filtro="interno" onclick="filtrarPendenciasGeral('interno')">🏨 Internas</div>
       <div class="pend-filtro" data-filtro="terceirizado" onclick="filtrarPendenciasGeral('terceirizado')">🛠️ Terceirizadas</div>
@@ -1664,7 +1735,7 @@ function renderGrid(filtro) {
 
     aptsDeste.forEach(([seq, apt]) => {
       const card = document.createElement('div');
-      card.className = `apt-card ${apt.status}`;
+      card.className = `apt-card ${apt.status}${apt.isComum ? ' area-comum' : ''}`;
       const statusTxt = apt.status === 'sem-revisao'
         ? '⬜ Sem revisão'
         : apt.status === 'vencido'
@@ -1678,7 +1749,7 @@ function renderGrid(filtro) {
       const pendInfo = apt.pendencias > 0
         ? `<div style="font-size:11px;font-weight:700;color:#c62828;margin-top:4px;">🔧 ${apt.pendencias} pend${apt.pendencias > 1 ? 'ências' : 'ência'} aberta${apt.pendencias > 1 ? 's' : ''}</div>`
         : '';
-      const numDisplay = apt.isComum ? '🛋️' : apt.id.replace('Apto ','');
+      const numDisplay = apt.isComum ? '🚪' : apt.id.replace('Apto ','');
       const nomeDisplay = apt.isComum ? 'Área Comum' : apt.id;
       card.innerHTML = `
         <div class="apt-num">${numDisplay}</div>
@@ -1757,6 +1828,7 @@ function selecionarApt(num) {
   // Resetar textareas
   document.getElementById('tecnico').value = '';
   document.getElementById('observacoes').value = '';
+  const chkUrg = document.getElementById('marcar-urgente'); if (chkUrg) chkUrg.checked = false;
   ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs','int_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   // Limpar sumários das seções
@@ -2144,6 +2216,7 @@ function enviarFormulario() {
     fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_int:  (_fotosBase64['int']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_obs:  (_fotosBase64['obs']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    urgente:    document.getElementById('marcar-urgente')?.checked ? true : false,
   };
 
   // ── Envio único — sem segunda chamada para fotos
@@ -2354,6 +2427,7 @@ function renderPendenciasGeral() {
   const filtradas = _pendGeralCache.filter(p => {
     const dest = (p.destinacao || '').toLowerCase();
     if (_filtroPendGeral === 'todas') return true;
+    if (_filtroPendGeral === 'urgente') return !!p.urgente;
     if (_filtroPendGeral === 'sem') return !dest || dest === '—' || dest === '';
     if (_filtroPendGeral === 'interno') return dest === 'interno';
     if (_filtroPendGeral === 'terceirizado') return dest === 'terceirizado';
@@ -2399,10 +2473,15 @@ function renderPendenciasGeral() {
     const secoesPresentes = ordemSecoes.concat(
       Object.keys(porApto[apto]).filter(s => ordemSecoes.indexOf(s) === -1)
     );
-    secoesPresentes.forEach(secao => {
+    secoesPresentes.forEach((secao, secIdx) => {
       if (!porApto[apto][secao]) return;
-      html += `<div class="pend-sub-categoria">
-        <div class="pend-sub-categoria-header">${secao} (${porApto[apto][secao].length})</div>`;
+      const catId = aptId + '-cat-' + secIdx;
+      html += `<div class="pend-sub-categoria" id="${catId}">
+        <div class="pend-sub-categoria-header" onclick="document.getElementById('${catId}').classList.toggle('recolhido')">
+          <span>${secao} (${porApto[apto][secao].length})</span>
+          <span class="sub-arrow">▼</span>
+        </div>
+        <div class="pend-sub-categoria-body">`;
       porApto[apto][secao].forEach(p => {
         const fotosArr = p.fotos && p.fotos !== '—'
           ? p.fotos.split('\n').filter(l => l.trim() !== '')
@@ -2425,9 +2504,11 @@ function renderPendenciasGeral() {
           ? '<span class="destinacao-tag terceirizado">🛠️ Terceirizado</span>'
           : '<span class="destinacao-tag sem">⏳ Sem destinação</span>';
 
+        const urg = !!p.urgente;
+        const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
         html += `
-          <div class="pend-card" id="pendg-${_escHtml(p.id)}">
-            <div class="pend-desc-text" style="margin-bottom:6px;">${_escHtml(p.descricao) || '—'}</div>
+          <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
+            <div class="pend-desc-text" style="margin-bottom:6px;">${urgBadgeHtml}${_escHtml(p.descricao) || '—'}</div>
             <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}</div>
             ${fotosHtml}
             <div style="margin-top:6px;">${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}</div>
@@ -2440,15 +2521,14 @@ function renderPendenciasGeral() {
               <input type="text" id="resp-${_escHtml(p.id)}" placeholder="Responsável" value="${_escHtml(responsavel)}">
               <button onclick="salvarDestinacao('${_escHtml(p.id)}', ${p.linha_planilha})">Salvar</button>
             </div>
-            <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">
-              📜 Ver histórico
-            </button>
+            <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">📜 Ver histórico</button>
+            <button class="btn-urgente-toggle ${urg ? 'ativo' : ''}" onclick="toggleUrgente('${_escHtml(p.id)}', ${p.linha_planilha})">${urg ? '✅ Desmarcar urgente' : '🚨 Marcar urgente'}</button>
             <div class="historico-container" id="hist-${_escHtml(p.id)}">
               <div class="historico-loading">Carregando...</div>
             </div>
           </div>`;
       });
-      html += `</div>`;
+      html += `</div></div>`;
     });
 
     html += `</div></div>`;
@@ -2486,6 +2566,25 @@ function salvarDestinacao(idPend, linhaPlanilha) {
     if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
     renderPendenciasGeral();
   });
+}
+
+function toggleUrgente(idPend, linhaPlanilha) {
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  const novoEstado = p ? !p.urgente : true;
+  if (p) p.urgente = novoEstado;
+  // re-render imediato para feedback
+  renderPendenciasGeral();
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'marcar_urgente',
+      id_pendencia: idPend,
+      linha_planilha: linhaPlanilha,
+      urgente: novoEstado,
+    }),
+  }).catch(() => {});
 }
 
 function toggleHistorico(idPend) {
