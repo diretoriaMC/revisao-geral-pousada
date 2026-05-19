@@ -708,13 +708,14 @@
     }
     .pend-sub-categoria:last-child { border-bottom: none; }
     .pend-sub-categoria-header {
-      font-size: 12px;
+      font-size: 16px;
       font-weight: 800;
       color: #1F3864;
-      padding: 9px 16px;
+      padding: 14px 16px;
       background: #EFF4FB;
       letter-spacing: .3px;
       border-top: 1px solid #dde8f7;
+      border-bottom: 2px solid #2E75B6;
     }
     .pend-sub-categoria:first-child .pend-sub-categoria-header { border-top: none; }
     .pend-card {
@@ -1583,6 +1584,7 @@ const LISTA_APTOS = [
   { id: "Apto 11",  andar: "Térreo"   },
   { id: "Apto 12",  andar: "Térreo"   },
   { id: "Apto 13",  andar: "Térreo"   },
+  { id: "Área Comum - Térreo",   andar: "Térreo",   isComum: true },
   // 1º Andar
   { id: "Apto 101", andar: "1º Andar" },
   { id: "Apto 102", andar: "1º Andar" },
@@ -1596,6 +1598,7 @@ const LISTA_APTOS = [
   { id: "Apto 110", andar: "1º Andar" },
   { id: "Apto 111", andar: "1º Andar" },
   { id: "Apto 112", andar: "1º Andar" },
+  { id: "Área Comum - 1º Andar", andar: "1º Andar", isComum: true },
   // 2º Andar
   { id: "Apto 201", andar: "2º Andar" },
   { id: "Apto 202", andar: "2º Andar" },
@@ -1611,6 +1614,7 @@ const LISTA_APTOS = [
   { id: "Apto 212", andar: "2º Andar" },
   { id: "Apto 213", andar: "2º Andar" },
   { id: "Apto 214", andar: "2º Andar" },
+  { id: "Área Comum - 2º Andar", andar: "2º Andar", isComum: true },
   // 3º Andar
   { id: "Apto 301", andar: "3º Andar" },
   { id: "Apto 302", andar: "3º Andar" },
@@ -1618,6 +1622,9 @@ const LISTA_APTOS = [
   { id: "Apto 304", andar: "3º Andar" },
   { id: "Apto 305", andar: "3º Andar" },
   { id: "Apto 306", andar: "3º Andar" },
+  { id: "Área Comum - 3º Andar", andar: "3º Andar", isComum: true },
+  // Cobertura
+  { id: "Área Comum - Cobertura", andar: "Cobertura", isComum: true },
 ];
 
 // Montar objeto indexado por posição (1–45)
@@ -1629,6 +1636,7 @@ LISTA_APTOS.forEach((apt, idx) => {
     id: apt.id,
     andar: apt.andar,
     nome: apt.id,
+    isComum: !!apt.isComum,
     status: 'sem-revisao',   // sem histórico ainda
     diasRestantes: null      // sem contagem até primeira revisão
   };
@@ -1638,7 +1646,7 @@ LISTA_APTOS.forEach((apt, idx) => {
 function renderGrid(filtro) {
   const grid = document.getElementById('grid-apts');
   grid.innerHTML = '';
-  const andares = ['Térreo','1º Andar','2º Andar','3º Andar'];
+  const andares = ['Térreo','1º Andar','2º Andar','3º Andar','Cobertura'];
   const filtroLower = (filtro || '').toLowerCase();
 
   andares.forEach(andar => {
@@ -1670,9 +1678,11 @@ function renderGrid(filtro) {
       const pendInfo = apt.pendencias > 0
         ? `<div style="font-size:11px;font-weight:700;color:#c62828;margin-top:4px;">🔧 ${apt.pendencias} pend${apt.pendencias > 1 ? 'ências' : 'ência'} aberta${apt.pendencias > 1 ? 's' : ''}</div>`
         : '';
+      const numDisplay = apt.isComum ? '🛋️' : apt.id.replace('Apto ','');
+      const nomeDisplay = apt.isComum ? 'Área Comum' : apt.id;
       card.innerHTML = `
-        <div class="apt-num">${apt.id.replace('Apto ','')}</div>
-        <div class="apt-nome">${apt.id}</div>
+        <div class="apt-num">${numDisplay}</div>
+        <div class="apt-nome">${nomeDisplay}</div>
         <div class="apt-status">${statusTxt}</div>
         ${ultimaInfo}
         ${pendInfo}
