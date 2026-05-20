@@ -781,6 +781,53 @@
     .pend-filtro.urg { border-color: #c62828; }
     .pend-filtro.urg.active { background: #c62828; }
 
+    .btn-resolver-toggle {
+      background: #2e7d32;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+    .form-resolucao {
+      display: none;
+      margin-top: 10px;
+      padding: 14px;
+      background: #e8f5e9;
+      border-radius: 10px;
+      border-left: 3px solid #2e7d32;
+    }
+    .form-resolucao.aberto { display: block; }
+    .form-resolucao input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid #c8e6c9;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    .form-resolucao .foto-upload-label {
+      background: white;
+      margin: 4px 0 6px;
+    }
+    .btn-confirmar-resolucao {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn-confirmar-resolucao:disabled { background: #90a4c8; cursor: default; }
+
     .urgente-form-check {
       display: inline-flex;
       align-items: center;
@@ -2126,18 +2173,27 @@ function enviarFormulario() {
     return;
   }
 
-  // Pelo menos 1 foto em alguma seção ou em observações gerais
+  // Internet é exceção: nunca exige foto. Outras seções: foto obrigatória se tiverem texto.
+  const chavesNaoInternet = ['hid','ele','mob','ele2','por','jan','pis','for','par','obs'];
+  const temConteudoNaoInternet = chavesNaoInternet.some(c => {
+    const obs = document.getElementById(c + '_obs')?.value.trim();
+    const fotos = (_fotosBase64[c] || []).length;
+    return (obs && obs !== '—' && obs !== '') || fotos > 0;
+  });
+
   const todasChaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','int','obs'];
   const totalFotos = todasChaves.reduce((acc, c) => acc + (_fotosBase64[c] || []).length, 0);
-  if (totalFotos === 0) {
+
+  // Pelo menos 1 foto se houver qualquer pendência fora da Internet
+  if (temConteudoNaoInternet && totalFotos === 0) {
     msgErro.textContent = '⚠️ Adicione ao menos 1 foto antes de registrar a revisão.';
     msgErro.style.display = 'block';
     msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
-  // Fotos obrigatórias para cada seção que tem problema descrito
-  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes', int: 'Internet' };
+  // Fotos obrigatórias por seção com problema descrito (Internet excluída)
+  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes' };
   const secoesSemFoto = [];
   Object.entries(mapaSecoes).forEach(([chave, nome]) => {
     const obs = document.getElementById(chave + '_obs')?.value.trim();
@@ -2545,6 +2601,18 @@ function renderPendenciasGeral() {
             </div>
             <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">📜 Ver histórico</button>
             <button class="btn-urgente-toggle ${urg ? 'ativo' : ''}" onclick="toggleUrgente('${_escHtml(p.id)}', ${p.linha_planilha})">${urg ? '✅ Desmarcar urgente' : '🚨 Marcar urgente'}</button>
+            <button class="btn-resolver-toggle" onclick="toggleFormResolucao('${_escHtml(p.id)}')">✅ Concluir pendência</button>
+            <div class="form-resolucao" id="form-res-pg-${_escHtml(p.id)}">
+              <input type="text" placeholder="Nome de quem resolveu *" id="res-tec-pg-${_escHtml(p.id)}">
+              <input type="text" placeholder="Observação da resolução (opcional)" id="res-obs-pg-${_escHtml(p.id)}">
+              <label class="foto-upload-label">
+                📷 ${secao && secao.toLowerCase().indexOf('internet') !== -1 ? 'Adicionar fotos (opcional)' : 'Adicionar fotos *'}
+                <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
+              </label>
+              <div class="fotos-preview" id="prev-res-pg-${_escHtml(p.id)}"></div>
+              <div class="foto-status" id="status-res-pg-${_escHtml(p.id)}"></div>
+              <button class="btn-confirmar-resolucao" id="btn-confirmar-res-${_escHtml(p.id)}" onclick="confirmarResolucaoPg('${_escHtml(p.id)}', ${p.linha_planilha})">✅ Confirmar resolução</button>
+            </div>
             <div class="historico-container" id="hist-${_escHtml(p.id)}">
               <div class="historico-loading">Carregando...</div>
             </div>
@@ -2586,6 +2654,89 @@ function salvarDestinacao(idPend, linhaPlanilha) {
   .catch(() => {
     const p = _pendGeralCache.find(x => x.id === idPend);
     if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
+    renderPendenciasGeral();
+  });
+}
+
+// ─────── Resolver pendência pela aba Pendências ───────
+const _fotosBase64ResolucaoPg = {};
+
+function toggleFormResolucao(idPend) {
+  const form = document.getElementById('form-res-pg-' + idPend);
+  if (form) form.classList.toggle('aberto');
+}
+
+function adicionarFotosResolucaoPg(input, idPend) {
+  const arquivos = Array.from(input.files);
+  if (!arquivos.length) return;
+  if (!_fotosBase64ResolucaoPg[idPend]) _fotosBase64ResolucaoPg[idPend] = [];
+  const preview = document.getElementById('prev-res-pg-' + idPend);
+  const statusEl = document.getElementById('status-res-pg-' + idPend);
+  arquivos.forEach((arquivo, i) => {
+    _comprimirImagem(arquivo, function(base64) {
+      const thumbId = 'thumb-respg-' + idPend + '-' + Date.now() + i;
+      const thumb = document.createElement('div');
+      thumb.className = 'foto-thumb';
+      thumb.id = thumbId;
+      thumb.innerHTML = '<img src="' + base64 + '"><button class="foto-remove" onclick="removerFotoResolucaoPg(\'' + idPend + '\',\'' + thumbId + '\')">×</button>';
+      preview.appendChild(thumb);
+      _fotosBase64ResolucaoPg[idPend].push({ base64, mime: 'image/jpeg', nome: arquivo.name, thumbId });
+      if (statusEl) { statusEl.textContent = '✅ ' + _fotosBase64ResolucaoPg[idPend].length + ' foto(s) pronta(s)'; statusEl.className = 'foto-status enviado'; }
+    });
+  });
+  input.value = '';
+}
+
+function removerFotoResolucaoPg(idPend, thumbId) {
+  if (_fotosBase64ResolucaoPg[idPend]) {
+    _fotosBase64ResolucaoPg[idPend] = _fotosBase64ResolucaoPg[idPend].filter(f => f.thumbId !== thumbId);
+  }
+  const el = document.getElementById(thumbId);
+  if (el) el.remove();
+  const statusEl = document.getElementById('status-res-pg-' + idPend);
+  if (statusEl) {
+    const qtd = (_fotosBase64ResolucaoPg[idPend] || []).length;
+    statusEl.textContent = qtd > 0 ? '✅ ' + qtd + ' foto(s) pronta(s)' : '';
+  }
+}
+
+function confirmarResolucaoPg(idPend, linhaPlanilha) {
+  const tec = document.getElementById('res-tec-pg-' + idPend)?.value.trim();
+  if (!tec) { alert('⚠️ Informe o nome de quem resolveu a pendência.'); return; }
+
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  const secao = p ? (p.secao || '') : '';
+  const isInternet = secao.toLowerCase().indexOf('internet') !== -1;
+
+  const fotos = _fotosBase64ResolucaoPg[idPend] || [];
+  if (!isInternet && fotos.length === 0) {
+    alert('⚠️ Adicione ao menos 1 foto da resolução antes de concluir.');
+    return;
+  }
+
+  const obsRes = document.getElementById('res-obs-pg-' + idPend)?.value.trim() || '';
+  const btn = document.getElementById('btn-confirmar-res-' + idPend);
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Salvando...'; }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({
+      action: 'resolver_pendencia',
+      linha_planilha: linhaPlanilha,
+      tecnico_resolve: tec,
+      obs_resolucao: obsRes,
+      fotos_resolucao: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    }),
+  })
+  .then(() => {
+    _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
+    delete _fotosBase64ResolucaoPg[idPend];
+    renderPendenciasGeral();
+  })
+  .catch(() => {
+    _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
+    delete _fotosBase64ResolucaoPg[idPend];
     renderPendenciasGeral();
   });
 }
