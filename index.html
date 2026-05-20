@@ -1515,6 +1515,29 @@
     </div>
   </div>
 
+  <!-- 10c. PISCINA (só para Área Comum - Térreo) -->
+  <div class="form-section collapsible collapsed" id="sec-psc" style="display:none;">
+    <h3 onclick="toggleSection('sec-psc')">
+      🏊 Piscina
+      <span class="section-summary" id="sum-psc"></span>
+      <span class="section-toggle">▼</span>
+    </h3>
+    <div class="section-body">
+      <div class="field">
+        <label>Observações Piscina</label>
+        <textarea id="psc_obs" placeholder="Bomba, filtro, vazamentos, qualidade da água, iluminação, escada..." oninput="atualizarProgresso()"></textarea>
+      </div>
+      <div class="foto-upload-area">
+        <label class="foto-upload-label">
+          📷 Adicionar fotos
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'psc')">
+        </label>
+        <div class="fotos-preview" id="preview-psc"></div>
+        <div class="foto-status" id="status-psc"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 11. OBSERVAÇÕES GERAIS -->
   <div class="form-section">
     <h3>📋 Observações Gerais</h3>
@@ -1690,6 +1713,7 @@ function _renderLightbox() {
 // Extraída da "lista de ar-condicionados.xls"
 const LISTA_APTOS = [
   // Térreo
+  { id: "Área Comum - Térreo",   andar: "Térreo",   isComum: true },
   { id: "Apto 01",  andar: "Térreo"   },
   { id: "Apto 02",  andar: "Térreo"   },
   { id: "Apto 03",  andar: "Térreo"   },
@@ -1703,8 +1727,8 @@ const LISTA_APTOS = [
   { id: "Apto 11",  andar: "Térreo"   },
   { id: "Apto 12",  andar: "Térreo"   },
   { id: "Apto 13",  andar: "Térreo"   },
-  { id: "Área Comum - Térreo",   andar: "Térreo",   isComum: true },
   // 1º Andar
+  { id: "Área Comum - 1º Andar", andar: "1º Andar", isComum: true },
   { id: "Apto 101", andar: "1º Andar" },
   { id: "Apto 102", andar: "1º Andar" },
   { id: "Apto 103", andar: "1º Andar" },
@@ -1717,8 +1741,8 @@ const LISTA_APTOS = [
   { id: "Apto 110", andar: "1º Andar" },
   { id: "Apto 111", andar: "1º Andar" },
   { id: "Apto 112", andar: "1º Andar" },
-  { id: "Área Comum - 1º Andar", andar: "1º Andar", isComum: true },
   // 2º Andar
+  { id: "Área Comum - 2º Andar", andar: "2º Andar", isComum: true },
   { id: "Apto 201", andar: "2º Andar" },
   { id: "Apto 202", andar: "2º Andar" },
   { id: "Apto 203", andar: "2º Andar" },
@@ -1733,15 +1757,14 @@ const LISTA_APTOS = [
   { id: "Apto 212", andar: "2º Andar" },
   { id: "Apto 213", andar: "2º Andar" },
   { id: "Apto 214", andar: "2º Andar" },
-  { id: "Área Comum - 2º Andar", andar: "2º Andar", isComum: true },
   // 3º Andar
+  { id: "Área Comum - 3º Andar", andar: "3º Andar", isComum: true },
   { id: "Apto 301", andar: "3º Andar" },
   { id: "Apto 302", andar: "3º Andar" },
   { id: "Apto 303", andar: "3º Andar" },
   { id: "Apto 304", andar: "3º Andar" },
   { id: "Apto 305", andar: "3º Andar" },
   { id: "Apto 306", andar: "3º Andar" },
-  { id: "Área Comum - 3º Andar", andar: "3º Andar", isComum: true },
   // Cobertura
   { id: "Área Comum - Cobertura", andar: "Cobertura", isComum: true },
 ];
@@ -1858,14 +1881,18 @@ function selecionarApt(num) {
   carregarPendencias(apt.id);
 
   // Recolher todas as seções colapsáveis ao abrir novo formulário
-  ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par','sec-int']
+  ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par','sec-int','sec-psc']
     .forEach(id => {
       const el = document.getElementById(id);
       if (el) el.classList.add('collapsed');
     });
 
+  // Mostrar Piscina só para "Área Comum - Térreo"
+  const secPsc = document.getElementById('sec-psc');
+  if (secPsc) secPsc.style.display = (apt.id === 'Área Comum - Térreo') ? '' : 'none';
+
   // Limpar fotos do formulário anterior
-  ['hid','ele','mob','ele2','por','jan','pis','for','par','int','obs'].forEach(s => {
+  ['hid','ele','mob','ele2','por','jan','pis','for','par','int','psc','obs'].forEach(s => {
     delete _fotosLinks[s];
     const prev = document.getElementById('preview-' + s);
     if (prev) prev.innerHTML = '';
@@ -1876,13 +1903,13 @@ function selecionarApt(num) {
   // Resetar textareas
   document.getElementById('tecnico').value = '';
   document.getElementById('observacoes').value = '';
-  ['hid','ele','mob','ele2','por','jan','pis','for','par','int'].forEach(c => {
+  ['hid','ele','mob','ele2','por','jan','pis','for','par','int','psc'].forEach(c => {
     const u = document.getElementById('urg-' + c); if (u) u.checked = false;
   });
-  ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs','int_obs']
+  ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs','int_obs','psc_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   // Limpar sumários das seções
-  ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par','sum-int']
+  ['sum-hid','sum-ele','sum-mob','sum-ele2','sum-por','sum-jan','sum-pis','sum-for','sum-par','sum-int','sum-psc']
     .forEach(id => { const el = document.getElementById(id); if(el) { el.textContent = ''; el.className = 'section-summary'; } });
 }
 
@@ -1905,7 +1932,7 @@ function _comprimirImagem(arquivo, cb) {
   reader.onload = function(ev) {
     const img = new Image();
     img.onload = function() {
-      const MAX = 800; // max 800px — ~30-60KB por foto em base64
+      const MAX = 600; // max 600px — ~15-30KB por foto em base64 (mais rápido)
       let w = img.width, h = img.height;
       if (w > MAX || h > MAX) {
         if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -1914,7 +1941,7 @@ function _comprimirImagem(arquivo, cb) {
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', 0.70));
+      cb(canvas.toDataURL('image/jpeg', 0.62));
     };
     img.src = ev.target.result;
   };
@@ -2136,6 +2163,7 @@ function atualizarProgresso() {
     { sumId: 'sum-for',  obsId: 'for_obs'  },
     { sumId: 'sum-par',  obsId: 'par_obs'  },
     { sumId: 'sum-int',  obsId: 'int_obs'  },
+    { sumId: 'sum-psc',  obsId: 'psc_obs'  },
   ];
   secoes.forEach(({ sumId, obsId }) => {
     const el = document.getElementById(sumId);
@@ -2174,14 +2202,14 @@ function enviarFormulario() {
   }
 
   // Internet é exceção: nunca exige foto. Outras seções: foto obrigatória se tiverem texto.
-  const chavesNaoInternet = ['hid','ele','mob','ele2','por','jan','pis','for','par','obs'];
+  const chavesNaoInternet = ['hid','ele','mob','ele2','por','jan','pis','for','par','psc','obs'];
   const temConteudoNaoInternet = chavesNaoInternet.some(c => {
     const obs = document.getElementById(c + '_obs')?.value.trim();
     const fotos = (_fotosBase64[c] || []).length;
     return (obs && obs !== '—' && obs !== '') || fotos > 0;
   });
 
-  const todasChaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','int','obs'];
+  const todasChaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','int','psc','obs'];
   const totalFotos = todasChaves.reduce((acc, c) => acc + (_fotosBase64[c] || []).length, 0);
 
   // Pelo menos 1 foto se houver qualquer pendência fora da Internet
@@ -2193,7 +2221,7 @@ function enviarFormulario() {
   }
 
   // Fotos obrigatórias por seção com problema descrito (Internet excluída)
-  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes' };
+  const mapaSecoes = { hid: 'Hidráulico', ele: 'Elétrica', mob: 'Móveis', ele2: 'Eletrodomésticos', por: 'Portas', jan: 'Janelas', pis: 'Piso', for: 'Forro/Teto', par: 'Paredes', psc: 'Piscina' };
   const secoesSemFoto = [];
   Object.entries(mapaSecoes).forEach(([chave, nome]) => {
     const obs = document.getElementById(chave + '_obs')?.value.trim();
@@ -2227,6 +2255,7 @@ function enviarFormulario() {
   const statusFor  = resumoObs('for_obs');
   const statusPar  = resumoObs('par_obs');
   const statusInt  = resumoObs('int_obs');
+  const statusPsc  = resumoObs('psc_obs');
 
   const fmt = iso => { const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; };
 
@@ -2251,6 +2280,7 @@ function enviarFormulario() {
     status_forro:         statusFor,
     status_paredes:       statusPar,
     status_internet:      statusInt,
+    status_piscina:       statusPsc,
     observacoes:          document.getElementById('observacoes').value.trim() || '—',
     hid_obs:              document.getElementById('hid_obs').value.trim() || '—',
     ele_obs:              document.getElementById('ele_obs').value.trim() || '—',
@@ -2262,6 +2292,7 @@ function enviarFormulario() {
     for_obs:              document.getElementById('for_obs').value.trim() || '—',
     par_obs:              document.getElementById('par_obs').value.trim() || '—',
     int_obs:              document.getElementById('int_obs').value.trim() || '—',
+    psc_obs:              document.getElementById('psc_obs')?.value.trim() || '—',
     email_notificacao:    EMAIL_NOTIFICACAO,
     // Fotos de cada seção — processadas pelo servidor ao criar cada pendência
     fotos_hid:  (_fotosBase64['hid']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
@@ -2274,6 +2305,7 @@ function enviarFormulario() {
     fotos_for:  (_fotosBase64['for']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_par:  (_fotosBase64['par']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_int:  (_fotosBase64['int']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    fotos_psc:  (_fotosBase64['psc']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     fotos_obs:  (_fotosBase64['obs']  || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     urgente_hid:  document.getElementById('urg-hid')?.checked  || false,
     urgente_ele:  document.getElementById('urg-ele')?.checked  || false,
@@ -2285,6 +2317,7 @@ function enviarFormulario() {
     urgente_for:  document.getElementById('urg-for')?.checked  || false,
     urgente_par:  document.getElementById('urg-par')?.checked  || false,
     urgente_int:  document.getElementById('urg-int')?.checked  || false,
+    urgente_psc:  document.getElementById('urg-psc')?.checked  || false,
   };
 
   // ── Envio único — sem segunda chamada para fotos
@@ -2306,6 +2339,7 @@ function _postarScript(dados) {
   return fetch(SCRIPT_URL, {
     method:  'POST',
     headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
     body:    JSON.stringify(dados),
   })
   .then(function(r) {
@@ -2353,7 +2387,8 @@ function mostrarSucesso(p) {
     🟫 Piso: ${p.status_piso}<br>
     🔲 Forro/Teto: ${p.status_forro}<br>
     🖼️ Paredes: ${p.status_paredes}<br>
-    🌐 Internet: ${p.status_internet}<br><br>
+    🌐 Internet: ${p.status_internet}<br>
+    ${p.apartamento === 'Área Comum - Térreo' ? '🏊 Piscina: ' + p.status_piscina + '<br>' : ''}<br>
     📅 Próxima Revisão: <strong>${p.proxima_revisao}</strong><br><br>
     Um e-mail de confirmação foi enviado para a pousada.
   `;
@@ -2436,7 +2471,7 @@ function carregarPendenciasDashboard() {
 // Inicializar — busca histórico ao abrir
 // Injeta checkbox 🚨 URGENTE em cada seção do formulário
 (function _injetarUrgenteChecks() {
-  const chaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','int'];
+  const chaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','int','psc'];
   chaves.forEach(chave => {
     const sec = document.getElementById('sec-' + chave);
     if (!sec) return;
@@ -2632,9 +2667,17 @@ function salvarDestinacao(idPend, linhaPlanilha) {
   const responsavel = document.getElementById('resp-' + idPend)?.value.trim() || '';
   if (!destinacao) { alert('Selecione Interno ou Terceirizado.'); return; }
 
+  // UI otimista: atualiza imediatamente e re-renderiza
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
+  delete _historicoCache[idPend];
+  renderPendenciasGeral();
+
+  // Salva em segundo plano
   fetch(SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
     body: JSON.stringify({
       action: 'atualizar_destinacao',
       id_pendencia: idPend,
@@ -2642,20 +2685,7 @@ function salvarDestinacao(idPend, linhaPlanilha) {
       destinacao: destinacao,
       responsavel: responsavel,
     }),
-  })
-  .then(r => r.text().catch(() => '{}'))
-  .then(() => {
-    // Atualiza cache local
-    const p = _pendGeralCache.find(x => x.id === idPend);
-    if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
-    delete _historicoCache[idPend]; // invalida histórico
-    renderPendenciasGeral();
-  })
-  .catch(() => {
-    const p = _pendGeralCache.find(x => x.id === idPend);
-    if (p) { p.destinacao = destinacao; p.responsavel = responsavel; }
-    renderPendenciasGeral();
-  });
+  }).catch(err => console.error('Erro salvar destinação:', err));
 }
 
 // ─────── Resolver pendência pela aba Pendências ───────
@@ -2715,12 +2745,16 @@ function confirmarResolucaoPg(idPend, linhaPlanilha) {
   }
 
   const obsRes = document.getElementById('res-obs-pg-' + idPend)?.value.trim() || '';
-  const btn = document.getElementById('btn-confirmar-res-' + idPend);
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Salvando...'; }
 
+  // UI otimista: remove da lista imediatamente e re-renderiza
+  _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
+  renderPendenciasGeral();
+
+  // Envia em segundo plano
   fetch(SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
     body: JSON.stringify({
       action: 'resolver_pendencia',
       linha_planilha: linhaPlanilha,
@@ -2729,16 +2763,8 @@ function confirmarResolucaoPg(idPend, linhaPlanilha) {
       fotos_resolucao: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
     }),
   })
-  .then(() => {
-    _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
-    delete _fotosBase64ResolucaoPg[idPend];
-    renderPendenciasGeral();
-  })
-  .catch(() => {
-    _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
-    delete _fotosBase64ResolucaoPg[idPend];
-    renderPendenciasGeral();
-  });
+  .then(() => { delete _fotosBase64ResolucaoPg[idPend]; })
+  .catch(err => { console.error('Erro resolver pendência:', err); delete _fotosBase64ResolucaoPg[idPend]; });
 }
 
 function toggleUrgente(idPend, linhaPlanilha) {
@@ -2751,13 +2777,14 @@ function toggleUrgente(idPend, linhaPlanilha) {
   fetch(SCRIPT_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
     body: JSON.stringify({
       action: 'marcar_urgente',
       id_pendencia: idPend,
       linha_planilha: linhaPlanilha,
       urgente: novoEstado,
     }),
-  }).catch(() => {});
+  }).catch(err => console.error('Erro toggle urgente:', err));
 }
 
 function toggleHistorico(idPend) {
