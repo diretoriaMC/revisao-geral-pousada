@@ -1029,6 +1029,18 @@
       font-weight: 700;
       margin-right: 6px;
     }
+    .btn-modificar-dest {
+      background: none;
+      border: 1px solid #d0d8e4;
+      color: #5a6e85;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 4px;
+    }
+    .btn-modificar-dest:hover { background: #EFF4FB; color: #1F3864; border-color: #2E75B6; }
     .destinacao-tag.interno { background: #e8f5e9; color: #2e7d32; }
     .destinacao-tag.terceirizado { background: #fff3e0; color: #e65100; }
     .destinacao-tag.sem { background: #eceff1; color: #607d8b; }
@@ -2434,15 +2446,7 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
     msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-
-  // Pelo menos 1 foto no total (entre todas as observações)
-  const totalFotos = obsList.reduce((acc, o) => acc + (o.fotos ? o.fotos.length : 0), 0);
-  if (totalFotos === 0) {
-    msgErro.textContent = '⚠️ Adicione ao menos 1 foto em alguma das observações antes de registrar.';
-    msgErro.style.display = 'block';
-    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
+  // Serviços Gerais não exige fotos
 
   const btn = document.getElementById('btn-enviar');
   btn.disabled = true;
@@ -3003,13 +3007,18 @@ function renderPendenciasGeral() {
 
         const urg = !!p.urgente;
         const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
+        const temDest = dest === 'interno' || dest === 'terceirizado';
+        const dispForm = temDest ? 'none' : '';
         html += `
           <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
             <div class="pend-desc-text" style="margin-bottom:6px;">${urgBadgeHtml}${_escHtml(p.descricao) || '—'}</div>
             <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}</div>
             ${fotosHtml}
-            <div style="margin-top:6px;">${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}</div>
-            <div class="destinacao-row">
+            <div style="margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+              ${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}
+              ${temDest ? `<button class="btn-modificar-dest" onclick="mostrarFormDestinacao('${_escHtml(p.id)}')">✏️ Modificar responsável pela pendência</button>` : ''}
+            </div>
+            <div class="destinacao-row" id="form-dest-${_escHtml(p.id)}" style="display:${dispForm};">
               <select id="dest-${_escHtml(p.id)}">
                 <option value="">Selecione...</option>
                 <option value="interno" ${dest === 'interno' ? 'selected' : ''}>🏨 Interno</option>
@@ -3106,6 +3115,8 @@ function renderPendPorCategoria(filtradas, lista) {
         : '<span class="destinacao-tag sem">⏳ Sem destinação</span>';
       const urg = !!p.urgente;
       const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
+      const temDest = dest === 'interno' || dest === 'terceirizado';
+      const dispForm = temDest ? 'none' : '';
       html += `
         <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
@@ -3115,8 +3126,11 @@ function renderPendPorCategoria(filtradas, lista) {
           <div class="pend-desc-text" style="margin-bottom:6px;">${_escHtml(p.descricao) || '—'}</div>
           <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}</div>
           ${fotosHtml}
-          <div style="margin-top:6px;">${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}</div>
-          <div class="destinacao-row">
+          <div style="margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
+            ${tagDest}${responsavel ? '<span style="font-size:12px;color:#555;font-weight:600;">👤 ' + _escHtml(responsavel) + '</span>' : ''}
+            ${temDest ? `<button class="btn-modificar-dest" onclick="mostrarFormDestinacao('${_escHtml(p.id)}')">✏️ Modificar responsável pela pendência</button>` : ''}
+          </div>
+          <div class="destinacao-row" id="form-dest-${_escHtml(p.id)}" style="display:${dispForm};">
             <select id="dest-${_escHtml(p.id)}">
               <option value="">Selecione...</option>
               <option value="interno" ${dest === 'interno' ? 'selected' : ''}>🏨 Interno</option>
@@ -3148,6 +3162,11 @@ function renderPendPorCategoria(filtradas, lista) {
   });
 
   lista.innerHTML = html;
+}
+
+function mostrarFormDestinacao(idPend) {
+  const form = document.getElementById('form-dest-' + idPend);
+  if (form) form.style.display = '';
 }
 
 function salvarDestinacao(idPend, linhaPlanilha) {
