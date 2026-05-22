@@ -83,6 +83,70 @@
     .apt-card.area-comum .apt-nome { font-size: 14px; font-weight: 700; color: #1F3864; margin-top: 6px; }
     .apt-card.servicos-gerais { border-color: #f9a825; background: #fff8e1; }
     .apt-card.servicos-gerais .apt-nome { color: #e65100; }
+    .apt-card.dessalinizador { border-color: #4fc3f7; background: #e1f5fe; }
+    .apt-card.dessalinizador .apt-nome { color: #0277bd; }
+
+    /* TROCAS DE CARTUCHOS */
+    .troca-card {
+      background: white;
+      border: 1.5px solid #b3e5fc;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .troca-card-header {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0277bd;
+      margin-bottom: 4px;
+    }
+    .troca-card-obs {
+      font-size: 13px;
+      color: #555;
+      margin-top: 4px;
+    }
+    .paginacao-trocas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 10px;
+      background: #f7f9fb;
+      border-radius: 8px;
+    }
+    .paginacao-trocas button {
+      background: #2E75B6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .paginacao-trocas button:disabled {
+      background: #c0d0e0;
+      cursor: default;
+    }
+    .paginacao-trocas span {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1F3864;
+    }
+    .btn-nova-troca {
+      background: #0277bd;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .btn-nova-troca:hover { background: #015a8e; }
 
     /* SERVIÇOS GERAIS — FORMULÁRIO ESPECIAL */
     .sg-card-obs {
@@ -1727,6 +1791,53 @@
     <button class="btn-add-obs-sg" onclick="adicionarObservacaoSG()">+ Adicionar nova observação</button>
   </div>
 
+  <!-- CONTAINER DESSALINIZADOR -->
+  <div class="form-section" id="sec-dessalinizador" style="display:none;">
+
+    <!-- TROCAS DE CARTUCHOS (recolhida por padrão) -->
+    <div class="form-section collapsible collapsed" id="sec-trocas-cartuchos" style="margin:0 0 16px;padding:14px;background:#e1f5fe;border:1px solid #4fc3f7;">
+      <h3 onclick="toggleSection('sec-trocas-cartuchos')" style="color:#0277bd;border-bottom-color:#b3e5fc;">
+        🔧 Trocas de Cartuchos
+        <span class="section-summary" id="sum-trocas"></span>
+        <span class="section-toggle">▼</span>
+      </h3>
+      <div class="section-body">
+        <button class="btn-nova-troca" onclick="abrirModalNovaTroca()">➕ Registrar nova troca</button>
+        <div id="lista-trocas-cartuchos">
+          <div style="font-size:13px;color:#8a9ab0;padding:10px;text-align:center;">Clique acima para registrar uma troca.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBSERVAÇÕES DESSALINIZADOR -->
+    <h3>💧 Observações do Dessalinizador</h3>
+    <p style="font-size:12px;color:#8a9ab0;margin-bottom:12px;">Cada bloco é registrado como uma pendência separada. Fotos são obrigatórias.</p>
+    <div id="lista-obs-des"></div>
+    <button class="btn-add-obs-sg" onclick="adicionarObservacaoDes()">+ Adicionar nova observação</button>
+  </div>
+
+  <!-- MODAL NOVA TROCA DE CARTUCHO -->
+  <div class="modal-overlay" id="modal-troca">
+    <div class="modal-content">
+      <h3>🔧 Nova Troca de Cartucho</h3>
+      <label>Técnico *</label>
+      <input type="text" id="troca-tecnico" placeholder="Nome de quem fez a troca">
+      <label>Observação (opcional)</label>
+      <textarea id="troca-obs" placeholder="Quantos cartuchos, modelo, condições anteriores..." style="min-height:60px;"></textarea>
+      <label>Fotos dos cartuchos novos/usados *</label>
+      <label class="foto-upload-label" style="display:inline-flex;">
+        📷 Adicionar fotos
+        <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'troca')">
+      </label>
+      <div class="fotos-preview" id="preview-troca"></div>
+      <div class="foto-status" id="status-troca"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-cancelar" onclick="fecharModalTroca()">Cancelar</button>
+        <button class="btn-modal-salvar" onclick="salvarTroca()">Salvar troca</button>
+      </div>
+    </div>
+  </div>
+
   <div class="msg-erro" id="msg-erro-2"></div>
 
   <button class="btn-submit" id="btn-enviar" onclick="enviarFormulario()">
@@ -1928,6 +2039,7 @@ function _renderLightbox() {
 const LISTA_APTOS = [
   // Serviços Gerais
   { id: "Serviços Gerais", andar: "Serviços Gerais", isServicosGerais: true },
+  { id: "Dessalinizador",  andar: "Serviços Gerais", isDessalinizador: true },
   // Térreo
   { id: "Área Comum - Térreo",   andar: "Térreo",   isComum: true },
   { id: "Apto 01",  andar: "Térreo"   },
@@ -1996,6 +2108,7 @@ LISTA_APTOS.forEach((apt, idx) => {
     nome: apt.id,
     isComum: !!apt.isComum,
     isServicosGerais: !!apt.isServicosGerais,
+    isDessalinizador: !!apt.isDessalinizador,
     status: 'sem-revisao',   // sem histórico ainda
     diasRestantes: null      // sem contagem até primeira revisão
   };
@@ -2023,7 +2136,7 @@ function renderGrid(filtro) {
 
     aptsDeste.forEach(([seq, apt]) => {
       const card = document.createElement('div');
-      card.className = `apt-card ${apt.status}${apt.isComum ? ' area-comum' : ''}${apt.isServicosGerais ? ' area-comum servicos-gerais' : ''}`;
+      card.className = `apt-card ${apt.status}${apt.isComum ? ' area-comum' : ''}${apt.isServicosGerais ? ' area-comum servicos-gerais' : ''}${apt.isDessalinizador ? ' area-comum dessalinizador' : ''}`;
       const statusTxt = apt.status === 'sem-revisao'
         ? '⬜ Sem revisão'
         : apt.status === 'vencido'
@@ -2038,7 +2151,8 @@ function renderGrid(filtro) {
         ? `<div style="font-size:11px;font-weight:700;color:#c62828;margin-top:4px;">🔧 ${apt.pendencias} pend${apt.pendencias > 1 ? 'ências' : 'ência'} aberta${apt.pendencias > 1 ? 's' : ''}</div>`
         : '';
       let numDisplay, nomeDisplay;
-      if (apt.isServicosGerais) { numDisplay = '🧰'; nomeDisplay = 'Serviços Gerais'; }
+      if (apt.isDessalinizador) { numDisplay = '💧'; nomeDisplay = 'Dessalinizador'; }
+      else if (apt.isServicosGerais) { numDisplay = '🧰'; nomeDisplay = 'Serviços Gerais'; }
       else if (apt.isComum)     { numDisplay = '🚪'; nomeDisplay = 'Área Comum'; }
       else                       { numDisplay = apt.id.replace('Apto ',''); nomeDisplay = apt.id; }
       card.innerHTML = `
@@ -2110,20 +2224,30 @@ function selecionarApt(num) {
   const secPsc = document.getElementById('sec-psc');
   if (secPsc) secPsc.style.display = (apt.id === 'Área Comum - Térreo') ? '' : 'none';
 
-  // Modo Serviços Gerais: esconde todas as seções normais, mostra somente o container especial
-  const isSG = !!apt.isServicosGerais;
+  // Modo Serviços Gerais / Dessalinizador: esconde todas as seções normais, mostra container especial
+  const isSG  = !!apt.isServicosGerais;
+  const isDes = !!apt.isDessalinizador;
+  const isEspecial = isSG || isDes;
   const secoesNormais = ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par','sec-pin','sec-ref','sec-int','sec-psc','sec-observacoes-gerais'];
   secoesNormais.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    if (isSG) el.style.display = 'none';
+    if (isEspecial) el.style.display = 'none';
     else if (id === 'sec-psc') { /* mantém regra do Piscina */ }
     else el.style.display = '';
   });
-  const secSG = document.getElementById('sec-servicos-gerais');
-  if (secSG) secSG.style.display = isSG ? '' : 'none';
+  const secSG  = document.getElementById('sec-servicos-gerais');
+  const secDes = document.getElementById('sec-dessalinizador');
+  if (secSG)  secSG.style.display  = isSG  ? '' : 'none';
+  if (secDes) secDes.style.display = isDes ? '' : 'none';
+
   _zerarServicosGerais();
-  if (isSG) adicionarObservacaoSG();  // já cria o primeiro card
+  _zerarObsDessalinizador();
+  if (isSG)  adicionarObservacaoSG();   // primeiro card
+  if (isDes) {
+    adicionarObservacaoDes();           // primeiro card
+    carregarTrocasCartuchos();          // lista de trocas
+  }
 
   // Limpar fotos do formulário anterior
   ['hid','ele','mob','ele2','por','jan','pis','for','par','pin','ref','int','psc','obs'].forEach(s => {
@@ -2478,6 +2602,68 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
     });
 }
 
+function _enviarDessalinizador(tecnico, dataRevisao, msgErro) {
+  // Coleta observações do Dessalinizador
+  const obsList = [];
+  for (let i = 1; i <= _contadorObsDes; i++) {
+    const card = document.getElementById('des-card-' + i);
+    if (!card) continue;
+    const desc = document.getElementById('des-desc-' + i)?.value.trim();
+    if (!desc) continue;
+    const fotos = _fotosBase64['des-' + i] || [];
+    const urg = document.getElementById('urg-des-' + i)?.checked || false;
+    obsList.push({
+      descricao: desc,
+      fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+      urgente: urg,
+    });
+  }
+
+  if (obsList.length === 0) {
+    msgErro.textContent = '⚠️ Adicione ao menos uma observação com descrição preenchida.';
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Para Dessalinizador, cada observação exige foto
+  const semFoto = obsList.find(o => !o.fotos || o.fotos.length === 0);
+  if (semFoto) {
+    msgErro.textContent = '⚠️ Cada observação do Dessalinizador exige ao menos 1 foto.';
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Enviando…';
+
+  const fmt = iso => { const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; };
+
+  const payload = {
+    action: 'registrar_servicos_gerais',
+    apartamento: 'Dessalinizador',
+    andar: 'Serviços Gerais',
+    apartamento_num: aptSelecionado,
+    data_revisao: fmt(dataRevisao),
+    tecnico: tecnico,
+    email_notificacao: EMAIL_NOTIFICACAO,
+    secao: '💧 Dessalinizador',
+    observacoes: obsList,
+  };
+
+  _postarScript(payload)
+    .then(function() { mostrarSucessoSG(payload); })
+    .catch(function(err) {
+      console.error(err);
+      msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
+      msgErro.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '✅ Registrar Revisão Completa';
+    });
+}
+
 function mostrarSucessoSG(p) {
   document.getElementById('tela-form').style.display = 'none';
   document.getElementById('tela-sucesso').style.display = 'block';
@@ -2507,6 +2693,9 @@ function enviarFormulario() {
   const aptAtualPrev = APARTAMENTOS[aptSelecionado];
   if (aptAtualPrev && aptAtualPrev.isServicosGerais) {
     return _enviarServicosGerais(tecnico, dataRevisao, msgErro);
+  }
+  if (aptAtualPrev && aptAtualPrev.isDessalinizador) {
+    return _enviarDessalinizador(tecnico, dataRevisao, msgErro);
   }
 
   // Internet é exceção: nunca exige foto. Outras seções: foto obrigatória se tiverem texto.
@@ -2834,6 +3023,161 @@ function _zerarServicosGerais() {
     delete _fotosBase64['sg-' + i];
   }
   _contadorObsSG = 0;
+}
+
+// ═════════════════════════════════════════════════════════════════
+// DESSALINIZADOR — múltiplas observações + trocas de cartuchos
+// ═════════════════════════════════════════════════════════════════
+let _contadorObsDes = 0;
+let _trocasCache = [];
+let _paginaTrocas = 0;
+const TROCAS_POR_PAGINA = 10;
+
+function adicionarObservacaoDes() {
+  _contadorObsDes++;
+  const idx = _contadorObsDes;
+  const lista = document.getElementById('lista-obs-des');
+  if (!lista) return;
+  const div = document.createElement('div');
+  div.className = 'sg-card-obs';
+  div.id = 'des-card-' + idx;
+  div.innerHTML =
+    '<div class="sg-card-header">' +
+      '<span class="sg-card-titulo">Observação ' + idx + '</span>' +
+      '<button class="sg-card-remover" onclick="removerObservacaoDes(' + idx + ')">✕ Remover</button>' +
+    '</div>' +
+    '<textarea id="des-desc-' + idx + '" placeholder="Descreva a observação ou pendência do dessalinizador..." style="width:100%;padding:10px;border:1.5px solid #d0d8e4;border-radius:8px;font-size:14px;min-height:80px;resize:vertical;"></textarea>' +
+    '<div class="foto-upload-area" style="margin-top:8px;">' +
+      '<label class="foto-upload-label">📷 Adicionar fotos *' +
+        '<input type="file" accept="image/*" multiple onchange="adicionarFotos(this,\'des-' + idx + '\')">' +
+      '</label>' +
+      '<div class="fotos-preview" id="preview-des-' + idx + '"></div>' +
+      '<div class="foto-status" id="status-des-' + idx + '"></div>' +
+    '</div>' +
+    '<label class="urgente-form-check" style="margin-top:8px;">' +
+      '<input type="checkbox" id="urg-des-' + idx + '"> 🚨 Marcar como URGENTE' +
+    '</label>';
+  lista.appendChild(div);
+}
+
+function removerObservacaoDes(idx) {
+  const card = document.getElementById('des-card-' + idx);
+  if (card) card.remove();
+  delete _fotosBase64['des-' + idx];
+}
+
+function _zerarObsDessalinizador() {
+  const lista = document.getElementById('lista-obs-des');
+  if (lista) lista.innerHTML = '';
+  for (let i = 1; i <= _contadorObsDes; i++) {
+    delete _fotosBase64['des-' + i];
+  }
+  _contadorObsDes = 0;
+}
+
+// — TROCAS DE CARTUCHOS —
+function abrirModalNovaTroca() {
+  document.getElementById('troca-tecnico').value = '';
+  document.getElementById('troca-obs').value = '';
+  document.getElementById('preview-troca').innerHTML = '';
+  document.getElementById('status-troca').textContent = '';
+  delete _fotosBase64['troca'];
+  document.getElementById('modal-troca').classList.add('ativo');
+}
+
+function fecharModalTroca() {
+  document.getElementById('modal-troca').classList.remove('ativo');
+}
+
+function salvarTroca() {
+  const tec = document.getElementById('troca-tecnico').value.trim();
+  const obs = document.getElementById('troca-obs').value.trim();
+  const fotos = _fotosBase64['troca'] || [];
+  if (!tec) { alert('Informe o nome do técnico.'); return; }
+  if (fotos.length === 0) { alert('Adicione ao menos 1 foto da troca.'); return; }
+
+  // Otimista: fecha modal e mostra "Salvando..."
+  fecharModalTroca();
+  const lista = document.getElementById('lista-trocas-cartuchos');
+  if (lista) lista.insertAdjacentHTML('afterbegin', '<div id="troca-salvando" style="padding:10px;background:#fff3c4;border-radius:6px;font-size:13px;color:#e65100;margin-bottom:6px;">⏳ Salvando troca...</div>');
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
+    body: JSON.stringify({
+      action: 'registrar_troca_cartucho',
+      tecnico: tec,
+      observacao: obs,
+      fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
+    }),
+  })
+  .then(() => { setTimeout(carregarTrocasCartuchos, 1200); })
+  .catch(() => { setTimeout(carregarTrocasCartuchos, 1200); });
+}
+
+function carregarTrocasCartuchos() {
+  const lista = document.getElementById('lista-trocas-cartuchos');
+  if (!lista) return;
+  lista.innerHTML = '<div style="font-size:13px;color:#8a9ab0;padding:10px;text-align:center;">⏳ Carregando...</div>';
+  fetch(SCRIPT_URL + '?action=trocas_cartuchos&t=' + Date.now())
+    .then(r => r.json())
+    .then(dados => {
+      _trocasCache = Array.isArray(dados) ? dados : [];
+      _paginaTrocas = 0;
+      renderTrocas();
+    })
+    .catch(() => {
+      lista.innerHTML = '<div style="font-size:13px;color:#c62828;padding:10px;text-align:center;">⚠️ Erro ao carregar.</div>';
+    });
+}
+
+function renderTrocas() {
+  const lista = document.getElementById('lista-trocas-cartuchos');
+  if (!lista) return;
+  if (_trocasCache.length === 0) {
+    lista.innerHTML = '<div style="font-size:13px;color:#8a9ab0;padding:10px;text-align:center;">Nenhuma troca registrada ainda.</div>';
+    return;
+  }
+  const totalPaginas = Math.max(1, Math.ceil(_trocasCache.length / TROCAS_POR_PAGINA));
+  if (_paginaTrocas >= totalPaginas) _paginaTrocas = totalPaginas - 1;
+  if (_paginaTrocas < 0) _paginaTrocas = 0;
+  const start = _paginaTrocas * TROCAS_POR_PAGINA;
+  const slice = _trocasCache.slice(start, start + TROCAS_POR_PAGINA);
+
+  let html = '';
+  slice.forEach(t => {
+    const fotosArr = t.fotos && t.fotos !== '—' ? t.fotos.split('\n').filter(l => l.trim() !== '') : [];
+    _pendFotos[t.id] = fotosArr;
+    const fotosHtml = fotosArr.length > 0
+      ? `<div class="pend-fotos-mini" style="margin-top:6px;">${fotosArr.map((l,i) =>
+          `<div class="pend-foto-mini" onclick="abrirLightbox('${t.id}',${i})">
+            <img src="${_driveThumbUrl(l,'w200')}" onerror="this.outerHTML='<div style=font-size:10px;text-align:center;padding:4px;color:#0277bd>📷</div>'">
+          </div>`).join('')}</div>`
+      : '';
+    html += `<div class="troca-card">
+      <div class="troca-card-header">📅 ${_escHtml(t.data)} · 👷 ${_escHtml(t.tecnico) || '—'}</div>
+      ${t.observacao ? `<div class="troca-card-obs">${_escHtml(t.observacao)}</div>` : ''}
+      ${fotosHtml}
+    </div>`;
+  });
+
+  if (totalPaginas > 1) {
+    html += `<div class="paginacao-trocas">
+      <button onclick="paginaTrocas(-1)" ${_paginaTrocas === 0 ? 'disabled' : ''}>‹ Anterior</button>
+      <span>Página ${_paginaTrocas + 1} de ${totalPaginas} · ${_trocasCache.length} troca${_trocasCache.length > 1 ? 's' : ''}</span>
+      <button onclick="paginaTrocas(1)" ${_paginaTrocas === totalPaginas - 1 ? 'disabled' : ''}>Próximo ›</button>
+    </div>`;
+  } else {
+    html += `<div style="text-align:center;font-size:12px;color:#8a9ab0;padding:8px;">Total: ${_trocasCache.length} troca${_trocasCache.length > 1 ? 's' : ''}</div>`;
+  }
+
+  lista.innerHTML = html;
+}
+
+function paginaTrocas(dir) {
+  _paginaTrocas += dir;
+  renderTrocas();
 }
 
 // Injeta checkbox 🚨 URGENTE em cada seção do formulário
