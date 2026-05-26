@@ -893,6 +893,52 @@
     .pend-filtro.urg { border-color: #c62828; }
     .pend-filtro.urg.active { background: #c62828; }
 
+    /* BARRA DE SELEÇÃO E IMPRESSÃO */
+    .pend-selecao-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      margin: 10px 0 0;
+      background: #f0f4f8;
+      border-radius: 8px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+    .pend-selecao-bar .sel-info { font-weight: 600; color: #1F3864; }
+    .pend-selecao-bar button {
+      background: white;
+      border: 1.5px solid #d0d8e4;
+      color: #1F3864;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .pend-selecao-bar button:hover { background: #EFF4FB; }
+    .pend-selecao-bar .btn-imprimir {
+      background: #2E75B6;
+      color: white;
+      border-color: #1F5fa6;
+      margin-left: auto;
+    }
+    .pend-selecao-bar .btn-imprimir:hover { background: #1F5fa6; }
+    .pend-selecao-bar .btn-imprimir:disabled {
+      background: #c0d0e0;
+      color: #6b7c93;
+      border-color: #c0d0e0;
+      cursor: default;
+    }
+    .pend-check {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #2E75B6;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
     /* MODOS DE EXIBIÇÃO DA ABA PENDÊNCIAS */
     .pend-view-modes {
       display: flex;
@@ -1876,6 +1922,12 @@
     <div class="pend-view-modes">
       <button class="pend-view-mode active" data-mode="apto" onclick="setViewModePend('apto')">⊞ Por apartamento</button>
       <button class="pend-view-mode" data-mode="cat" onclick="setViewModePend('cat')">☰ Por categoria</button>
+    </div>
+    <div class="pend-selecao-bar">
+      <button onclick="selecionarTodasVisiveisPend()">☑ Selecionar todas</button>
+      <button onclick="limparSelecaoPend()">✕ Limpar seleção</button>
+      <span class="sel-info" id="pend-sel-count">0 selecionadas</span>
+      <button class="btn-imprimir" id="btn-imprimir-pend" disabled onclick="imprimirRelatorioPend()">🖨️ Imprimir relatório</button>
     </div>
   </div>
   <div id="pend-geral-lista">
@@ -3231,6 +3283,200 @@ let _filtroPendGeral = 'todas';
 let _modoViewPend = 'apto';  // 'apto' ou 'cat'
 const _historicoCache = {};
 
+// — Seleção e impressão de pendências —
+const _pendSelecionadas = new Set();
+
+function togglePendSelecionada(id, checked) {
+  if (checked) _pendSelecionadas.add(id);
+  else _pendSelecionadas.delete(id);
+  atualizarBarraSelecaoPend();
+}
+
+function selecionarTodasVisiveisPend() {
+  document.querySelectorAll('.pend-check').forEach(cb => {
+    cb.checked = true;
+    _pendSelecionadas.add(cb.getAttribute('data-id'));
+  });
+  atualizarBarraSelecaoPend();
+}
+
+function limparSelecaoPend() {
+  _pendSelecionadas.clear();
+  document.querySelectorAll('.pend-check').forEach(cb => cb.checked = false);
+  atualizarBarraSelecaoPend();
+}
+
+function atualizarBarraSelecaoPend() {
+  const count = _pendSelecionadas.size;
+  const counter = document.getElementById('pend-sel-count');
+  if (counter) counter.textContent = count + ' selecionada' + (count !== 1 ? 's' : '');
+  const btn = document.getElementById('btn-imprimir-pend');
+  if (btn) btn.disabled = count === 0;
+}
+
+function imprimirRelatorioPend() {
+  if (_pendSelecionadas.size === 0) { alert('Selecione ao menos 1 pendência.'); return; }
+  const pends = _pendGeralCache.filter(p => _pendSelecionadas.has(p.id));
+  if (pends.length === 0) { alert('Pendências não encontradas.'); return; }
+
+  // Ordena: urgentes primeiro, depois por apartamento + categoria
+  function aptoOrdNum(nome) {
+    if (!nome) return 99999;
+    if (nome.indexOf('Serviços Gerais') !== -1) return -10;
+    if (nome.indexOf('Dessalinizador')   !== -1) return -5;
+    if (nome.indexOf('Cobertura')        !== -1) return 100000;
+    const m = nome.match(/(\d+)/);
+    return m ? parseInt(m[1]) : (nome.indexOf('Área Comum') !== -1 ? 0 : 99999);
+  }
+  pends.sort((a, b) => {
+    if (a.urgente !== b.urgente) return a.urgente ? -1 : 1;
+    const ao = aptoOrdNum(a.apartamento), bo = aptoOrdNum(b.apartamento);
+    if (ao !== bo) return ao - bo;
+    return String(a.secao).localeCompare(String(b.secao));
+  });
+
+  const html = gerarHtmlRelatorioPend(pends);
+  const w = window.open('', '_blank');
+  if (!w) { alert('Não foi possível abrir a janela de impressão. Verifique se pop-ups estão liberados.'); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  // Aguarda imagens carregarem antes de imprimir
+  w.onload = function() { setTimeout(() => { try { w.print(); } catch(e){} }, 800); };
+}
+
+function _escHtmlPrint(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function gerarHtmlRelatorioPend(pends) {
+  const dataGerado = new Date().toLocaleString('pt-BR');
+  let body = '';
+  pends.forEach((p, idx) => {
+    const urg = p.urgente;
+    const fotosArr = p.fotos && p.fotos !== '—'
+      ? p.fotos.split('\n').filter(l => l.trim() !== '')
+      : [];
+    const destText = p.destinacao === 'interno' ? '🏨 Interno'
+      : p.destinacao === 'terceirizado' ? '🛠️ Terceirizado'
+      : '⏳ Sem destinação';
+    body += `
+      <div class="item${urg ? ' urgente' : ''}">
+        <div class="item-num">${idx + 1}</div>
+        <div class="item-header">
+          <span class="apto">🏨 ${_escHtmlPrint(p.apartamento)}</span>
+          <span class="secao">${_escHtmlPrint(p.secao)}</span>
+          ${urg ? '<span class="urg">🚨 URGENTE</span>' : ''}
+        </div>
+        <div class="desc">${_escHtmlPrint(p.descricao) || '—'}</div>
+        <div class="meta">
+          📅 Aberta em ${_escHtmlPrint(p.data_abertura)} · 👷 Aberto por: ${_escHtmlPrint(p.tecnico_abre) || '—'}
+        </div>
+        <div class="meta">
+          📍 ${destText}${p.responsavel ? ' · 👤 ' + _escHtmlPrint(p.responsavel) : ''}
+        </div>
+        ${fotosArr.length > 0 ? `
+          <div class="fotos">
+            ${fotosArr.map(l => `<img src="${_driveThumbUrl(l, 'w400')}" alt="">`).join('')}
+          </div>
+        ` : '<div class="sem-fotos">(sem fotos)</div>'}
+        <div class="resolucao">
+          <strong>Resolução:</strong>
+          <div class="campo">Data: ____/____/______ &nbsp; · &nbsp; Técnico: ______________________________</div>
+          <div class="campo">Observações: _______________________________________________________</div>
+          <div class="campo">__________________________________________________________________</div>
+        </div>
+      </div>
+    `;
+  });
+  return `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório de Pendências — Pousada Marie Claire</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: Arial, Helvetica, sans-serif; margin: 18px; color: #222; }
+  h1 { font-size: 20px; color: #1F3864; margin: 0 0 4px; }
+  .subt { font-size: 12px; color: #666; margin-bottom: 18px; padding-bottom: 8px; border-bottom: 2px solid #1F3864; }
+  .item {
+    border: 1.5px solid #bbb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    page-break-inside: avoid;
+    position: relative;
+  }
+  .item.urgente { border-color: #c62828; background: #fff5f5; }
+  .item-num {
+    position: absolute;
+    top: -10px; left: -10px;
+    background: #1F3864;
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+  }
+  .item.urgente .item-num { background: #c62828; }
+  .item-header { margin-bottom: 6px; }
+  .apto { background: #1F3864; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .secao { color: #2E75B6; font-weight: 700; font-size: 13px; }
+  .urg { background: #c62828; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-left: 6px; }
+  .desc { font-size: 14px; margin: 6px 0; line-height: 1.5; padding: 8px 10px; background: #f7f9fb; border-left: 3px solid #2E75B6; border-radius: 4px; }
+  .item.urgente .desc { border-left-color: #c62828; }
+  .meta { font-size: 11px; color: #555; margin: 3px 0; }
+  .fotos { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .fotos img { width: 180px; height: 180px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px; }
+  .sem-fotos { font-size: 11px; color: #888; font-style: italic; margin: 6px 0; }
+  .resolucao {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1.5px dashed #999;
+    font-size: 11px;
+    color: #333;
+  }
+  .resolucao .campo { margin-top: 4px; }
+  @media print {
+    body { margin: 12mm; }
+    .no-print { display: none !important; }
+  }
+  .controls {
+    position: fixed;
+    top: 10px; right: 10px;
+    background: white;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+    z-index: 100;
+  }
+  .controls button {
+    background: #1F3864;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="controls no-print">
+    <button onclick="window.print()">🖨️ Imprimir</button>
+  </div>
+  <h1>📋 Relatório de Pendências — Pousada Marie Claire</h1>
+  <div class="subt">Gerado em ${dataGerado} · ${pends.length} pendência${pends.length > 1 ? 's' : ''} selecionada${pends.length > 1 ? 's' : ''}</div>
+  ${body}
+</body>
+</html>
+  `;
+}
+
 function setViewModePend(mode) {
   _modoViewPend = mode;
   document.querySelectorAll('.pend-view-mode').forEach(el => {
@@ -3353,9 +3599,13 @@ function renderPendenciasGeral() {
         const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
         const temDest = dest === 'interno' || dest === 'terceirizado';
         const dispForm = temDest ? 'none' : '';
+        const checked = _pendSelecionadas.has(p.id) ? 'checked' : '';
         html += `
           <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
-            <div class="pend-desc-text" style="margin-bottom:6px;">${urgBadgeHtml}${_escHtml(p.descricao) || '—'}</div>
+            <div style="display:flex;align-items:flex-start;gap:0;margin-bottom:6px;">
+              <input type="checkbox" class="pend-check" data-id="${_escHtml(p.id)}" ${checked} onchange="togglePendSelecionada('${_escHtml(p.id)}', this.checked)">
+              <div class="pend-desc-text" style="flex:1;">${urgBadgeHtml}${_escHtml(p.descricao) || '—'}</div>
+            </div>
             <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}</div>
             ${fotosHtml}
             <div style="margin-top:6px;display:flex;align-items:center;flex-wrap:wrap;gap:4px;">
@@ -3461,9 +3711,11 @@ function renderPendPorCategoria(filtradas, lista) {
       const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
       const temDest = dest === 'interno' || dest === 'terceirizado';
       const dispForm = temDest ? 'none' : '';
+      const checked = _pendSelecionadas.has(p.id) ? 'checked' : '';
       html += `
         <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+            <input type="checkbox" class="pend-check" data-id="${_escHtml(p.id)}" ${checked} onchange="togglePendSelecionada('${_escHtml(p.id)}', this.checked)">
             <span class="pend-apto-badge">🏨 ${_escHtml(p.apartamento) || '?'}</span>
             ${urgBadgeHtml}
           </div>
