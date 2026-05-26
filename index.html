@@ -3565,6 +3565,11 @@ function gerarHtmlRelatorioPend(pends) {
           ${p.responsavel ? '👤 <strong>' + _escHtmlPrint(p.responsavel) + '</strong>' : '<em style="color:#888;">— Sem responsável definido —</em>'}
         </div>
         <div class="desc"><strong>🔧 Problema:</strong> ${_escHtmlPrint(p.descricao) || '—'}</div>
+        ${fotosArr.length > 0 ? `
+          <div class="fotos">
+            ${fotosArr.map(l => `<img src="${_driveThumbUrl(l, 'w400')}" alt="">`).join('')}
+          </div>
+        ` : ''}
       </div>
     `;
   });
