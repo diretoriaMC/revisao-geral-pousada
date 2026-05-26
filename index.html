@@ -85,6 +85,8 @@
     .apt-card.servicos-gerais .apt-nome { color: #e65100; }
     .apt-card.dessalinizador { border-color: #4fc3f7; background: #e1f5fe; }
     .apt-card.dessalinizador .apt-nome { color: #0277bd; }
+    .apt-card.pousada-subaba { border-color: #ce93d8; background: #f3e5f5; }
+    .apt-card.pousada-subaba .apt-nome { color: #6a1b9a; }
 
     /* TROCAS DE CARTUCHOS */
     .troca-card {
@@ -1355,6 +1357,37 @@
       color: #c62828;
       border-color: #e57373;
     }
+    .btn-concluida {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1.5px solid #2e7d32;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-concluida.ativo { background: #2e7d32; color: white; }
+    .diretriz-card.concluida {
+      opacity: 0.65;
+      background: #f5f5f5 !important;
+      border-left-color: #2e7d32 !important;
+    }
+    .diretriz-card.concluida .diretriz-titulo,
+    .diretriz-card.concluida .diretriz-conteudo {
+      text-decoration: line-through;
+      text-decoration-color: rgba(0,0,0,.3);
+    }
+    .badge-concluida {
+      display: inline-block;
+      background: #2e7d32;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 10px;
+      margin-right: 8px;
+    }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -1917,11 +1950,15 @@
       <div class="pend-filtro urg" data-filtro="urgente" onclick="filtrarPendenciasGeral('urgente')">🚨 Urgentes</div>
       <div class="pend-filtro" data-filtro="sem" onclick="filtrarPendenciasGeral('sem')">⏳ Sem destinação</div>
       <div class="pend-filtro" data-filtro="interno" onclick="filtrarPendenciasGeral('interno')">🏨 Internas</div>
-      <div class="pend-filtro" data-filtro="terceirizado" onclick="filtrarPendenciasGeral('terceirizado')">🛠️ Terceirizadas</div>
+      <div class="pend-filtro" data-filtro="terceirizado" onclick="filtrarPendenciasGeral('terceirizado')">🤝 Terceirizadas</div>
+      <div class="pend-filtro" data-filtro="recepcao" onclick="filtrarPendenciasGeral('recepcao')">📋 Recepção/Reservas</div>
+      <div class="pend-filtro" data-filtro="financeiro" onclick="filtrarPendenciasGeral('financeiro')">💰 Financeiro</div>
+      <div class="pend-filtro" data-filtro="almoxarifado" onclick="filtrarPendenciasGeral('almoxarifado')">📦 Almoxarifado</div>
     </div>
     <div class="pend-view-modes">
       <button class="pend-view-mode active" data-mode="apto" onclick="setViewModePend('apto')">⊞ Por apartamento</button>
       <button class="pend-view-mode" data-mode="cat" onclick="setViewModePend('cat')">☰ Por categoria</button>
+      <button class="pend-view-mode" data-mode="prestador" id="vm-prestador" style="display:none;" onclick="setViewModePend('prestador')">👤 Por prestador</button>
     </div>
     <div class="pend-selecao-bar">
       <button onclick="selecionarTodasVisiveisPend()">☑ Selecionar todas</button>
@@ -2089,9 +2126,12 @@ function _renderLightbox() {
 // ── Numeração real dos 45 apartamentos da Pousada Marie Claire ──
 // Extraída da "lista de ar-condicionados.xls"
 const LISTA_APTOS = [
-  // Serviços Gerais
-  { id: "Serviços Gerais", andar: "Serviços Gerais", isServicosGerais: true },
-  { id: "Dessalinizador",  andar: "Serviços Gerais", isDessalinizador: true },
+  // Pousada em Geral (antes "Serviços Gerais")
+  { id: "Serviços Gerais",      andar: "Pousada em Geral", isServicosGerais: true },
+  { id: "Dessalinizador",       andar: "Pousada em Geral", isDessalinizador: true },
+  { id: "Recepção / Reservas",  andar: "Pousada em Geral", isPousadaSubaba: 'recepcao' },
+  { id: "Financeiro",           andar: "Pousada em Geral", isPousadaSubaba: 'financeiro' },
+  { id: "Almoxarifado",         andar: "Pousada em Geral", isPousadaSubaba: 'almoxarifado' },
   // Térreo
   { id: "Área Comum - Térreo",   andar: "Térreo",   isComum: true },
   { id: "Apto 01",  andar: "Térreo"   },
@@ -2161,6 +2201,7 @@ LISTA_APTOS.forEach((apt, idx) => {
     isComum: !!apt.isComum,
     isServicosGerais: !!apt.isServicosGerais,
     isDessalinizador: !!apt.isDessalinizador,
+    isPousadaSubaba: apt.isPousadaSubaba || null,
     status: 'sem-revisao',   // sem histórico ainda
     diasRestantes: null      // sem contagem até primeira revisão
   };
@@ -2170,7 +2211,7 @@ LISTA_APTOS.forEach((apt, idx) => {
 function renderGrid(filtro) {
   const grid = document.getElementById('grid-apts');
   grid.innerHTML = '';
-  const andares = ['Serviços Gerais','Térreo','1º Andar','2º Andar','3º Andar','Cobertura'];
+  const andares = ['Pousada em Geral','Térreo','1º Andar','2º Andar','3º Andar','Cobertura'];
   const filtroLower = (filtro || '').toLowerCase();
 
   andares.forEach(andar => {
@@ -2188,7 +2229,7 @@ function renderGrid(filtro) {
 
     aptsDeste.forEach(([seq, apt]) => {
       const card = document.createElement('div');
-      card.className = `apt-card ${apt.status}${apt.isComum ? ' area-comum' : ''}${apt.isServicosGerais ? ' area-comum servicos-gerais' : ''}${apt.isDessalinizador ? ' area-comum dessalinizador' : ''}`;
+      card.className = `apt-card ${apt.status}${apt.isComum ? ' area-comum' : ''}${apt.isServicosGerais ? ' area-comum servicos-gerais' : ''}${apt.isDessalinizador ? ' area-comum dessalinizador' : ''}${apt.isPousadaSubaba ? ' area-comum pousada-subaba' : ''}`;
       const statusTxt = apt.status === 'sem-revisao'
         ? '⬜ Sem revisão'
         : apt.status === 'vencido'
@@ -2205,6 +2246,9 @@ function renderGrid(filtro) {
       let numDisplay, nomeDisplay;
       if (apt.isDessalinizador) { numDisplay = '💧'; nomeDisplay = 'Dessalinizador'; }
       else if (apt.isServicosGerais) { numDisplay = '🧰'; nomeDisplay = 'Serviços Gerais'; }
+      else if (apt.isPousadaSubaba === 'recepcao')   { numDisplay = '📋'; nomeDisplay = 'Recepção / Reservas'; }
+      else if (apt.isPousadaSubaba === 'financeiro') { numDisplay = '💰'; nomeDisplay = 'Financeiro'; }
+      else if (apt.isPousadaSubaba === 'almoxarifado') { numDisplay = '📦'; nomeDisplay = 'Almoxarifado'; }
       else if (apt.isComum)     { numDisplay = '🚪'; nomeDisplay = 'Área Comum'; }
       else                       { numDisplay = apt.id.replace('Apto ',''); nomeDisplay = apt.id; }
       card.innerHTML = `
@@ -2276,10 +2320,24 @@ function selecionarApt(num) {
   const secPsc = document.getElementById('sec-psc');
   if (secPsc) secPsc.style.display = (apt.id === 'Área Comum - Térreo') ? '' : 'none';
 
-  // Modo Serviços Gerais / Dessalinizador: esconde todas as seções normais, mostra container especial
-  const isSG  = !!apt.isServicosGerais;
-  const isDes = !!apt.isDessalinizador;
-  const isEspecial = isSG || isDes;
+  // Modo Especial: SG, Dessalinizador ou Subabas da Pousada em Geral
+  const isSG     = !!apt.isServicosGerais;
+  const isDes    = !!apt.isDessalinizador;
+  const subaba   = apt.isPousadaSubaba || null;
+  const isSubaba = !!subaba;
+  const isEspecial = isSG || isDes || isSubaba;
+
+  // Contexto da seção (usado em multi-obs):
+  if (isSG) {
+    _contextoMultiObs = { titulo: 'Serviços Gerais', secao: '📋 Serviços Gerais', apartamento: 'Serviços Gerais' };
+  } else if (subaba === 'recepcao') {
+    _contextoMultiObs = { titulo: 'Recepção / Reservas', secao: '📋 Recepção / Reservas', apartamento: 'Recepção / Reservas' };
+  } else if (subaba === 'financeiro') {
+    _contextoMultiObs = { titulo: 'Financeiro', secao: '💰 Financeiro', apartamento: 'Financeiro' };
+  } else if (subaba === 'almoxarifado') {
+    _contextoMultiObs = { titulo: 'Almoxarifado', secao: '📦 Almoxarifado', apartamento: 'Almoxarifado' };
+  }
+
   const secoesNormais = ['sec-hid','sec-ele','sec-mob','sec-ele2','sec-por','sec-jan','sec-pis','sec-for','sec-par','sec-pin','sec-ref','sec-int','sec-psc','sec-observacoes-gerais'];
   secoesNormais.forEach(id => {
     const el = document.getElementById(id);
@@ -2290,12 +2348,21 @@ function selecionarApt(num) {
   });
   const secSG  = document.getElementById('sec-servicos-gerais');
   const secDes = document.getElementById('sec-dessalinizador');
-  if (secSG)  secSG.style.display  = isSG  ? '' : 'none';
+  if (secSG)  secSG.style.display  = (isSG || isSubaba) ? '' : 'none';
   if (secDes) secDes.style.display = isDes ? '' : 'none';
+
+  // Atualiza o título do container Serviços Gerais conforme o contexto
+  if (isSG || isSubaba) {
+    const titleEl = secSG?.querySelector('h3');
+    if (titleEl) {
+      const icone = isSG ? '🧰' : (subaba === 'recepcao' ? '📋' : subaba === 'financeiro' ? '💰' : '📦');
+      titleEl.textContent = icone + ' Observações de ' + _contextoMultiObs.titulo;
+    }
+  }
 
   _zerarServicosGerais();
   _zerarObsDessalinizador();
-  if (isSG)  adicionarObservacaoSG();   // primeiro card
+  if (isSG || isSubaba) adicionarObservacaoSG();   // primeiro card
   if (isDes) {
     adicionarObservacaoDes();           // primeiro card
     carregarTrocasCartuchos();          // lista de trocas
@@ -2315,6 +2382,9 @@ function selecionarApt(num) {
   document.getElementById('observacoes').value = '';
   ['hid','ele','mob','ele2','por','jan','pis','for','par','pin','ref','int','psc'].forEach(c => {
     const u = document.getElementById('urg-' + c); if (u) u.checked = false;
+    const d = document.getElementById('dest-sec-' + c); if (d) d.value = '';
+    const r = document.getElementById('resp-sec-' + c); if (r) r.value = '';
+    const dp = document.getElementById('data-sec-' + c); if (dp) dp.value = '';
   });
   ['hid_obs','ele_obs','mob_obs','ele2_obs','por_obs','jan_obs','pis_obs','for_obs','par_obs','pin_obs','ref_obs','int_obs','psc_obs']
     .forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
@@ -2602,17 +2672,25 @@ function resumoObs(obsId) {
 function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
   // Coleta todas as observações
   const obsList = [];
+  const semResp = [];
   for (let i = 1; i <= _contadorObsSG; i++) {
     const card = document.getElementById('sg-card-' + i);
     if (!card) continue;
     const desc = document.getElementById('sg-desc-' + i)?.value.trim();
     if (!desc) continue;
     const fotos = _fotosBase64['sg-' + i] || [];
-    const urg = document.getElementById('urg-sg-' + i)?.checked || false;
+    const urg   = document.getElementById('urg-sg-' + i)?.checked || false;
+    const destinacao = document.getElementById('dest-sg-' + i)?.value || '';
+    const responsavel = document.getElementById('resp-sg-' + i)?.value.trim() || '';
+    const dataPrevista = document.getElementById('data-sg-' + i)?.value || '';
+    if (!destinacao || !responsavel) semResp.push(i);
     obsList.push({
       descricao: desc,
       fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
       urgente: urg,
+      destinacao: destinacao,
+      responsavel: responsavel,
+      data_prevista: dataPrevista,
     });
   }
 
@@ -2622,7 +2700,13 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
     msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-  // Serviços Gerais não exige fotos
+  if (semResp.length > 0) {
+    msgErro.textContent = '⚠️ Defina quem vai resolver (Interno/Terceirizado + Nome) na(s) observação(ões) ' + semResp.join(', ') + '.';
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  // Serviços Gerais / Subabas Pousada em Geral não exigem fotos
 
   const btn = document.getElementById('btn-enviar');
   btn.disabled = true;
@@ -2632,12 +2716,13 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
 
   const payload = {
     action: 'registrar_servicos_gerais',
-    apartamento: 'Serviços Gerais',
-    andar: 'Serviços Gerais',
+    apartamento: _contextoMultiObs.apartamento,
+    andar: 'Pousada em Geral',
     apartamento_num: aptSelecionado,
     data_revisao: fmt(dataRevisao),
     tecnico: tecnico,
     email_notificacao: EMAIL_NOTIFICACAO,
+    secao: _contextoMultiObs.secao,
     observacoes: obsList,
   };
 
@@ -2657,6 +2742,7 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
 function _enviarDessalinizador(tecnico, dataRevisao, msgErro) {
   // Coleta observações do Dessalinizador
   const obsList = [];
+  const semResp = [];
   for (let i = 1; i <= _contadorObsDes; i++) {
     const card = document.getElementById('des-card-' + i);
     if (!card) continue;
@@ -2664,15 +2750,28 @@ function _enviarDessalinizador(tecnico, dataRevisao, msgErro) {
     if (!desc) continue;
     const fotos = _fotosBase64['des-' + i] || [];
     const urg = document.getElementById('urg-des-' + i)?.checked || false;
+    const destinacao = document.getElementById('dest-des-' + i)?.value || '';
+    const responsavel = document.getElementById('resp-des-' + i)?.value.trim() || '';
+    const dataPrevista = document.getElementById('data-des-' + i)?.value || '';
+    if (!destinacao || !responsavel) semResp.push(i);
     obsList.push({
       descricao: desc,
       fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
       urgente: urg,
+      destinacao: destinacao,
+      responsavel: responsavel,
+      data_prevista: dataPrevista,
     });
   }
 
   if (obsList.length === 0) {
     msgErro.textContent = '⚠️ Adicione ao menos uma observação com descrição preenchida.';
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (semResp.length > 0) {
+    msgErro.textContent = '⚠️ Defina quem vai resolver (Interno/Terceirizado + Nome) na(s) observação(ões) ' + semResp.join(', ') + '.';
     msgErro.style.display = 'block';
     msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
@@ -2741,9 +2840,9 @@ function enviarFormulario() {
     return;
   }
 
-  // Caso especial: Serviços Gerais — múltiplas observações
+  // Caso especial: Serviços Gerais / Subabas Pousada em Geral — múltiplas observações
   const aptAtualPrev = APARTAMENTOS[aptSelecionado];
-  if (aptAtualPrev && aptAtualPrev.isServicosGerais) {
+  if (aptAtualPrev && (aptAtualPrev.isServicosGerais || aptAtualPrev.isPousadaSubaba)) {
     return _enviarServicosGerais(tecnico, dataRevisao, msgErro);
   }
   if (aptAtualPrev && aptAtualPrev.isDessalinizador) {
@@ -2779,6 +2878,23 @@ function enviarFormulario() {
   });
   if (secoesSemFoto.length > 0) {
     msgErro.textContent = '⚠️ Adicione ao menos 1 foto nas seções com problema: ' + secoesSemFoto.join(', ');
+    msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Responsável obrigatório nas seções com problema (Internet incluída)
+  const todasComMapa = Object.assign({}, mapaSecoes, { int: 'Internet' });
+  const secoesSemResp = [];
+  Object.entries(todasComMapa).forEach(([chave, nome]) => {
+    const obs = document.getElementById(chave + '_obs')?.value.trim();
+    if (!obs || obs === '—' || obs === '') return;
+    const dest = document.getElementById('dest-sec-' + chave)?.value || '';
+    const resp = document.getElementById('resp-sec-' + chave)?.value.trim() || '';
+    if (!dest || !resp) secoesSemResp.push(nome);
+  });
+  if (secoesSemResp.length > 0) {
+    msgErro.textContent = '⚠️ Defina quem vai resolver (Interno/Terceirizado + Nome) nas seções: ' + secoesSemResp.join(', ');
     msgErro.style.display = 'block';
     msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
@@ -2877,6 +2993,46 @@ function enviarFormulario() {
     urgente_psc:  document.getElementById('urg-psc')?.checked  || false,
     urgente_pin:  document.getElementById('urg-pin')?.checked  || false,
     urgente_ref:  document.getElementById('urg-ref')?.checked  || false,
+    // Destinação / Responsável / Data prevista por seção
+    dest_hid:  document.getElementById('dest-sec-hid')?.value  || '',
+    dest_ele:  document.getElementById('dest-sec-ele')?.value  || '',
+    dest_mob:  document.getElementById('dest-sec-mob')?.value  || '',
+    dest_ele2: document.getElementById('dest-sec-ele2')?.value || '',
+    dest_por:  document.getElementById('dest-sec-por')?.value  || '',
+    dest_jan:  document.getElementById('dest-sec-jan')?.value  || '',
+    dest_pis:  document.getElementById('dest-sec-pis')?.value  || '',
+    dest_for:  document.getElementById('dest-sec-for')?.value  || '',
+    dest_par:  document.getElementById('dest-sec-par')?.value  || '',
+    dest_pin:  document.getElementById('dest-sec-pin')?.value  || '',
+    dest_ref:  document.getElementById('dest-sec-ref')?.value  || '',
+    dest_int:  document.getElementById('dest-sec-int')?.value  || '',
+    dest_psc:  document.getElementById('dest-sec-psc')?.value  || '',
+    resp_hid:  document.getElementById('resp-sec-hid')?.value.trim()  || '',
+    resp_ele:  document.getElementById('resp-sec-ele')?.value.trim()  || '',
+    resp_mob:  document.getElementById('resp-sec-mob')?.value.trim()  || '',
+    resp_ele2: document.getElementById('resp-sec-ele2')?.value.trim() || '',
+    resp_por:  document.getElementById('resp-sec-por')?.value.trim()  || '',
+    resp_jan:  document.getElementById('resp-sec-jan')?.value.trim()  || '',
+    resp_pis:  document.getElementById('resp-sec-pis')?.value.trim()  || '',
+    resp_for:  document.getElementById('resp-sec-for')?.value.trim()  || '',
+    resp_par:  document.getElementById('resp-sec-par')?.value.trim()  || '',
+    resp_pin:  document.getElementById('resp-sec-pin')?.value.trim()  || '',
+    resp_ref:  document.getElementById('resp-sec-ref')?.value.trim()  || '',
+    resp_int:  document.getElementById('resp-sec-int')?.value.trim()  || '',
+    resp_psc:  document.getElementById('resp-sec-psc')?.value.trim()  || '',
+    data_hid:  document.getElementById('data-sec-hid')?.value  || '',
+    data_ele:  document.getElementById('data-sec-ele')?.value  || '',
+    data_mob:  document.getElementById('data-sec-mob')?.value  || '',
+    data_ele2: document.getElementById('data-sec-ele2')?.value || '',
+    data_por:  document.getElementById('data-sec-por')?.value  || '',
+    data_jan:  document.getElementById('data-sec-jan')?.value  || '',
+    data_pis:  document.getElementById('data-sec-pis')?.value  || '',
+    data_for:  document.getElementById('data-sec-for')?.value  || '',
+    data_par:  document.getElementById('data-sec-par')?.value  || '',
+    data_pin:  document.getElementById('data-sec-pin')?.value  || '',
+    data_ref:  document.getElementById('data-sec-ref')?.value  || '',
+    data_int:  document.getElementById('data-sec-int')?.value  || '',
+    data_psc:  document.getElementById('data-sec-psc')?.value  || '',
   };
 
   // ── Envio único — sem segunda chamada para fotos
@@ -3031,9 +3187,10 @@ function carregarPendenciasDashboard() {
 
 // Inicializar — busca histórico ao abrir
 // ═════════════════════════════════════════════════════════════════
-// SERVIÇOS GERAIS — múltiplas observações
+// SERVIÇOS GERAIS / SUBABAS POUSADA — múltiplas observações
 // ═════════════════════════════════════════════════════════════════
 let _contadorObsSG = 0;
+let _contextoMultiObs = { titulo: 'Serviços Gerais', secao: '📋 Serviços Gerais', apartamento: 'Serviços Gerais' };
 
 function adicionarObservacaoSG() {
   _contadorObsSG++;
@@ -3056,10 +3213,29 @@ function adicionarObservacaoSG() {
       '<div class="fotos-preview" id="preview-sg-' + idx + '"></div>' +
       '<div class="foto-status" id="status-sg-' + idx + '"></div>' +
     '</div>' +
+    _htmlCamposPendencia('sg', idx) +
     '<label class="urgente-form-check" style="margin-top:8px;">' +
       '<input type="checkbox" id="urg-sg-' + idx + '"> 🚨 Marcar como URGENTE' +
     '</label>';
   lista.appendChild(div);
+}
+
+// HTML auxiliar para campos: destinação + responsável + data prevista
+function _htmlCamposPendencia(prefix, idx) {
+  return '<div class="campos-pendencia" style="margin-top:10px;padding:10px;background:#f7f9fb;border:1px solid #d0d8e4;border-radius:8px;">' +
+    '<div style="font-size:12px;font-weight:700;color:#1F3864;margin-bottom:8px;">📍 Quem vai resolver? *</div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">' +
+      '<select id="dest-' + prefix + '-' + idx + '" style="padding:6px 10px;border:1.5px solid #d0d8e4;border-radius:6px;font-size:13px;font-weight:600;">' +
+        '<option value="">Selecione...</option>' +
+        '<option value="interno">🏨 Equipe Interna</option>' +
+        '<option value="terceirizado">🤝 Terceirizado</option>' +
+      '</select>' +
+      '<input type="text" id="resp-' + prefix + '-' + idx + '" placeholder="Nome do técnico/empresa" style="flex:1;min-width:140px;padding:6px 10px;border:1.5px solid #d0d8e4;border-radius:6px;font-size:13px;">' +
+    '</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#1F3864;margin-bottom:4px;">📅 Data prevista (opcional)</div>' +
+    '<input type="date" id="data-' + prefix + '-' + idx + '" style="padding:6px 10px;border:1.5px solid #d0d8e4;border-radius:6px;font-size:13px;">' +
+    '<div style="font-size:11px;color:#8a9ab0;margin-top:4px;">Se preencher data futura, a pendência só aparecerá nas listas no dia indicado.</div>' +
+  '</div>';
 }
 
 function removerObservacaoSG(idx) {
@@ -3106,6 +3282,7 @@ function adicionarObservacaoDes() {
       '<div class="fotos-preview" id="preview-des-' + idx + '"></div>' +
       '<div class="foto-status" id="status-des-' + idx + '"></div>' +
     '</div>' +
+    _htmlCamposPendencia('des', idx) +
     '<label class="urgente-form-check" style="margin-top:8px;">' +
       '<input type="checkbox" id="urg-des-' + idx + '"> 🚨 Marcar como URGENTE' +
     '</label>';
@@ -3247,6 +3424,20 @@ function paginaTrocas(dir) {
   });
 })();
 
+// Injeta destinação + responsável + data prevista em cada seção do formulário
+(function _injetarCamposPendencia() {
+  const chaves = ['hid','ele','mob','ele2','por','jan','pis','for','par','pin','ref','int','psc'];
+  chaves.forEach(chave => {
+    const sec = document.getElementById('sec-' + chave);
+    if (!sec) return;
+    const body = sec.querySelector('.section-body');
+    if (!body) return;
+    const wrap = document.createElement('div');
+    wrap.innerHTML = _htmlCamposPendencia('sec', chave);
+    body.appendChild(wrap);
+  });
+})();
+
 carregarHistorico();
 carregarPendenciasDashboard();
 carregarDiretrizes();
@@ -3366,30 +3557,14 @@ function gerarHtmlRelatorioPend(pends) {
       <div class="item${urg ? ' urgente' : ''}">
         <div class="item-num">${idx + 1}</div>
         <div class="item-header">
-          <span class="apto">🏨 ${_escHtmlPrint(p.apartamento)}</span>
-          <span class="secao">${_escHtmlPrint(p.secao)}</span>
+          <span class="apto">📍 ${_escHtmlPrint(p.apartamento)}</span>
           ${urg ? '<span class="urg">🚨 URGENTE</span>' : ''}
         </div>
-        <div class="desc">${_escHtmlPrint(p.descricao) || '—'}</div>
-        <div class="meta">
-          📅 Aberta em ${_escHtmlPrint(p.data_abertura)} · 👷 Aberto por: ${_escHtmlPrint(p.tecnico_abre) || '—'}
-        </div>
         <div class="responsavel-box">
-          <span class="destino-tag">📍 ${destText}</span>
-          ${p.responsavel ? '👤 Responsável: <strong>' + _escHtmlPrint(p.responsavel) + '</strong>' : '<em style="color:#888;">— Sem responsável definido —</em>'}
+          <span class="destino-tag">${destText}</span>
+          ${p.responsavel ? '👤 <strong>' + _escHtmlPrint(p.responsavel) + '</strong>' : '<em style="color:#888;">— Sem responsável definido —</em>'}
         </div>
-        ${fotosArr.length > 0 ? `
-          <div class="fotos">
-            ${fotosArr.map(l => `<img src="${_driveThumbUrl(l, 'w400')}" alt="">`).join('')}
-          </div>
-        ` : '<div class="sem-fotos">(sem fotos)</div>'}
-        <div class="resolucao">
-          <strong>Resolução:</strong>
-          <div class="campo">Data: ____/____/______ &nbsp; &nbsp; · &nbsp; &nbsp; Técnico: _________________________________</div>
-          <div class="campo">Observações: __________________________________________________________</div>
-          <div class="campo">_____________________________________________________________________</div>
-          <div class="campo">_____________________________________________________________________</div>
-        </div>
+        <div class="desc"><strong>🔧 Problema:</strong> ${_escHtmlPrint(p.descricao) || '—'}</div>
       </div>
     `;
   });
@@ -3529,18 +3704,31 @@ function filtrarPendenciasGeral(filtro) {
   document.querySelectorAll('.pend-filtro').forEach(el => {
     el.classList.toggle('active', el.getAttribute('data-filtro') === filtro);
   });
+  // Botão "Por prestador" só faz sentido para Terceirizadas
+  const btnPrestador = document.getElementById('vm-prestador');
+  if (btnPrestador) {
+    btnPrestador.style.display = (filtro === 'terceirizado') ? '' : 'none';
+    if (filtro !== 'terceirizado' && _modoViewPend === 'prestador') {
+      setViewModePend('apto');
+      return;
+    }
+  }
   renderPendenciasGeral();
 }
 
 function renderPendenciasGeral() {
   const lista = document.getElementById('pend-geral-lista');
   const filtradas = _pendGeralCache.filter(p => {
-    const dest = (p.destinacao || '').toLowerCase();
+    const dest  = (p.destinacao || '').toLowerCase();
+    const secao = String(p.secao || '').toLowerCase();
     if (_filtroPendGeral === 'todas') return true;
     if (_filtroPendGeral === 'urgente') return !!p.urgente;
     if (_filtroPendGeral === 'sem') return !dest || dest === '—' || dest === '';
     if (_filtroPendGeral === 'interno') return dest === 'interno';
     if (_filtroPendGeral === 'terceirizado') return dest === 'terceirizado';
+    if (_filtroPendGeral === 'recepcao')     return secao.indexOf('recepção') !== -1 || secao.indexOf('recepcao') !== -1;
+    if (_filtroPendGeral === 'financeiro')   return secao.indexOf('financeiro') !== -1;
+    if (_filtroPendGeral === 'almoxarifado') return secao.indexOf('almoxarifado') !== -1;
     return true;
   });
 
@@ -3551,6 +3739,10 @@ function renderPendenciasGeral() {
 
   if (_modoViewPend === 'cat') {
     renderPendPorCategoria(filtradas, lista);
+    return;
+  }
+  if (_modoViewPend === 'prestador') {
+    renderPendPorPrestador(filtradas, lista);
     return;
   }
 
@@ -3667,6 +3859,58 @@ function renderPendenciasGeral() {
       html += `</div></div>`;
     });
 
+    html += `</div></div>`;
+  });
+
+  lista.innerHTML = html;
+}
+
+// Renderização por prestador (cada prestador é um grupo, útil para Terceirizadas)
+function renderPendPorPrestador(filtradas, lista) {
+  const porPrestador = {};
+  filtradas.forEach(p => {
+    const key = (p.responsavel && p.responsavel.trim()) ? p.responsavel.trim() : '— Sem responsável definido —';
+    if (!porPrestador[key]) porPrestador[key] = [];
+    porPrestador[key].push(p);
+  });
+
+  const nomes = Object.keys(porPrestador).sort();
+  let html = '';
+  nomes.forEach((nome, idx) => {
+    const gid = 'prest-' + idx;
+    const arr = porPrestador[nome];
+    html += `<div class="pend-apto-group recolhido" id="${gid}">
+      <div class="pend-apto-header" onclick="document.getElementById('${gid}').classList.toggle('recolhido')">
+        <span class="pend-apto-titulo">👤 ${_escHtml(nome)}</span>
+        <span class="pend-apto-count">${arr.length} pend${arr.length > 1 ? 'ências' : 'ência'}</span>
+        <span class="pend-apto-arrow">▼</span>
+      </div>
+      <div class="pend-apto-body">`;
+    arr.forEach(p => {
+      const fotosArr = p.fotos && p.fotos !== '—' ? p.fotos.split('\n').filter(l => l.trim() !== '') : [];
+      _pendFotos[p.id] = fotosArr;
+      const urg = !!p.urgente;
+      const urgBadgeHtml = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
+      const dest = (p.destinacao || '').toLowerCase();
+      const responsavel = p.responsavel || '';
+      const tagDest = dest === 'interno'
+        ? '<span class="destinacao-tag interno">🏨 Interno</span>'
+        : dest === 'terceirizado'
+        ? '<span class="destinacao-tag terceirizado">🤝 Terceirizado</span>'
+        : '<span class="destinacao-tag sem">⏳ Sem destinação</span>';
+      const checked = _pendSelecionadas.has(p.id) ? 'checked' : '';
+      html += `
+        <div class="pend-card ${urg ? 'urgente' : ''}" id="pendg-${_escHtml(p.id)}">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+            <input type="checkbox" class="pend-check" data-id="${_escHtml(p.id)}" ${checked} onchange="togglePendSelecionada('${_escHtml(p.id)}', this.checked)">
+            <span class="pend-apto-badge">🏨 ${_escHtml(p.apartamento) || '?'}</span>
+            <span style="font-size:11px;color:#2E75B6;font-weight:700;">${_escHtml(p.secao)}</span>
+            ${urgBadgeHtml}
+          </div>
+          <div class="pend-desc-text" style="margin-bottom:6px;">${_escHtml(p.descricao) || '—'}</div>
+          <div class="pend-data-abertura">📅 Aberta em ${_escHtml(p.data_abertura)} · 👷 ${_escHtml(p.tecnico_abre) || '—'}${p.data_prevista ? ' · 🗓️ Prevista: ' + _escHtml(p.data_prevista) : ''}</div>
+        </div>`;
+    });
     html += `</div></div>`;
   });
 
@@ -4146,8 +4390,10 @@ function carregarCompras() {
               </div>`).join('')}</div>`
           : '';
         const urgBadge = urg ? '<span class="urgente-badge">🚨 URGENTE</span>' : '';
-        html += `<div class="diretriz-card ${urg ? 'urgente' : ''}" style="${urg ? 'border-left-color:#c62828;background:#fff8f8;' : ''}">
-          <div style="margin-bottom:6px;">${urgBadge}</div>
+        const concl = !!c.concluida;
+        const conclBadge = concl ? '<span class="badge-concluida">✅ CONCLUÍDA</span>' : '';
+        html += `<div class="diretriz-card ${urg ? 'urgente' : ''} ${concl ? 'concluida' : ''}" style="${urg && !concl ? 'border-left-color:#c62828;background:#fff8f8;' : ''}">
+          <div style="margin-bottom:6px;">${conclBadge}${urgBadge}</div>
           <div class="diretriz-titulo">${_escHtml(c.titulo) || '—'}</div>
           ${c.subtitulo ? `<div class="diretriz-subtitulo">${_escHtml(c.subtitulo)}</div>` : ''}
           <div class="diretriz-conteudo">${_escHtml(c.descricao)}</div>
@@ -4156,6 +4402,7 @@ function carregarCompras() {
           <div class="diretriz-actions">
             <button class="btn-edit-diretriz" onclick="editarCompra('${_escHtml(c.id)}')">✏️ Editar</button>
             <button class="btn-urgente-toggle ${urg ? 'ativo' : ''}" onclick="toggleUrgenteCompra('${_escHtml(c.id)}')">${urg ? '✅ Desmarcar urgente' : '🚨 Marcar urgente'}</button>
+            <button class="btn-concluida ${concl ? 'ativo' : ''}" onclick="toggleConcluidaCompra('${_escHtml(c.id)}')">${concl ? '↩ Reabrir' : '✅ Concluído'}</button>
             <button class="btn-historico-toggle" onclick="toggleHistoricoCompra('${_escHtml(c.id)}')">📜 Ver histórico</button>
             <button class="btn-del-diretriz" onclick="excluirCompra('${_escHtml(c.id)}')">🗑️ Excluir</button>
           </div>
@@ -4251,6 +4498,18 @@ function toggleUrgenteCompra(id) {
     headers: { 'Content-Type': 'text/plain' },
     keepalive: true,
     body: JSON.stringify({ action: 'marcar_urgente_compra', id: id, urgente: c.urgente }),
+  }).catch(() => {});
+}
+
+function toggleConcluidaCompra(id) {
+  const c = _comprasCache[id]; if (!c) return;
+  c.concluida = !c.concluida;
+  carregarCompras();
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
+    body: JSON.stringify({ action: 'marcar_concluida_compra', id: id, concluida: c.concluida }),
   }).catch(() => {});
 }
 
