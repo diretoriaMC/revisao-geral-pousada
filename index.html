@@ -2017,6 +2017,26 @@
 </div>
 
 
+<!-- MODAL EDITAR PENDÊNCIA -->
+<div class="modal-overlay" id="modal-edit-pend">
+  <div class="modal-content">
+    <h3>✏️ Editar Pendência</h3>
+    <input type="hidden" id="ep-id" value="">
+    <input type="hidden" id="ep-linha" value="">
+    <div id="ep-info" style="font-size:13px;color:#1F3864;margin-bottom:10px;font-weight:600;"></div>
+    <label>Descrição</label>
+    <textarea id="ep-descricao" placeholder="Descreva o problema..." style="min-height:100px;"></textarea>
+    <label>Data prevista (opcional)</label>
+    <input type="date" id="ep-data-prevista">
+    <div style="font-size:11px;color:#8a9ab0;margin-top:4px;">Se for data futura, a pendência só reaparecerá na data indicada.</div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancelar" onclick="fecharModalEditarPendencia()">Cancelar</button>
+      <button class="btn-modal-salvar" onclick="salvarEdicaoPendencia()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- MODAL DIRETRIZ -->
 <div class="modal-overlay" id="modal-diretriz">
   <div class="modal-content">
@@ -3851,6 +3871,8 @@ function renderPendenciasGeral() {
             </div>
             <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">📜 Ver histórico</button>
             <button class="btn-urgente-toggle ${urg ? 'ativo' : ''}" onclick="toggleUrgente('${_escHtml(p.id)}', ${p.linha_planilha})">${urg ? '✅ Desmarcar urgente' : '🚨 Marcar urgente'}</button>
+            <button class="btn-edit-diretriz" onclick="abrirModalEditarPendencia('${_escHtml(p.id)}', ${p.linha_planilha})">✏️ Editar</button>
+            <button class="btn-del-diretriz" onclick="excluirPendencia('${_escHtml(p.id)}', ${p.linha_planilha})">🗑️ Excluir</button>
             <button class="btn-resolver-toggle" onclick="toggleFormResolucao('${_escHtml(p.id)}')">✅ Concluir pendência</button>
             <div class="form-resolucao" id="form-res-pg-${_escHtml(p.id)}">
               <input type="text" placeholder="Nome de quem resolveu *" id="res-tec-pg-${_escHtml(p.id)}">
@@ -4017,6 +4039,8 @@ function renderPendPorCategoria(filtradas, lista) {
           </div>
           <button class="btn-historico-toggle" onclick="toggleHistorico('${_escHtml(p.id)}')">📜 Ver histórico</button>
           <button class="btn-urgente-toggle ${urg ? 'ativo' : ''}" onclick="toggleUrgente('${_escHtml(p.id)}', ${p.linha_planilha})">${urg ? '✅ Desmarcar urgente' : '🚨 Marcar urgente'}</button>
+          <button class="btn-edit-diretriz" onclick="abrirModalEditarPendencia('${_escHtml(p.id)}', ${p.linha_planilha})">✏️ Editar</button>
+          <button class="btn-del-diretriz" onclick="excluirPendencia('${_escHtml(p.id)}', ${p.linha_planilha})">🗑️ Excluir</button>
           <button class="btn-resolver-toggle" onclick="toggleFormResolucao('${_escHtml(p.id)}')">✅ Concluir pendência</button>
           <div class="form-resolucao" id="form-res-pg-${_escHtml(p.id)}">
             <input type="text" placeholder="Nome de quem resolveu *" id="res-tec-pg-${_escHtml(p.id)}">
@@ -4043,6 +4067,89 @@ function renderPendPorCategoria(filtradas, lista) {
 function mostrarFormDestinacao(idPend) {
   const form = document.getElementById('form-dest-' + idPend);
   if (form) form.style.display = '';
+}
+
+// ═════════════════════════════════════════════════════════════════
+// EDITAR / EXCLUIR PENDÊNCIA
+// ═════════════════════════════════════════════════════════════════
+function abrirModalEditarPendencia(idPend, linhaPlanilha) {
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  if (!p) { alert('Pendência não encontrada.'); return; }
+  document.getElementById('ep-id').value = idPend;
+  document.getElementById('ep-linha').value = linhaPlanilha;
+  document.getElementById('ep-info').textContent = '🏨 ' + p.apartamento + '  ·  ' + p.secao;
+  document.getElementById('ep-descricao').value = p.descricao || '';
+  // Converte data prevista (dd/mm/yyyy ou ISO) para formato HTML date
+  let dataIso = '';
+  if (p.data_prevista) {
+    const s = String(p.data_prevista);
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) dataIso = s.substring(0, 10);
+    else if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) {
+      const parts = s.substring(0, 10).split('/');
+      dataIso = parts[2] + '-' + parts[1] + '-' + parts[0];
+    }
+  }
+  document.getElementById('ep-data-prevista').value = dataIso;
+  document.getElementById('modal-edit-pend').classList.add('ativo');
+}
+
+function fecharModalEditarPendencia() {
+  document.getElementById('modal-edit-pend').classList.remove('ativo');
+}
+
+function salvarEdicaoPendencia() {
+  const idPend = document.getElementById('ep-id').value;
+  const linha  = parseInt(document.getElementById('ep-linha').value);
+  const desc   = document.getElementById('ep-descricao').value.trim();
+  const data   = document.getElementById('ep-data-prevista').value || '';
+
+  if (!desc) { alert('A descrição não pode ficar vazia.'); return; }
+
+  // UI otimista: atualiza cache e re-renderiza
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  if (p) {
+    p.descricao = desc;
+    p.data_prevista = data;
+  }
+  fecharModalEditarPendencia();
+  renderPendenciasGeral();
+
+  // Envia em segundo plano
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
+    body: JSON.stringify({
+      action: 'editar_pendencia',
+      id_pendencia: idPend,
+      linha_planilha: linha,
+      descricao: desc,
+      data_prevista: data,
+    }),
+  }).catch(err => console.error('Erro editar pendência:', err));
+}
+
+function excluirPendencia(idPend, linhaPlanilha) {
+  const p = _pendGeralCache.find(x => x.id === idPend);
+  const nome = p ? (p.apartamento + ' — ' + p.secao) : idPend;
+  if (!confirm('Excluir esta pendência?\n\n' + nome + '\n\nEsta ação não pode ser desfeita.')) return;
+
+  // UI otimista: remove do cache e re-renderiza
+  _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
+  _pendSelecionadas.delete(idPend);
+  renderPendenciasGeral();
+  atualizarBarraSelecaoPend();
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
+    body: JSON.stringify({
+      action: 'excluir_pendencia',
+      id_pendencia: idPend,
+      linha_planilha: linhaPlanilha,
+    }),
+  }).catch(err => console.error('Erro excluir pendência:', err));
 }
 
 function salvarDestinacao(idPend, linhaPlanilha) {
