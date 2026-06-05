@@ -2559,6 +2559,10 @@ function carregarPendencias(nomeApto) {
           <div class="pendencia-desc">${p.descricao}</div>
           <div class="pendencia-meta">📅 Aberta em ${p.data_abertura} · 👷 ${p.tecnico_abre}</div>
           ${fotosHtml}
+          <div style="display:flex;gap:6px;margin:6px 0 10px;flex-wrap:wrap;">
+            <button class="btn-edit-diretriz" onclick="editarPendenciaApto('${p.id}', ${p.linha_planilha})">✏️ Editar</button>
+            <button class="btn-del-diretriz" onclick="excluirPendenciaApto('${p.id}', ${p.linha_planilha}, '${(p.secao || '').replace(/'/g,'')}', '${(p.descricao || '').replace(/'/g,'').substring(0,60)}')">🗑️ Excluir</button>
+          </div>
           <div class="foto-upload-area" style="margin-bottom:10px;">
             <label class="foto-upload-label" style="font-size:12px;padding:6px 10px;">
               📷 Fotos da resolução
@@ -2582,6 +2586,77 @@ function carregarPendencias(nomeApto) {
     .catch(() => {
       lista.innerHTML = '<div style="color:#e53935;font-size:13px;">⚠️ Não foi possível carregar pendências.</div>';
     });
+}
+
+// ── Editar / Excluir pendência (a partir da aba Apartamentos) ──────────
+function editarPendenciaApto(idPend, linhaPlanilha) {
+  // Pega dados atuais direto do card (não há cache global aqui)
+  const card = document.getElementById('pend-' + idPend);
+  if (!card) { alert('Pendência não encontrada.'); return; }
+  const secaoEl = card.querySelector('.pendencia-secao');
+  const descEl  = card.querySelector('.pendencia-desc');
+  const secao = secaoEl ? secaoEl.textContent : '';
+  const desc  = descEl  ? descEl.textContent  : '';
+
+  document.getElementById('ep-id').value = idPend;
+  document.getElementById('ep-linha').value = linhaPlanilha;
+  document.getElementById('ep-info').textContent = secao;
+  document.getElementById('ep-descricao').value = desc;
+  document.getElementById('ep-data-prevista').value = '';
+  document.getElementById('modal-edit-pend').classList.add('ativo');
+
+  // Override do botão Salvar do modal para atualizar a UI desta aba
+  document.querySelector('#modal-edit-pend .btn-modal-salvar').onclick = function() {
+    const novaDesc = document.getElementById('ep-descricao').value.trim();
+    const novaData = document.getElementById('ep-data-prevista').value || '';
+    if (!novaDesc) { alert('A descrição não pode ficar vazia.'); return; }
+    // UI otimista: atualiza o texto no card
+    if (descEl) descEl.textContent = novaDesc;
+    fecharModalEditarPendencia();
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      keepalive: true,
+      body: JSON.stringify({
+        action: 'editar_pendencia',
+        id_pendencia: idPend,
+        linha_planilha: linhaPlanilha,
+        descricao: novaDesc,
+        data_prevista: novaData,
+      }),
+    }).catch(err => console.error('Erro editar pendência:', err));
+    // Restaura o handler padrão depois de usar
+    document.querySelector('#modal-edit-pend .btn-modal-salvar').onclick = salvarEdicaoPendencia;
+  };
+}
+
+function excluirPendenciaApto(idPend, linhaPlanilha, secao, descricao) {
+  if (!confirm('Excluir esta pendência?\n\n' + secao + '\n' + descricao + '\n\nEsta ação não pode ser desfeita.')) return;
+
+  // UI otimista: remove o card visualmente
+  const card = document.getElementById('pend-' + idPend);
+  if (card) {
+    card.style.opacity = '0';
+    card.style.transition = 'opacity .3s';
+    setTimeout(() => {
+      card.remove();
+      const lista = document.getElementById('lista-pendencias');
+      if (lista && lista.children.length === 0) {
+        lista.innerHTML = '<div class="sem-pendencias">✅ Nenhuma pendência em aberto</div>';
+      }
+    }, 320);
+  }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    keepalive: true,
+    body: JSON.stringify({
+      action: 'excluir_pendencia',
+      id_pendencia: idPend,
+      linha_planilha: linhaPlanilha,
+    }),
+  }).catch(err => console.error('Erro excluir pendência:', err));
 }
 
 // ── Resolver uma pendência ──────────────────────────────────────────────
