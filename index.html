@@ -1,4 +1,3 @@
-<!-- teste de sincronização automática -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -321,6 +320,47 @@
     }
     .foto-upload-label:hover { background: #dde8f7; }
     .foto-upload-label input[type="file"] { display: none; }
+
+    /* ── PAR DE BOTÕES: CÂMERA + GALERIA ── */
+    .foto-botoes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .foto-btn-camera, .foto-btn-galeria {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .foto-btn-camera input[type="file"],
+    .foto-btn-galeria input[type="file"] { display: none; }
+    .foto-btn-camera {
+      background: #2E75B6;
+      color: white;
+      border: 1.5px solid #2E75B6;
+    }
+    .foto-btn-camera:hover  { background: #1F5fa6; }
+    .foto-btn-camera:active { transform: scale(.96); }
+    .foto-btn-galeria {
+      background: #EFF4FB;
+      color: #1F3864;
+      border: 1.5px dashed #2E75B6;
+    }
+    .foto-btn-galeria:hover  { background: #dde8f7; }
+    .foto-btn-galeria:active { transform: scale(.96); }
+    /* Variação compacta (usada dentro dos cards de pendência) */
+    .foto-botoes.compacto .foto-btn-camera,
+    .foto-botoes.compacto .foto-btn-galeria {
+      font-size: 12px;
+      padding: 7px 12px;
+    }
     .fotos-preview {
       display: flex;
       flex-wrap: wrap;
@@ -998,10 +1038,10 @@
       margin-bottom: 8px;
       box-sizing: border-box;
     }
-    .form-resolucao .foto-upload-label {
-      background: white;
+    .form-resolucao .foto-botoes {
       margin: 4px 0 6px;
     }
+    .form-resolucao .foto-btn-galeria { background: white; }
     .btn-confirmar-resolucao {
       background: #2e7d32;
       color: white;
@@ -1554,10 +1594,16 @@
         <textarea id="hid_obs" placeholder="Descreva problemas encontrados..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'hid')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'hid')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'hid')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-hid"></div>
         <div class="foto-status" id="status-hid"></div>
       </div>
@@ -1577,10 +1623,16 @@
         <textarea id="ele_obs" placeholder="Lâmpadas queimadas, tomadas com problema..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'ele')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-ele"></div>
         <div class="foto-status" id="status-ele"></div>
       </div>
@@ -1600,10 +1652,16 @@
         <textarea id="mob_obs" placeholder="Peças quebradas, itens para substituir..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'mob')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'mob')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'mob')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-mob"></div>
         <div class="foto-status" id="status-mob"></div>
       </div>
@@ -1623,10 +1681,16 @@
         <textarea id="ele2_obs" placeholder="Equipamentos com problema..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele2')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'ele2')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ele2')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-ele2"></div>
         <div class="foto-status" id="status-ele2"></div>
       </div>
@@ -1646,10 +1710,16 @@
         <textarea id="por_obs" placeholder="Fechaduras, dobradiças, trincos com problema..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'por')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'por')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'por')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-por"></div>
         <div class="foto-status" id="status-por"></div>
       </div>
@@ -1669,10 +1739,16 @@
         <textarea id="jan_obs" placeholder="Vidros, folgas, vedação, cortinas, persianas..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'jan')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'jan')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'jan')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-jan"></div>
         <div class="foto-status" id="status-jan"></div>
       </div>
@@ -1692,10 +1768,16 @@
         <textarea id="pis_obs" placeholder="Peças soltas, rejunte falho, localização..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'pis')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'pis')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'pis')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-pis"></div>
         <div class="foto-status" id="status-pis"></div>
       </div>
@@ -1715,10 +1797,16 @@
         <textarea id="for_obs" placeholder="Manchas, goteiras, rachaduras, localização..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'for')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'for')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'for')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-for"></div>
         <div class="foto-status" id="status-for"></div>
       </div>
@@ -1738,10 +1826,16 @@
         <textarea id="par_obs" placeholder="Manchas, rachaduras, localização específica..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'par')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'par')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'par')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-par"></div>
         <div class="foto-status" id="status-par"></div>
       </div>
@@ -1761,10 +1855,16 @@
         <textarea id="pin_obs" placeholder="Manchas, descascamento, retoques necessários, cor..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'pin')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'pin')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'pin')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-pin"></div>
         <div class="foto-status" id="status-pin"></div>
       </div>
@@ -1784,10 +1884,16 @@
         <textarea id="ref_obs" placeholder="Ar-condicionado, geladeira, frigobar, ruído, gelo, vazamento..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ref')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'ref')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'ref')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-ref"></div>
         <div class="foto-status" id="status-ref"></div>
       </div>
@@ -1807,10 +1913,16 @@
         <textarea id="int_obs" placeholder="Sinal fraco, sem conexão, equipamento com problema..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'int')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'int')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'int')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-int"></div>
         <div class="foto-status" id="status-int"></div>
       </div>
@@ -1830,10 +1942,16 @@
         <textarea id="psc_obs" placeholder="Bomba, filtro, vazamentos, qualidade da água, iluminação, escada..." oninput="atualizarProgresso()"></textarea>
       </div>
       <div class="foto-upload-area">
-        <label class="foto-upload-label">
-          📷 Adicionar fotos
-          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'psc')">
-        </label>
+        <div class="foto-botoes">
+          <label class="foto-btn-camera">
+            📸 Tirar foto
+            <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'psc')">
+          </label>
+          <label class="foto-btn-galeria">
+            🖼️ Galeria
+            <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'psc')">
+          </label>
+        </div>
         <div class="fotos-preview" id="preview-psc"></div>
         <div class="foto-status" id="status-psc"></div>
       </div>
@@ -1854,10 +1972,16 @@
       <label style="display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;">
         📷 Fotos adicionais <span style="font-weight:400;color:#8a9ab0;">(pendências que não se encaixaram nos itens acima)</span>
       </label>
-      <label class="foto-upload-label">
-        📷 Adicionar fotos
-        <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'obs')">
-      </label>
+      <div class="foto-botoes">
+        <label class="foto-btn-camera">
+          📸 Tirar foto
+          <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'obs')">
+        </label>
+        <label class="foto-btn-galeria">
+          🖼️ Galeria
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'obs')">
+        </label>
+      </div>
       <div class="fotos-preview" id="preview-obs"></div>
       <div class="foto-status" id="status-obs"></div>
     </div>
@@ -1905,10 +2029,16 @@
       <label>Observação (opcional)</label>
       <textarea id="troca-obs" placeholder="Quantos cartuchos, modelo, condições anteriores..." style="min-height:60px;"></textarea>
       <label>Fotos dos cartuchos novos/usados *</label>
-      <label class="foto-upload-label" style="display:inline-flex;">
-        📷 Adicionar fotos
-        <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'troca')">
-      </label>
+      <div class="foto-botoes">
+        <label class="foto-btn-camera">
+          📸 Tirar foto
+          <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'troca')">
+        </label>
+        <label class="foto-btn-galeria">
+          🖼️ Galeria
+          <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'troca')">
+        </label>
+      </div>
       <div class="fotos-preview" id="preview-troca"></div>
       <div class="foto-status" id="status-troca"></div>
       <div class="modal-actions">
@@ -2000,10 +2130,16 @@
     <label>Descrição</label>
     <textarea id="compra-descricao" placeholder="Detalhes, fornecedor, valores..."></textarea>
     <label>Fotos</label>
-    <label class="foto-upload-label" style="display:inline-flex;">
-      📷 Adicionar fotos
-      <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'compra')">
-    </label>
+    <div class="foto-botoes">
+      <label class="foto-btn-camera">
+        📸 Tirar foto
+        <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,'compra')">
+      </label>
+      <label class="foto-btn-galeria">
+        🖼️ Galeria
+        <input type="file" accept="image/*" multiple onchange="adicionarFotos(this,'compra')">
+      </label>
+    </div>
     <div class="fotos-preview" id="preview-compra"></div>
     <label class="urgente-form-check" style="margin-top:10px;">
       <input type="checkbox" id="compra-urgente"> 🚨 Marcar como URGENTE
@@ -2428,21 +2564,61 @@ const _fotosLinks    = _fotosBase64;
 const _fotosLinksRes = _fotosBase64Resolucao;
 
 // Redimensiona e comprime imagem via canvas, retorna base64 via callback
+// Seções que NÃO exigem foto (nem para abrir nem para resolver pendência)
+function _secaoDispensaFoto(secao) {
+  const s = String(secao || '').toLowerCase();
+  return s.indexOf('internet') !== -1
+      || s.indexOf('recep') !== -1
+      || s.indexOf('reserva') !== -1
+      || s.indexOf('financeiro') !== -1
+      || s.indexOf('almoxarifado') !== -1;
+}
+
+// Compressão adaptativa: reduz dimensão/qualidade em passos até o base64
+// caber no orçamento (ALVO_KB). Garante que fotos de celulares modernos
+// (12MP+) nunca gerem payload grande o suficiente para falhar o envio.
+const _FOTO_ALVO_KB   = 85;   // tamanho alvo por foto (base64)
+const _FOTO_LIMITE_KB = 130;  // teto absoluto por foto
+
 function _comprimirImagem(arquivo, cb) {
   const reader = new FileReader();
+  reader.onerror = function() { cb(null); };
   reader.onload = function(ev) {
     const img = new Image();
+    img.onerror = function() { cb(null); };
     img.onload = function() {
-      const MAX = 600; // max 600px — ~15-30KB por foto em base64 (mais rápido)
-      let w = img.width, h = img.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-        else        { w = Math.round(w * MAX / h); h = MAX; }
+      // Passos progressivos: (dimensão máxima, qualidade JPEG)
+      const passos = [
+        [1200, 0.80], [1000, 0.75], [900, 0.70],
+        [800, 0.65],  [700, 0.60],  [600, 0.55],
+        [500, 0.50],  [400, 0.45]
+      ];
+
+      function render(maxDim, q) {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else       { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        return canvas.toDataURL('image/jpeg', q);
       }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', 0.62));
+
+      let resultado = null;
+      for (let i = 0; i < passos.length; i++) {
+        resultado = render(passos[i][0], passos[i][1]);
+        const kb = resultado.length / 1024;
+        if (kb <= _FOTO_ALVO_KB) break;              // já está bom
+        if (i === passos.length - 1) {                // último passo
+          if (kb > _FOTO_LIMITE_KB) resultado = render(320, 0.40);
+        }
+      }
+      cb(resultado);
     };
     img.src = ev.target.result;
   };
@@ -2457,20 +2633,44 @@ function adicionarFotos(input, secao) {
   const preview  = document.getElementById('preview-' + secao);
   const statusEl = document.getElementById('status-' + secao);
 
+  // Feedback imediato enquanto comprime (celulares podem levar 1-2s por foto)
+  if (statusEl) {
+    statusEl.textContent = '⏳ Processando ' + arquivos.length + ' foto(s)...';
+    statusEl.className = 'foto-status enviando';
+  }
+
+  let pendentes = arquivos.length;
   arquivos.forEach((arquivo, i) => {
     _comprimirImagem(arquivo, function(base64) {
-      const thumbId = 'thumb-' + secao + '-' + Date.now() + i;
+      pendentes--;
+      if (!base64) {
+        if (statusEl) {
+          statusEl.textContent = '⚠️ Uma foto não pôde ser processada. Tente novamente.';
+          statusEl.className = 'foto-status erro';
+        }
+        return;
+      }
+      const thumbId = 'thumb-' + secao + '-' + Date.now() + '-' + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
       thumb.id = thumbId;
       thumb.innerHTML = `<img src="${base64}"><button class="foto-remove" onclick="removerFoto('${secao}','${thumbId}')">×</button>`;
       preview.appendChild(thumb);
       _fotosBase64[secao].push({ base64, mime: 'image/jpeg', nome: arquivo.name, thumbId });
-      statusEl.textContent = `✅ ${_fotosBase64[secao].length} foto(s) pronta(s) — será(ão) salva(s) ao enviar`;
-      statusEl.className = 'foto-status enviado';
+      if (statusEl && pendentes === 0) _atualizarStatusFotos(secao, statusEl);
+      else if (statusEl) statusEl.textContent = '⏳ Processando... (' + pendentes + ' restante(s))';
     });
   });
   input.value = '';
+}
+
+// Mostra quantidade e peso total — ajuda a perceber quando há fotos demais
+function _atualizarStatusFotos(secao, statusEl) {
+  const arr = _fotosBase64[secao] || [];
+  if (arr.length === 0) { statusEl.textContent = ''; statusEl.className = 'foto-status'; return; }
+  const kb = _tamanhoFotosKB([arr]);
+  statusEl.textContent = '✅ ' + arr.length + ' foto(s) pronta(s) · ' + kb + ' KB — será(ão) salva(s) ao enviar';
+  statusEl.className = 'foto-status enviado';
 }
 
 function removerFoto(secao, thumbId) {
@@ -2480,8 +2680,7 @@ function removerFoto(secao, thumbId) {
   const el = document.getElementById(thumbId);
   if (el) el.remove();
   const statusEl = document.getElementById('status-' + secao);
-  const qtd = (_fotosBase64[secao] || []).length;
-  if (statusEl) statusEl.textContent = qtd > 0 ? `✅ ${qtd} foto(s) pronta(s) — será(ão) salva(s) ao enviar` : '';
+  if (statusEl) _atualizarStatusFotos(secao, statusEl);
 }
 
 function adicionarFotosResolucao(input, idPend) {
@@ -2494,6 +2693,7 @@ function adicionarFotosResolucao(input, idPend) {
 
   arquivos.forEach((arquivo, i) => {
     _comprimirImagem(arquivo, function(base64) {
+      if (!base64) { alert('⚠️ Não foi possível processar a foto "' + (arquivo.name || '') + '". Tente tirar novamente.'); return; }
       const thumbId = 'thumb-res-' + idPend + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
@@ -2565,10 +2765,16 @@ function carregarPendencias(nomeApto) {
             <button class="btn-del-diretriz" onclick="excluirPendenciaApto('${p.id}', ${p.linha_planilha}, '${(p.secao || '').replace(/'/g,'')}', '${(p.descricao || '').replace(/'/g,'').substring(0,60)}')">🗑️ Excluir</button>
           </div>
           <div class="foto-upload-area" style="margin-bottom:10px;">
-            <label class="foto-upload-label" style="font-size:12px;padding:6px 10px;">
-              📷 Fotos da resolução
-              <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucao(this,'${p.id}')">
-            </label>
+            <div class="foto-botoes compacto">
+              <label class="foto-btn-camera">
+                📸 Tirar foto
+                <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotosResolucao(this,'${p.id}')">
+              </label>
+              <label class="foto-btn-galeria">
+                🖼️ Galeria
+                <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucao(this,'${p.id}')">
+              </label>
+            </div>
             <div class="fotos-preview" id="preview-res-${p.id}"></div>
             <div class="foto-status" id="status-res-${p.id}"></div>
           </div>
@@ -2664,32 +2870,23 @@ function excluirPendenciaApto(idPend, linhaPlanilha, secao, descricao) {
 function resolverPendencia(idPend, linhaPlanilha) {
   const tecnico = document.getElementById('tec-' + idPend)?.value.trim();
   if (!tecnico) { alert('⚠️ Informe o nome de quem resolveu a pendência.'); return; }
-  if ((_fotosBase64Resolucao[idPend] || []).length === 0) { alert('⚠️ Adicione ao menos 1 foto da resolução antes de fechar a pendência.'); return; }
+  // Seções administrativas (Recepção, Financeiro, Almoxarifado, Internet) não exigem foto
+  const secaoCard = document.querySelector('#pend-' + idPend + ' .pendencia-secao')?.textContent || '';
+  if (!_secaoDispensaFoto(secaoCard) && (_fotosBase64Resolucao[idPend] || []).length === 0) {
+    alert('⚠️ Adicione ao menos 1 foto da resolução antes de fechar a pendência.'); return;
+  }
 
   const btn = document.querySelector(`#pend-${idPend} .btn-resolver`);
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Salvando...'; }
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({
-      action:           'resolver_pendencia',
-      linha_planilha:   linhaPlanilha,
-      tecnico_resolve:  tecnico,
-      obs_resolucao:    document.getElementById('obs-res-' + idPend)?.value.trim() || '',
-      fotos_resolucao:  (_fotosBase64Resolucao[idPend] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    }),
+  _postarScript({
+    action:           'resolver_pendencia',
+    linha_planilha:   linhaPlanilha,
+    tecnico_resolve:  tecnico,
+    obs_resolucao:    document.getElementById('obs-res-' + idPend)?.value.trim() || '',
+    fotos_resolucao:  (_fotosBase64Resolucao[idPend] || []).map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   })
-  .then(r => r.text().catch(() => '{}'))
-  .then(text => {
-    let resp = {};
-    try { resp = JSON.parse(text); } catch(e) { /* CORS opaco — trata como sucesso */ }
-    if (resp.status === 'erro') {
-      alert('Erro ao resolver pendência: ' + (resp.msg || 'Tente novamente.'));
-      if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
-      return;
-    }
-    // Sucesso (incluindo resposta opaca do Apps Script)
+  .then(() => {
     const item = document.getElementById('pend-' + idPend);
     if (item) {
       item.style.opacity = '0';
@@ -2702,12 +2899,11 @@ function resolverPendencia(idPend, linhaPlanilha) {
         }
       }, 400);
     }
+    delete _fotosBase64Resolucao[idPend];
   })
-  .catch(() => {
-    // Mesmo em caso de erro de rede, pode ter funcionado (opaque response)
-    // Recarrega pendências para confirmar
-    const item = document.getElementById('pend-' + idPend);
-    if (item) item.remove();
+  .catch(err => {
+    console.error('Erro resolver pendência:', err);
+    alert('⚠️ Não foi possível salvar a resolução.\nVerifique a conexão e tente novamente.');
     if (btn) { btn.disabled = false; btn.textContent = '✅ Resolver'; }
   });
 }
@@ -2828,8 +3024,9 @@ function _enviarServicosGerais(tecnico, dataRevisao, msgErro) {
     })
     .catch(function(err) {
       console.error(err);
-      msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
+      msgErro.textContent = '⚠️ Não foi possível enviar (tentamos 3 vezes). Verifique a conexão e toque em Registrar novamente — suas fotos e textos continuam preenchidos.';
       msgErro.style.display = 'block';
+      msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
       btn.disabled = false;
       btn.innerHTML = '✅ Registrar Revisão Completa';
     });
@@ -2904,8 +3101,9 @@ function _enviarDessalinizador(tecnico, dataRevisao, msgErro) {
     .then(function() { mostrarSucessoSG(payload); })
     .catch(function(err) {
       console.error(err);
-      msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
+      msgErro.textContent = '⚠️ Não foi possível enviar (tentamos 3 vezes). Verifique a conexão e toque em Registrar novamente — suas fotos e textos continuam preenchidos.';
       msgErro.style.display = 'block';
+      msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
       btn.disabled = false;
       btn.innerHTML = '✅ Registrar Revisão Completa';
     });
@@ -3138,29 +3336,59 @@ function enviarFormulario() {
   })
   .catch(function(err) {
     console.error(err);
-    msgErro.textContent = '⚠️ Erro ao enviar. Verifique sua conexão e tente novamente.';
+    msgErro.textContent = '⚠️ Não foi possível enviar (tentamos 3 vezes). Verifique a conexão e toque em Registrar novamente — suas fotos e textos continuam preenchidos.';
     msgErro.style.display = 'block';
+    msgErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
     btn.disabled = false;
     btn.innerHTML = '✅ Registrar Revisão Completa';
   });
 }
 
 // POST para o Apps Script
-function _postarScript(dados) {
-  return fetch(SCRIPT_URL, {
+// POST resiliente ao Apps Script.
+// IMPORTANTE: `keepalive` só pode ser usado com corpos pequenos (limite de 64KB
+// nos navegadores). Payloads com fotos passam disso e falhavam com "erro de rede".
+function _postarScript(dados, tentativa) {
+  const corpo = JSON.stringify(dados);
+  const usarKeepalive = corpo.length < 55000;   // margem de segurança sob 64KB
+  const nTentativa = tentativa || 1;
+  const MAX_TENTATIVAS = 3;
+
+  const opcoes = {
     method:  'POST',
     headers: { 'Content-Type': 'text/plain' },
-    keepalive: true,
-    body:    JSON.stringify(dados),
-  })
-  .then(function(r) {
-    if (r.type === 'opaque' || r.type === 'opaqueredirect' || r.status === 0) return {};
-    return r.json().catch(function() { return {}; });
-  })
-  .then(function(resp) {
-    if (resp && resp.status === 'erro') throw new Error(resp.msg || 'Erro no servidor');
-    return resp || {};
+    body:    corpo,
+  };
+  if (usarKeepalive) opcoes.keepalive = true;
+
+  return fetch(SCRIPT_URL, opcoes)
+    .then(function(r) {
+      if (r.type === 'opaque' || r.type === 'opaqueredirect' || r.status === 0) return {};
+      return r.json().catch(function() { return {}; });
+    })
+    .then(function(resp) {
+      if (resp && resp.status === 'erro') throw new Error(resp.msg || 'Erro no servidor');
+      return resp || {};
+    })
+    .catch(function(err) {
+      // Reenvia automaticamente em falhas de rede (conexão instável no celular)
+      if (nTentativa < MAX_TENTATIVAS) {
+        console.warn('Envio falhou (tentativa ' + nTentativa + '), reenviando...', err);
+        const espera = nTentativa * 1500;
+        return new Promise(function(resolve) { setTimeout(resolve, espera); })
+          .then(function() { return _postarScript(dados, nTentativa + 1); });
+      }
+      throw err;
+    });
+}
+
+// Tamanho aproximado do payload de fotos, em KB
+function _tamanhoFotosKB(listas) {
+  let total = 0;
+  listas.forEach(function(arr) {
+    (arr || []).forEach(function(f) { total += (f.base64 ? f.base64.length : 0); });
   });
+  return Math.round(total / 1024);
 }
 
 function mostrarSucesso(p) {
@@ -3303,9 +3531,14 @@ function adicionarObservacaoSG() {
     '</div>' +
     '<textarea id="sg-desc-' + idx + '" placeholder="Descreva a observação ou pendência..." style="width:100%;padding:10px;border:1.5px solid #d0d8e4;border-radius:8px;font-size:14px;min-height:80px;resize:vertical;"></textarea>' +
     '<div class="foto-upload-area" style="margin-top:8px;">' +
-      '<label class="foto-upload-label">📷 Adicionar fotos' +
-        '<input type="file" accept="image/*" multiple onchange="adicionarFotos(this,\'sg-' + idx + '\')">' +
-      '</label>' +
+      '<div class="foto-botoes compacto">' +
+        '<label class="foto-btn-camera">📸 Tirar foto' +
+          '<input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,\'sg-' + idx + '\')">' +
+        '</label>' +
+        '<label class="foto-btn-galeria">🖼️ Galeria' +
+          '<input type="file" accept="image/*" multiple onchange="adicionarFotos(this,\'sg-' + idx + '\')">' +
+        '</label>' +
+      '</div>' +
       '<div class="fotos-preview" id="preview-sg-' + idx + '"></div>' +
       '<div class="foto-status" id="status-sg-' + idx + '"></div>' +
     '</div>' +
@@ -3372,9 +3605,15 @@ function adicionarObservacaoDes() {
     '</div>' +
     '<textarea id="des-desc-' + idx + '" placeholder="Descreva a observação ou pendência do dessalinizador..." style="width:100%;padding:10px;border:1.5px solid #d0d8e4;border-radius:8px;font-size:14px;min-height:80px;resize:vertical;"></textarea>' +
     '<div class="foto-upload-area" style="margin-top:8px;">' +
-      '<label class="foto-upload-label">📷 Adicionar fotos *' +
-        '<input type="file" accept="image/*" multiple onchange="adicionarFotos(this,\'des-' + idx + '\')">' +
-      '</label>' +
+      '<div style="font-size:12px;font-weight:700;color:#0277bd;margin-bottom:6px;">📷 Fotos (obrigatório)</div>' +
+      '<div class="foto-botoes compacto">' +
+        '<label class="foto-btn-camera">📸 Tirar foto' +
+          '<input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotos(this,\'des-' + idx + '\')">' +
+        '</label>' +
+        '<label class="foto-btn-galeria">🖼️ Galeria' +
+          '<input type="file" accept="image/*" multiple onchange="adicionarFotos(this,\'des-' + idx + '\')">' +
+        '</label>' +
+      '</div>' +
       '<div class="fotos-preview" id="preview-des-' + idx + '"></div>' +
       '<div class="foto-status" id="status-des-' + idx + '"></div>' +
     '</div>' +
@@ -3426,19 +3665,18 @@ function salvarTroca() {
   const lista = document.getElementById('lista-trocas-cartuchos');
   if (lista) lista.insertAdjacentHTML('afterbegin', '<div id="troca-salvando" style="padding:10px;background:#fff3c4;border-radius:6px;font-size:13px;color:#e65100;margin-bottom:6px;">⏳ Salvando troca...</div>');
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    keepalive: true,
-    body: JSON.stringify({
-      action: 'registrar_troca_cartucho',
-      tecnico: tec,
-      observacao: obs,
-      fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    }),
+  _postarScript({
+    action: 'registrar_troca_cartucho',
+    tecnico: tec,
+    observacao: obs,
+    fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   })
   .then(() => { setTimeout(carregarTrocasCartuchos, 1200); })
-  .catch(() => { setTimeout(carregarTrocasCartuchos, 1200); });
+  .catch(err => {
+    console.error('Erro registrar troca:', err);
+    alert('⚠️ Não foi possível salvar a troca. Verifique a conexão e tente novamente.');
+    setTimeout(carregarTrocasCartuchos, 500);
+  });
 }
 
 function carregarTrocasCartuchos() {
@@ -3812,11 +4050,13 @@ function filtrarPendenciasGeral(filtro) {
   document.querySelectorAll('.pend-filtro').forEach(el => {
     el.classList.toggle('active', el.getAttribute('data-filtro') === filtro);
   });
-  // Botão "Por prestador" só faz sentido para Terceirizadas
+  // Botão "Por responsável" vale para Terceirizadas e Equipe Interna
   const btnPrestador = document.getElementById('vm-prestador');
+  const filtroTemResponsavel = (filtro === 'terceirizado' || filtro === 'interno');
   if (btnPrestador) {
-    btnPrestador.style.display = (filtro === 'terceirizado') ? '' : 'none';
-    if (filtro !== 'terceirizado' && _modoViewPend === 'prestador') {
+    btnPrestador.style.display = filtroTemResponsavel ? '' : 'none';
+    btnPrestador.textContent = (filtro === 'interno') ? '👤 Por técnico' : '👤 Por prestador';
+    if (!filtroTemResponsavel && _modoViewPend === 'prestador') {
       setViewModePend('apto');
       return;
     }
@@ -3953,10 +4193,16 @@ function renderPendenciasGeral() {
             <div class="form-resolucao" id="form-res-pg-${_escHtml(p.id)}">
               <input type="text" placeholder="Nome de quem resolveu *" id="res-tec-pg-${_escHtml(p.id)}">
               <input type="text" placeholder="Observação da resolução (opcional)" id="res-obs-pg-${_escHtml(p.id)}">
-              <label class="foto-upload-label">
-                📷 ${secao && secao.toLowerCase().indexOf('internet') !== -1 ? 'Adicionar fotos (opcional)' : 'Adicionar fotos *'}
-                <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
-              </label>
+              <div class="foto-botoes compacto">
+                <label class="foto-btn-camera">
+                  📸 Tirar foto
+                  <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
+                </label>
+                <label class="foto-btn-galeria">
+                  🖼️ ${_secaoDispensaFoto(secao) ? 'Galeria (opcional)' : 'Galeria'}
+                  <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
+                </label>
+              </div>
               <div class="fotos-preview" id="prev-res-pg-${_escHtml(p.id)}"></div>
               <div class="foto-status" id="status-res-pg-${_escHtml(p.id)}"></div>
               <button class="btn-confirmar-resolucao" id="btn-confirmar-res-${_escHtml(p.id)}" onclick="confirmarResolucaoPg('${_escHtml(p.id)}', ${p.linha_planilha})">✅ Confirmar resolução</button>
@@ -4121,10 +4367,16 @@ function renderPendPorCategoria(filtradas, lista) {
           <div class="form-resolucao" id="form-res-pg-${_escHtml(p.id)}">
             <input type="text" placeholder="Nome de quem resolveu *" id="res-tec-pg-${_escHtml(p.id)}">
             <input type="text" placeholder="Observação da resolução (opcional)" id="res-obs-pg-${_escHtml(p.id)}">
-            <label class="foto-upload-label">
-              📷 ${secao && secao.toLowerCase().indexOf('internet') !== -1 ? 'Adicionar fotos (opcional)' : 'Adicionar fotos *'}
-              <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
-            </label>
+            <div class="foto-botoes compacto">
+              <label class="foto-btn-camera">
+                📸 Tirar foto
+                <input type="file" accept="image/*" capture="environment" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
+              </label>
+              <label class="foto-btn-galeria">
+                🖼️ ${_secaoDispensaFoto(secao) ? 'Galeria (opcional)' : 'Galeria'}
+                <input type="file" accept="image/*" multiple onchange="adicionarFotosResolucaoPg(this,'${_escHtml(p.id)}')">
+              </label>
+            </div>
             <div class="fotos-preview" id="prev-res-pg-${_escHtml(p.id)}"></div>
             <div class="foto-status" id="status-res-pg-${_escHtml(p.id)}"></div>
             <button class="btn-confirmar-resolucao" id="btn-confirmar-res-${_escHtml(p.id)}" onclick="confirmarResolucaoPg('${_escHtml(p.id)}', ${p.linha_planilha})">✅ Confirmar resolução</button>
@@ -4270,6 +4522,7 @@ function adicionarFotosResolucaoPg(input, idPend) {
   const statusEl = document.getElementById('status-res-pg-' + idPend);
   arquivos.forEach((arquivo, i) => {
     _comprimirImagem(arquivo, function(base64) {
+      if (!base64) { alert('⚠️ Não foi possível processar a foto "' + (arquivo.name || '') + '". Tente tirar novamente.'); return; }
       const thumbId = 'thumb-respg-' + idPend + '-' + Date.now() + i;
       const thumb = document.createElement('div');
       thumb.className = 'foto-thumb';
@@ -4302,10 +4555,9 @@ function confirmarResolucaoPg(idPend, linhaPlanilha) {
 
   const p = _pendGeralCache.find(x => x.id === idPend);
   const secao = p ? (p.secao || '') : '';
-  const isInternet = secao.toLowerCase().indexOf('internet') !== -1;
 
   const fotos = _fotosBase64ResolucaoPg[idPend] || [];
-  if (!isInternet && fotos.length === 0) {
+  if (!_secaoDispensaFoto(secao) && fotos.length === 0) {
     alert('⚠️ Adicione ao menos 1 foto da resolução antes de concluir.');
     return;
   }
@@ -4316,21 +4568,19 @@ function confirmarResolucaoPg(idPend, linhaPlanilha) {
   _pendGeralCache = _pendGeralCache.filter(x => x.id !== idPend);
   renderPendenciasGeral();
 
-  // Envia em segundo plano
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    keepalive: true,
-    body: JSON.stringify({
-      action: 'resolver_pendencia',
-      linha_planilha: linhaPlanilha,
-      tecnico_resolve: tec,
-      obs_resolucao: obsRes,
-      fotos_resolucao: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    }),
+  // Envia em segundo plano (com reenvio automático em falha de rede)
+  _postarScript({
+    action: 'resolver_pendencia',
+    linha_planilha: linhaPlanilha,
+    tecnico_resolve: tec,
+    obs_resolucao: obsRes,
+    fotos_resolucao: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   })
   .then(() => { delete _fotosBase64ResolucaoPg[idPend]; })
-  .catch(err => { console.error('Erro resolver pendência:', err); delete _fotosBase64ResolucaoPg[idPend]; });
+  .catch(err => {
+    console.error('Erro resolver pendência:', err);
+    alert('⚠️ Não foi possível salvar a resolução desta pendência.\nVerifique a conexão e tente novamente — a pendência voltará à lista ao recarregar.');
+  });
 }
 
 function toggleUrgente(idPend, linhaPlanilha) {
@@ -4656,19 +4906,17 @@ function salvarCompra() {
   if (!descricao) { alert('Escreva a descrição.'); return; }
   if (!autor)     { alert('Informe seu nome.'); return; }
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    keepalive: true,
-    body: JSON.stringify({
-      action: 'salvar_compra',
-      id: id, titulo: titulo, subtitulo: subtitulo,
-      descricao: descricao, urgente: urgente, autor: autor,
-      fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
-    }),
+  _postarScript({
+    action: 'salvar_compra',
+    id: id, titulo: titulo, subtitulo: subtitulo,
+    descricao: descricao, urgente: urgente, autor: autor,
+    fotos: fotos.map(f => ({ base64: f.base64, mime: f.mime, nome: f.nome })),
   })
   .then(() => { fecharModalCompra(); setTimeout(carregarCompras, 800); })
-  .catch(() => { fecharModalCompra(); setTimeout(carregarCompras, 800); });
+  .catch(err => {
+    console.error('Erro salvar item:', err);
+    alert('⚠️ Não foi possível salvar este item. Verifique a conexão e tente novamente.');
+  });
 }
 
 function excluirCompra(id) {
