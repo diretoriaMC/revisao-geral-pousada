@@ -1531,6 +1531,83 @@
       body.imprimindo-ofuros > .aba-principal:not(#aba-ofuros) { display: none !important; }
     }
 
+    /* ═══ OFURÔS — RELATÓRIO DE VENDAS POR FUNCIONÁRIO ═══ */
+    #aba-ofuros .rel-filtro {
+      background: #fff; border: 1px solid #e0e0d8; border-radius: 12px;
+      padding: 1rem; margin-bottom: 1.25rem;
+    }
+    #aba-ofuros .rel-periodo {
+      display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;
+    }
+    #aba-ofuros .rel-campo { display: flex; flex-direction: column; gap: 4px; }
+    #aba-ofuros .rel-campo label { font-size: 11px; color: #666; font-weight: 500; }
+    #aba-ofuros .rel-campo input {
+      padding: 9px 12px; border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; font-family: inherit;
+    }
+    #aba-ofuros .rel-btn {
+      padding: 10px 20px; background: #185FA5; color: #fff; border: none;
+      border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    #aba-ofuros .rel-btn:hover { background: #0C447C; }
+    #aba-ofuros .rel-atalhos {
+      display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid #f0f0ec;
+    }
+    #aba-ofuros .rel-atalhos span { font-size: 11px; color: #888; margin-right: 2px; }
+    #aba-ofuros .rel-atalhos button {
+      padding: 5px 12px; border: 1px solid #ddd; background: #fff; color: #555;
+      border-radius: 14px; font-size: 12px; cursor: pointer; font-family: inherit;
+    }
+    #aba-ofuros .rel-atalhos button:hover { background: #f0f0ec; border-color: #bbb; }
+    #aba-ofuros .rel-obs { font-size: 11px; color: #888; margin-top: 10px; line-height: 1.5; }
+
+    #aba-ofuros .rel-cab {
+      display: flex; justify-content: space-between; align-items: baseline;
+      flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }
+    #aba-ofuros .rel-cab h3 { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+    #aba-ofuros .rel-cab .per { font-size: 12px; color: #666; }
+
+    #aba-ofuros .rel-tabela {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border: 1px solid #e0e0d8; border-radius: 12px; overflow: hidden;
+    }
+    #aba-ofuros .rel-tabela th {
+      background: #f5f5f3; padding: 10px 12px; font-size: 11px; font-weight: 600;
+      color: #555; text-align: left; text-transform: uppercase; letter-spacing: .3px;
+      border-bottom: 1px solid #e0e0d8;
+    }
+    #aba-ofuros .rel-tabela th.num, #aba-ofuros .rel-tabela td.num { text-align: right; }
+    #aba-ofuros .rel-tabela td {
+      padding: 11px 12px; font-size: 13px; border-bottom: 1px solid #f0f0ec;
+    }
+    #aba-ofuros .rel-tabela tr:last-child td { border-bottom: none; }
+    #aba-ofuros .rel-tabela tr.tot td {
+      background: #f5f5f3; font-weight: 700; border-top: 2px solid #ddd;
+    }
+    #aba-ofuros .rel-nome { display: flex; align-items: center; gap: 8px; }
+    #aba-ofuros .rel-ini {
+      width: 28px; height: 28px; border-radius: 50%; background: #185FA5; color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    #aba-ofuros .rel-val { font-weight: 700; color: #2e7d32; }
+    #aba-ofuros .rel-barra {
+      height: 5px; background: #e8e8e4; border-radius: 3px; margin-top: 5px; overflow: hidden;
+    }
+    #aba-ofuros .rel-barra i { display: block; height: 100%; background: #185FA5; border-radius: 3px; }
+    #aba-ofuros .rel-vazio {
+      text-align: center; padding: 2.5rem 1rem; color: #888; font-size: 13px;
+      background: #fff; border: 1px solid #e0e0d8; border-radius: 12px;
+    }
+    @media(max-width:600px){
+      #aba-ofuros .rel-tabela th.op, #aba-ofuros .rel-tabela td.op { display: none; }
+      #aba-ofuros .rel-periodo { flex-direction: column; align-items: stretch; }
+      #aba-ofuros .rel-btn { width: 100%; }
+    }
+
     /* ═══ MÓDULO OFURÔS (estilos com escopo em #aba-ofuros) ═══ */
     #aba-ofuros .app{max-width:980px;margin:0 auto;padding:1rem 1rem 4rem;}
     #aba-ofuros .header{text-align:center;padding:1.5rem 1rem 1rem;border-bottom:1px solid #e0e0d8;margin-bottom:1.5rem;}
@@ -1660,7 +1737,10 @@
     #aba-ofuros .footer span{color:#185FA5;font-weight:500;}
     #aba-ofuros .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#185FA5;color:white;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9998;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);}
     #aba-ofuros .toast.show{opacity:1;}
-    @media print {#aba-ofuros body{background:white;font-size:11px;}#aba-ofuros .app{max-width:100%;padding:0;}#aba-ofuros .header, #aba-ofuros .storage-bar, #aba-ofuros .tab-row, #aba-ofuros .notif-bar, #aba-ofuros .alarm-bar, #aba-ofuros .no-print{display:none!important;}#aba-ofuros #of-tab-novo, #aba-ofuros #of-tab-registros{display:block!important;}#aba-ofuros #of-tab-novo .form-card, #aba-ofuros #of-tab-novo .ofuro-grid, #aba-ofuros .sec-title, #aba-ofuros .floor-label, #aba-ofuros #of-tab-novo .stats-row{display:none!important;}#aba-ofuros .frow, #aba-ofuros .btn-pdf, #aba-ofuros .edit-rec-btn, #aba-ofuros .del-btn, #aba-ofuros .ss{display:none!important;}#aba-ofuros .rec-card{border:1px solid #ccc;margin-bottom:6px;page-break-inside:avoid;border-radius:4px;}#aba-ofuros .rec-main{padding:.5rem .75rem;}#aba-ofuros .uso-panel{padding:.4rem .75rem;}#aba-ofuros .obs-panel{padding:.4rem .75rem;}#aba-ofuros .oc{width:36px;height:36px;}#aba-ofuros .oc .n{font-size:13px;}#aba-ofuros .print-header{display:block!important;}#aba-ofuros .footer{display:block;border-top:1px solid #ccc;margin-top:1rem;padding:.5rem 0;}
+    @media print {#aba-ofuros body{background:white;font-size:11px;}#aba-ofuros .app{max-width:100%;padding:0;}#aba-ofuros .header, #aba-ofuros .storage-bar, #aba-ofuros .tab-row, #aba-ofuros .notif-bar, #aba-ofuros .alarm-bar, #aba-ofuros .no-print{display:none!important;}body.imprimindo-registros #of-tab-registros{display:block!important;}
+      body.imprimindo-registros #of-tab-novo, body.imprimindo-registros #of-tab-relatorio{display:none!important;}
+      body.imprimindo-relatorio #of-tab-relatorio{display:block!important;}
+      body.imprimindo-relatorio #of-tab-novo, body.imprimindo-relatorio #of-tab-registros{display:none!important;}#aba-ofuros #of-tab-novo .form-card, #aba-ofuros #of-tab-novo .ofuro-grid, #aba-ofuros .sec-title, #aba-ofuros .floor-label, #aba-ofuros #of-tab-novo .stats-row{display:none!important;}#aba-ofuros .frow, #aba-ofuros .btn-pdf, #aba-ofuros .edit-rec-btn, #aba-ofuros .del-btn, #aba-ofuros .ss{display:none!important;}#aba-ofuros .rec-card{border:1px solid #ccc;margin-bottom:6px;page-break-inside:avoid;border-radius:4px;}#aba-ofuros .rec-main{padding:.5rem .75rem;}#aba-ofuros .uso-panel{padding:.4rem .75rem;}#aba-ofuros .obs-panel{padding:.4rem .75rem;}#aba-ofuros .oc{width:36px;height:36px;}#aba-ofuros .oc .n{font-size:13px;}#aba-ofuros .print-header{display:block!important;}#aba-ofuros .footer{display:block;border-top:1px solid #ccc;margin-top:1rem;padding:.5rem 0;}
     }
     #aba-ofuros .print-header{display:none;text-align:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid #185FA5;}
     #aba-ofuros .print-header h2{font-size:16px;font-weight:600;color:#185FA5;}
@@ -2355,6 +2435,7 @@
 <div class="tab-row no-print">
   <button class="tab active" onclick="OFURO.showTab('novo')">Novo agendamento</button>
   <button class="tab" onclick="OFURO.showTab('registros')">Registros</button>
+  <button class="tab" onclick="OFURO.showTab('relatorio')">📊 Vendas por funcionário</button>
 </div>
 
 <div class="notif-bar prompt no-print" id="of-notif-perm-bar">
@@ -2439,6 +2520,36 @@
     <button class="btn-pdf" onclick="OFURO.exportarPDF()">🖨️ Exportar PDF</button>
   </div>
   <div id="of-rec-list"></div>
+</div>
+
+<!-- ══ SUB-ABA: VENDAS POR FUNCIONÁRIO ══ -->
+<div id="of-tab-relatorio" style="display:none;">
+  <div class="rel-filtro no-print">
+    <div class="rel-periodo">
+      <div class="rel-campo">
+        <label>De</label>
+        <input type="date" id="of-rel-de">
+      </div>
+      <div class="rel-campo">
+        <label>Até</label>
+        <input type="date" id="of-rel-ate">
+      </div>
+      <button class="rel-btn" onclick="OFURO.gerarRelatorio()">Ver relatório</button>
+    </div>
+    <div class="rel-atalhos">
+      <span>Atalhos:</span>
+      <button onclick="OFURO.periodoRapido('hoje')">Hoje</button>
+      <button onclick="OFURO.periodoRapido('semana')">Últimos 7 dias</button>
+      <button onclick="OFURO.periodoRapido('mes')">Este mês</button>
+      <button onclick="OFURO.periodoRapido('mespassado')">Mês passado</button>
+      <button onclick="OFURO.periodoRapido('ano')">Este ano</button>
+      <button onclick="OFURO.periodoRapido('tudo')">Todo o período</button>
+    </div>
+    <div class="rel-obs">
+      Considera a <strong>data da reserva</strong>. Lançamentos cancelados e "não consta" ficam de fora do total arrecadado.
+    </div>
+  </div>
+  <div id="of-rel-saida"></div>
 </div>
 
 <div class="footer">Desenvolvido por <span>Francyne Oliveira</span> · Pousada Marie Claire</div>
@@ -5652,6 +5763,11 @@ const OFUROS=[
   {num:6,local:'Piscina',g:'ps'},{num:7,local:'Piscina',g:'ps'},
 ];
 
+// Equipe ativa — nomes sugeridos ao registrar um novo agendamento.
+// Quem sai da equipe é removido daqui, mas os lançamentos antigos
+// permanecem no histórico e continuam aparecendo nos filtros.
+const EQUIPE_ATIVA=['RENATA','Gabriel','Carlos','Camila','Diego','fran','ulises'];
+
 let recs=[], selO=null, selT=null, fO=0, fT='todos', fSt='todos', fF='todos';
 let alarmeAtivo=true, alarmeInterval=null, alarmedIds=new Set(), audioCtx=null;
 let somAtivo=false, somInterval=null;
@@ -5707,9 +5823,9 @@ function exportarPDF(){
   const data=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
   document.getElementById('of-print-subtitulo').textContent=sub+' — Gerado em '+data;
   // Oculta o restante do sistema durante a impressão (cabeçalho, abas, diretrizes)
-  document.body.classList.add('imprimindo-ofuros');
+  document.body.classList.add('imprimindo-ofuros','imprimindo-registros');
   window.print();
-  setTimeout(function(){ document.body.classList.remove('imprimindo-ofuros'); }, 1000);
+  setTimeout(function(){ document.body.classList.remove('imprimindo-ofuros','imprimindo-registros'); }, 1000);
 }
 
 // ---- MODAL EDIÇÃO ----
@@ -5832,8 +5948,12 @@ function renderAll(){
   if(count) count.textContent=recs.length+' registro'+(recs.length!==1?'s':'');
 }
 function updateFuncDl(){
+  // Sugestões ao criar um agendamento: somente a equipe ativa (EQUIPE_ATIVA).
+  // Os chips de filtro continuam vindo dos registros, para que o histórico
+  // de quem saiu da equipe siga consultável.
   const names=[...new Set(recs.map(r=>r.func).filter(Boolean))];
-  const dl=document.getElementById('of-func-dl');if(dl)dl.innerHTML=names.map(n=>`<option value="${n}">`).join('');
+  const dl=document.getElementById('of-func-dl');
+  if(dl)dl.innerHTML=EQUIPE_ATIVA.map(n=>`<option value="${n}">`).join('');
   const ff=document.getElementById('of-f-func');
   if(ff){
     // mantém o botão PDF no final
@@ -5956,8 +6076,125 @@ function selTaxa(v){
   document.getElementById('of-btn-rev').className='taxa-btn rv'+(v==='revertido'?' st':'');
 }
 function showTab(t){
-  ['novo','registros'].forEach(x=>document.getElementById('of-tab-'+x).style.display=x===t?'':'none');
-  document.querySelectorAll('#aba-ofuros .tab').forEach((el,i)=>el.classList.toggle('active',['novo','registros'][i]===t));
+  const abas=['novo','registros','relatorio'];
+  abas.forEach(x=>{const el=document.getElementById('of-tab-'+x); if(el) el.style.display=x===t?'':'none';});
+  document.querySelectorAll('#aba-ofuros .tab').forEach((el,i)=>el.classList.toggle('active',abas[i]===t));
+  if(t==='relatorio' && !document.getElementById('of-rel-de').value){
+    periodoRapido('mes');   // abre já com o mês corrente
+  }
+}
+
+// ── RELATÓRIO DE VENDAS POR FUNCIONÁRIO ───────────────────────────────
+function periodoRapido(tipo){
+  const hoje=new Date();
+  const fmt=d=>d.toISOString().slice(0,10);
+  let de,ate=new Date(hoje);
+  if(tipo==='hoje'){ de=new Date(hoje); }
+  else if(tipo==='semana'){ de=new Date(hoje); de.setDate(de.getDate()-6); }
+  else if(tipo==='mes'){ de=new Date(hoje.getFullYear(),hoje.getMonth(),1); }
+  else if(tipo==='mespassado'){
+    de=new Date(hoje.getFullYear(),hoje.getMonth()-1,1);
+    ate=new Date(hoje.getFullYear(),hoje.getMonth(),0);
+  }
+  else if(tipo==='ano'){ de=new Date(hoje.getFullYear(),0,1); }
+  else { // tudo
+    const datas=recs.map(r=>r.dr).filter(Boolean).sort();
+    de=datas.length?new Date(datas[0]+'T12:00:00'):new Date(hoje);
+  }
+  document.getElementById('of-rel-de').value=fmt(de);
+  document.getElementById('of-rel-ate').value=fmt(ate);
+  gerarRelatorio();
+}
+
+function gerarRelatorio(){
+  const de=document.getElementById('of-rel-de').value;
+  const ate=document.getElementById('of-rel-ate').value;
+  const saida=document.getElementById('of-rel-saida');
+  if(!de||!ate){ saida.innerHTML='<div class="rel-vazio">Escolha as duas datas do período.</div>'; return; }
+  if(de>ate){ saida.innerHTML='<div class="rel-vazio">⚠️ A data inicial não pode ser depois da data final.</div>'; return; }
+
+  // Filtra pela data da reserva
+  const noPeriodo=recs.filter(r=>r.dr && r.dr>=de && r.dr<=ate);
+  if(noPeriodo.length===0){
+    saida.innerHTML='<div class="rel-vazio">Nenhum agendamento entre '+fd(de)+' e '+fd(ate)+'.</div>';
+    return;
+  }
+
+  // Só contam no faturamento os lançamentos válidos
+  const contaValor=r=>r.status==='confirmada'||r.status==='pendente';
+  const valorDe=r=>r.taxa==='taxa'?50:r.taxa==='meia'?25:0;
+
+  const porFunc={};
+  noPeriodo.forEach(r=>{
+    const f=r.func||'(sem nome)';
+    if(!porFunc[f]) porFunc[f]={nome:f,total:0,h1:0,m30:0,rev:0,valor:0,cancel:0};
+    const o=porFunc[f];
+    o.total++;
+    if(r.taxa==='taxa') o.h1++; else if(r.taxa==='meia') o.m30++; else o.rev++;
+    if(contaValor(r)) o.valor+=valorDe(r); else o.cancel++;
+  });
+
+  const lista=Object.values(porFunc).sort((a,b)=>b.valor-a.valor||b.total-a.total);
+  const maxValor=Math.max(...lista.map(f=>f.valor),1);
+  const tot=lista.reduce((a,f)=>({
+    total:a.total+f.total, h1:a.h1+f.h1, m30:a.m30+f.m30,
+    rev:a.rev+f.rev, valor:a.valor+f.valor, cancel:a.cancel+f.cancel
+  }),{total:0,h1:0,m30:0,rev:0,valor:0,cancel:0});
+
+  const brl=v=>'R$ '+v.toLocaleString('pt-BR');
+  let html=
+    '<div class="rel-cab">'+
+      '<h3>📊 Vendas por funcionário</h3>'+
+      '<span class="per">'+fd(de)+' a '+fd(ate)+' · '+noPeriodo.length+' agendamento'+(noPeriodo.length!==1?'s':'')+'</span>'+
+    '</div>'+
+    '<table class="rel-tabela"><thead><tr>'+
+      '<th>Funcionário</th>'+
+      '<th class="num">Vendas</th>'+
+      '<th class="num op">1h</th>'+
+      '<th class="num op">30min</th>'+
+      '<th class="num op">Revert.</th>'+
+      '<th class="num op">Cancel.</th>'+
+      '<th class="num">Arrecadado</th>'+
+    '</tr></thead><tbody>';
+
+  lista.forEach(f=>{
+    const pct=Math.round(f.valor/maxValor*100);
+    html+='<tr>'+
+      '<td><div class="rel-nome"><span class="rel-ini">'+initials(f.nome)+'</span><span>'+f.nome+'</span></div>'+
+        '<div class="rel-barra"><i style="width:'+pct+'%"></i></div></td>'+
+      '<td class="num"><strong>'+f.total+'</strong></td>'+
+      '<td class="num op">'+f.h1+'</td>'+
+      '<td class="num op">'+f.m30+'</td>'+
+      '<td class="num op">'+f.rev+'</td>'+
+      '<td class="num op">'+(f.cancel||'—')+'</td>'+
+      '<td class="num rel-val">'+brl(f.valor)+'</td>'+
+    '</tr>';
+  });
+
+  html+='<tr class="tot">'+
+      '<td>Total ('+lista.length+' funcionário'+(lista.length!==1?'s':'')+')</td>'+
+      '<td class="num">'+tot.total+'</td>'+
+      '<td class="num op">'+tot.h1+'</td>'+
+      '<td class="num op">'+tot.m30+'</td>'+
+      '<td class="num op">'+tot.rev+'</td>'+
+      '<td class="num op">'+(tot.cancel||'—')+'</td>'+
+      '<td class="num">'+brl(tot.valor)+'</td>'+
+    '</tr></tbody></table>'+
+    '<div style="margin-top:14px;text-align:right;" class="no-print">'+
+      '<button class="rel-btn" onclick="OFURO.imprimirRelatorio()">🖨️ Imprimir / PDF</button>'+
+    '</div>';
+
+  saida.innerHTML=html;
+}
+
+function imprimirRelatorio(){
+  const de=document.getElementById('of-rel-de').value;
+  const ate=document.getElementById('of-rel-ate').value;
+  document.getElementById('of-print-subtitulo').textContent=
+    'Vendas por funcionário — '+fd(de)+' a '+fd(ate);
+  document.body.classList.add('imprimindo-ofuros','imprimindo-relatorio');
+  window.print();
+  setTimeout(function(){ document.body.classList.remove('imprimindo-ofuros','imprimindo-relatorio'); }, 1000);
 }
 async function submitForm(){
   const dc=document.getElementById('of-dc').value,dr=document.getElementById('of-dr').value;
@@ -6009,6 +6246,9 @@ setInterval(()=>loadData(), 30000);
   }
 
   return { iniciar: iniciar, recarregar: function(){ try { loadData(); } catch(e){} },
+    gerarRelatorio: gerarRelatorio,
+    periodoRapido: periodoRapido,
+    imprimirRelatorio: imprimirRelatorio,
     abrirModal: abrirModal,
     delRec: delRec,
     exportarPDF: exportarPDF,
