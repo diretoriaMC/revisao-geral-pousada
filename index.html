@@ -1521,6 +1521,152 @@
     }
     .btn-modal-salvar { background: #1F3864; color: white; }
     .btn-modal-cancelar { background: #f0f4f8; color: #555; }
+
+    /* Impressão a partir da aba Ofurôs: esconde o restante do sistema */
+    @media print {
+      body.imprimindo-ofuros > .header,
+      body.imprimindo-ofuros > .main-tabs,
+      body.imprimindo-ofuros > #diretrizes-topo,
+      body.imprimindo-ofuros > .modal-overlay,
+      body.imprimindo-ofuros > .aba-principal:not(#aba-ofuros) { display: none !important; }
+    }
+
+    /* ═══ MÓDULO OFURÔS (estilos com escopo em #aba-ofuros) ═══ */
+    #aba-ofuros .app{max-width:980px;margin:0 auto;padding:1rem 1rem 4rem;}
+    #aba-ofuros .header{text-align:center;padding:1.5rem 1rem 1rem;border-bottom:1px solid #e0e0d8;margin-bottom:1.5rem;}
+    #aba-ofuros .header h1{font-size:22px;font-weight:500;}
+    #aba-ofuros .header p{font-size:13px;color:#666;margin-top:4px;}
+    #aba-ofuros .badge{display:inline-flex;align-items:center;gap:6px;background:#f0f0ec;border:1px solid #ddd;border-radius:12px;padding:6px 14px;margin-bottom:12px;font-size:13px;color:#555;}
+    #aba-ofuros .tab-row{display:flex;gap:4px;margin-bottom:1.5rem;background:#efefeb;border-radius:10px;padding:4px;}
+    #aba-ofuros .tab{flex:1;padding:8px;text-align:center;font-size:12px;cursor:pointer;border-radius:7px;color:#666;border:none;background:transparent;font-family:inherit;transition:all .15s;}
+    #aba-ofuros .tab.active{background:#fff;color:#1a1a1a;font-weight:500;border:1px solid #ddd;}
+    #aba-ofuros .alarm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#EAF3DE;border:1px solid #639922;border-radius:10px;padding:10px 14px;margin-bottom:10px;flex-wrap:wrap;}
+    #aba-ofuros .alarm-bar.off{background:#f0f0ec;border-color:#ddd;}
+    #aba-ofuros .alarm-status{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#3B6D11;}
+    #aba-ofuros .alarm-status.off{color:#888;}
+    #aba-ofuros .alarm-dot{width:8px;height:8px;border-radius:50%;background:#639922;animation:of-pulse 1.5s infinite;}
+    #aba-ofuros .alarm-dot.off{background:#aaa;animation:none;}
+    @keyframes of-pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+    #aba-ofuros .alarm-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid #639922;background:white;color:#3B6D11;}
+    #aba-ofuros .alarm-btn.off{border-color:#ccc;background:#fff;color:#888;}
+    #aba-ofuros .alarm-next{font-size:12px;color:#3B6D11;}
+    #aba-ofuros .notif-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:10px;padding:9px 14px;margin-bottom:1.25rem;flex-wrap:wrap;font-size:12px;}
+    #aba-ofuros .notif-bar.granted{background:#E6F1FB;border:1px solid #185FA5;color:#0C447C;}
+    #aba-ofuros .notif-bar.denied{background:#FCEBEB;border:1px solid #E24B4A;color:#A32D2D;}
+    #aba-ofuros .notif-bar.prompt{background:#FAEEDA;border:1px solid #BA7517;color:#854F0B;}
+    #aba-ofuros .notif-bar button{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid currentColor;background:white;}
+    #aba-ofuros .notif-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:9999;}
+    #aba-ofuros .notif-box{background:#fff;border-radius:16px;padding:2rem;max-width:400px;width:90%;text-align:center;border:3px solid #E24B4A;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:of-alertpulse 1s infinite;}
+    @keyframes of-alertpulse{0%,100%{border-color:#E24B4A;box-shadow:0 20px 60px rgba(226,75,74,.3);}50%{border-color:#ff8800;box-shadow:0 20px 60px rgba(255,136,0,.4);}}
+    #aba-ofuros .notif-icon{font-size:48px;margin-bottom:1rem;animation:of-shake .4s infinite;}
+    @keyframes of-shake{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+    #aba-ofuros .notif-title{font-size:18px;font-weight:600;margin-bottom:.5rem;color:#A32D2D;}
+    #aba-ofuros .notif-msg{font-size:14px;color:#555;margin-bottom:1.5rem;line-height:1.6;}
+    #aba-ofuros .notif-close{padding:10px 24px;background:#E24B4A;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;min-width:160px;}
+    #aba-ofuros .notif-close:hover{background:#A32D2D;}
+    #aba-ofuros /* MODAL DE EDIÇÃO */
+    #aba-ofuros .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:8888;padding:1rem;}
+    #aba-ofuros .modal-box{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+    #aba-ofuros .modal-box h2{font-size:16px;font-weight:600;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;}
+    #aba-ofuros .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;padding:0 4px;}
+    #aba-ofuros .modal-close:hover{color:#333;}
+    #aba-ofuros .mfr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    #aba-ofuros .mfg{display:flex;flex-direction:column;gap:4px;}
+    #aba-ofuros .mfg label{font-size:12px;color:#888;font-weight:500;}
+    #aba-ofuros .mfg input, #aba-ofuros .mfg select, #aba-ofuros .mfg textarea{font-size:14px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#f5f5f3;color:#1a1a1a;font-family:inherit;width:100%;}
+    #aba-ofuros .mfg textarea{resize:vertical;min-height:60px;}
+    #aba-ofuros .modal-taxa-row{display:flex;gap:8px;margin-bottom:12px;}
+    #aba-ofuros .modal-taxa-btn{flex:1;padding:10px 6px;border:1px solid #ddd;border-radius:10px;background:#f5f5f3;color:#888;cursor:pointer;font-size:12px;text-align:center;font-family:inherit;line-height:1.4;transition:all .15s;}
+    #aba-ofuros .modal-taxa-btn.st{background:#E6F1FB;border-color:#185FA5;color:#0C447C;font-weight:500;}
+    #aba-ofuros .modal-taxa-btn.hm.st{background:#FEF3E2;border-color:#BA7517;color:#854F0B;font-weight:500;}
+    #aba-ofuros .modal-taxa-btn.rv.st{background:#E1F5EE;border-color:#0F6E56;color:#085041;font-weight:500;}
+    #aba-ofuros .modal-footer{display:flex;gap:10px;margin-top:1.25rem;padding-top:1rem;border-top:1px solid #eee;}
+    #aba-ofuros .btn-gravar{flex:1;padding:11px;background:#185FA5;color:white;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;}
+    #aba-ofuros .btn-gravar:hover{background:#0C447C;}
+    #aba-ofuros .btn-cancelar{padding:11px 18px;background:#f5f5f3;color:#888;border:1px solid #ddd;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;}
+    #aba-ofuros .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;}
+    #aba-ofuros .stat-card{background:#efefeb;border-radius:10px;padding:.75rem 1rem;}
+    #aba-ofuros .stat-label{font-size:11px;color:#888;margin-bottom:4px;}
+    #aba-ofuros .stat-value{font-size:20px;font-weight:500;}
+    #aba-ofuros .sec-title{font-size:13px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+    #aba-ofuros .floor-label{font-size:11px;font-weight:500;color:#888;background:#efefeb;border-radius:4px;padding:3px 8px;display:inline-block;margin-bottom:8px;}
+    #aba-ofuros .ofuro-grid{display:grid;gap:8px;margin-bottom:1.25rem;}
+    #aba-ofuros .ofuro-grid.t3{grid-template-columns:repeat(4,1fr);}
+    #aba-ofuros .ofuro-grid.ps{grid-template-columns:repeat(2,1fr);}
+    #aba-ofuros .ofuro-btn{background:#fff;border:1px solid #ddd;border-radius:10px;padding:12px 6px 10px;text-align:center;cursor:pointer;transition:all .15s;}
+    #aba-ofuros .ofuro-btn:hover{background:#f5f5f3;}
+    #aba-ofuros .ofuro-btn.sel{border:2px solid #185FA5;background:#E6F1FB;}
+    #aba-ofuros .ofuro-num{font-size:22px;font-weight:500;}
+    #aba-ofuros .ofuro-lbl{font-size:11px;color:#888;margin-top:1px;}
+    #aba-ofuros .ofuro-cnt{font-size:11px;color:#185FA5;margin-top:3px;font-weight:500;}
+    #aba-ofuros .form-card{background:#fff;border:1px solid #e0e0d8;border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;}
+    #aba-ofuros .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    #aba-ofuros .fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+    #aba-ofuros .fg{display:flex;flex-direction:column;gap:4px;}
+    #aba-ofuros .fg label{font-size:12px;color:#888;font-weight:500;}
+    #aba-ofuros .fg input, #aba-ofuros .fg select, #aba-ofuros .fg textarea{font-size:14px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;background:#f5f5f3;color:#1a1a1a;font-family:inherit;width:100%;}
+    #aba-ofuros .fg textarea{resize:vertical;min-height:70px;}
+    #aba-ofuros .taxa-row{display:flex;gap:8px;margin-bottom:12px;}
+    #aba-ofuros .taxa-btn{flex:1;padding:12px 8px;border:1px solid #ddd;border-radius:10px;background:#f5f5f3;color:#888;cursor:pointer;font-size:13px;text-align:center;font-family:inherit;line-height:1.4;transition:all .15s;}
+    #aba-ofuros .taxa-btn.st{background:#E6F1FB;border-color:#185FA5;color:#0C447C;font-weight:500;}
+    #aba-ofuros .taxa-btn.hm.st{background:#FEF3E2;border-color:#BA7517;color:#854F0B;font-weight:500;}
+    #aba-ofuros .taxa-btn.rv.st{background:#E1F5EE;border-color:#0F6E56;color:#085041;font-weight:500;}
+    #aba-ofuros .taxa-price{font-size:15px;font-weight:500;display:block;}
+    #aba-ofuros .taxa-name{font-size:11px;display:block;margin-top:1px;}
+    #aba-ofuros .btn-sub{width:100%;padding:12px;background:#185FA5;color:white;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .15s;}
+    #aba-ofuros .btn-sub:hover{background:#0C447C;}
+    #aba-ofuros .frow{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
+    #aba-ofuros .fchip{padding:5px 12px;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;background:#f5f5f3;color:#888;transition:all .15s;}
+    #aba-ofuros .fchip.ac{background:#185FA5;color:white;border-color:#185FA5;}
+    #aba-ofuros .btn-pdf{display:flex;align-items:center;gap:6px;padding:6px 14px;background:#A32D2D;color:white;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;margin-left:auto;}
+    #aba-ofuros .btn-pdf:hover{background:#7a1e1e;}
+    #aba-ofuros .rec-card{background:#fff;border:1px solid #e0e0d8;border-radius:12px;margin-bottom:10px;overflow:hidden;}
+    #aba-ofuros .rec-main{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:1rem 1.25rem .75rem;}
+    #aba-ofuros .oc{width:48px;height:48px;border-radius:50%;background:#E6F1FB;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+    #aba-ofuros .oc .n{font-size:16px;font-weight:500;color:#185FA5;line-height:1;}
+    #aba-ofuros .oc .l{font-size:8px;color:#185FA5;text-align:center;line-height:1.2;margin-top:2px;}
+    #aba-ofuros .ri h3{font-size:14px;font-weight:500;}
+    #aba-ofuros .ri p{font-size:12px;color:#888;margin-top:2px;}
+    #aba-ofuros .ri .rd{font-size:11px;color:#aaa;margin-top:3px;}
+    #aba-ofuros .fbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#534AB7;background:#EEEDFE;border-radius:4px;padding:2px 7px;margin-top:3px;font-weight:500;}
+    #aba-ofuros .ra{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+    #aba-ofuros .ttag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;}
+    #aba-ofuros .ttag.nm{background:#E6F1FB;color:#0C447C;}
+    #aba-ofuros .ttag.hm{background:#FEF3E2;color:#854F0B;}
+    #aba-ofuros .ttag.rv{background:#E1F5EE;color:#085041;}
+    #aba-ofuros .del-btn{background:none;border:none;cursor:pointer;color:#aaa;padding:4px 6px;border-radius:4px;font-size:14px;}
+    #aba-ofuros .del-btn:hover{color:#A32D2D;}
+    #aba-ofuros .edit-rec-btn{background:none;border:1px solid #ddd;cursor:pointer;color:#555;padding:4px 8px;border-radius:6px;font-size:12px;font-family:inherit;}
+    #aba-ofuros .edit-rec-btn:hover{background:#f0f0ec;}
+    #aba-ofuros .ss{font-size:12px;padding:4px 8px;border-radius:4px;border:1px solid #ddd;font-family:inherit;cursor:pointer;font-weight:500;}
+    #aba-ofuros .s-conf{background:#EAF3DE;color:#3B6D11;border-color:#639922;}
+    #aba-ofuros .s-canc{background:#FCEBEB;color:#A32D2D;border-color:#E24B4A;}
+    #aba-ofuros .s-nc{background:#FAEEDA;color:#854F0B;border-color:#BA7517;}
+    #aba-ofuros .s-pend{background:#f5f5f3;color:#888;}
+    #aba-ofuros .obs-panel{border-top:1px solid #eee;padding:.6rem 1.25rem;background:#FAEEDA;display:flex;gap:10px;align-items:center;}
+    #aba-ofuros .obs-panel label{font-size:11px;color:#854F0B;font-weight:500;white-space:nowrap;}
+    #aba-ofuros .obs-panel input{font-size:13px;padding:5px 8px;border:1px solid #BA7517;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit;flex:1;}
+    #aba-ofuros .uso-panel{border-top:1px solid #eee;padding:.75rem 1.25rem;background:#fafaf8;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;}
+    #aba-ofuros .ug{display:flex;flex-direction:column;gap:4px;}
+    #aba-ofuros .ug label{font-size:11px;color:#888;font-weight:500;}
+    #aba-ofuros .ug input, #aba-ofuros .ug select{font-size:13px;padding:6px 8px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit;width:100%;}
+    #aba-ofuros .tbadge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:#fff;border:1px solid #ddd;font-size:13px;font-weight:500;min-height:34px;}
+    #aba-ofuros .tbadge.ok{background:#EAF3DE;color:#3B6D11;border-color:#639922;}
+    #aba-ofuros .tbadge.ov{background:#FCEBEB;color:#A32D2D;border-color:#E24B4A;}
+    #aba-ofuros .empty{text-align:center;padding:3rem 1rem;color:#aaa;font-size:14px;}
+    #aba-ofuros .storage-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#E6F1FB;border:1px solid #185FA5;border-radius:10px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#0C447C;flex-wrap:wrap;}
+    #aba-ofuros .storage-bar button{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid #185FA5;background:white;color:#185FA5;}
+    #aba-ofuros .footer{text-align:center;padding:1.5rem 1rem;border-top:1px solid #e0e0d8;margin-top:2rem;font-size:12px;color:#aaa;}
+    #aba-ofuros .footer span{color:#185FA5;font-weight:500;}
+    #aba-ofuros .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#185FA5;color:white;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9998;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2);}
+    #aba-ofuros .toast.show{opacity:1;}
+    @media print {#aba-ofuros body{background:white;font-size:11px;}#aba-ofuros .app{max-width:100%;padding:0;}#aba-ofuros .header, #aba-ofuros .storage-bar, #aba-ofuros .tab-row, #aba-ofuros .notif-bar, #aba-ofuros .alarm-bar, #aba-ofuros .no-print{display:none!important;}#aba-ofuros #of-tab-novo, #aba-ofuros #of-tab-registros{display:block!important;}#aba-ofuros #of-tab-novo .form-card, #aba-ofuros #of-tab-novo .ofuro-grid, #aba-ofuros .sec-title, #aba-ofuros .floor-label, #aba-ofuros #of-tab-novo .stats-row{display:none!important;}#aba-ofuros .frow, #aba-ofuros .btn-pdf, #aba-ofuros .edit-rec-btn, #aba-ofuros .del-btn, #aba-ofuros .ss{display:none!important;}#aba-ofuros .rec-card{border:1px solid #ccc;margin-bottom:6px;page-break-inside:avoid;border-radius:4px;}#aba-ofuros .rec-main{padding:.5rem .75rem;}#aba-ofuros .uso-panel{padding:.4rem .75rem;}#aba-ofuros .obs-panel{padding:.4rem .75rem;}#aba-ofuros .oc{width:36px;height:36px;}#aba-ofuros .oc .n{font-size:13px;}#aba-ofuros .print-header{display:block!important;}#aba-ofuros .footer{display:block;border-top:1px solid #ccc;margin-top:1rem;padding:.5rem 0;}
+    }
+    #aba-ofuros .print-header{display:none;text-align:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid #185FA5;}
+    #aba-ofuros .print-header h2{font-size:16px;font-weight:600;color:#185FA5;}
+    #aba-ofuros .print-header p{font-size:11px;color:#666;margin-top:3px;}
+    @media(max-width:600px){#aba-ofuros .fr{grid-template-columns:1fr;}#aba-ofuros .fr3{grid-template-columns:1fr 1fr;}#aba-ofuros .stats-row{grid-template-columns:repeat(2,1fr);}#aba-ofuros .ofuro-grid.t3{grid-template-columns:repeat(2,1fr);}#aba-ofuros .uso-panel{grid-template-columns:1fr 1fr;}#aba-ofuros .rec-main{grid-template-columns:44px 1fr;}#aba-ofuros .ra{flex-direction:row;justify-content:space-between;padding-top:8px;grid-column:1/-1;}#aba-ofuros .taxa-row{flex-wrap:wrap;}#aba-ofuros .mfr{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -1539,6 +1685,7 @@
   <button class="main-tab active" id="tab-apartamentos" onclick="abrirAbaPrincipal('apartamentos')">🏠 Apartamentos</button>
   <button class="main-tab" id="tab-pendencias" onclick="abrirAbaPrincipal('pendencias')">🔧 Pendências</button>
   <button class="main-tab" id="tab-gerencia" onclick="abrirAbaPrincipal('gerencia')">💼 Gerência</button>
+  <button class="main-tab" id="tab-ofuros" onclick="abrirAbaPrincipal('ofuros')">🛁 Ofurôs</button>
 </div>
 
 <!-- DIRETRIZES NO TOPO (visível em todas as abas) -->
@@ -2138,6 +2285,169 @@
 <!-- ══════════════════════════════════════
      ABA 3 — GERÊNCIA
 ══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     ABA 4 — OFURÔS
+══════════════════════════════════════ -->
+<div class="aba-principal" id="aba-ofuros">
+
+<!-- ALERTA SONORO -->
+<div class="notif-overlay" id="of-notif-overlay" style="display:none;">
+  <div class="notif-box">
+    <div class="notif-icon">🛁</div>
+    <div class="notif-title" id="of-notif-title">Ofurô em 30 minutos!</div>
+    <div class="notif-msg" id="of-notif-msg"></div>
+    <button class="notif-close" id="of-notif-close-btn" onclick="OFURO.fecharNotif()">OK</button>
+  </div>
+</div>
+
+<!-- MODAL DE EDIÇÃO COMPLETA -->
+<div class="modal-overlay" id="of-modal-edit" onclick="OFURO.fecharModal(event)">
+  <div class="modal-box">
+    <h2>✏️ Editar lançamento <button class="modal-close" onclick="OFURO.fecharModalBtn()">✕</button></h2>
+    <input type="hidden" id="of-edit-id">
+    <div class="mfr">
+      <div class="mfg"><label>Data da compra</label><input type="date" id="of-edit-dc"></div>
+      <div class="mfg"><label>Data da reserva</label><input type="date" id="of-edit-dr"></div>
+    </div>
+    <div class="mfr">
+      <div class="mfg"><label>Ofurô</label>
+        <select id="of-edit-ofuro">
+          <option value="1">Ofurô 1 — Terceiro andar</option>
+          <option value="2">Ofurô 2 — Terceiro andar</option>
+          <option value="3">Ofurô 3 — Terceiro andar</option>
+          <option value="4">Ofurô 4 — Terceiro andar</option>
+          <option value="6">Ofurô 6 — Piscina</option>
+          <option value="7">Ofurô 7 — Piscina</option>
+        </select>
+      </div>
+      <div class="mfg"><label>Apartamento</label><input type="text" id="of-edit-apto" placeholder="Ex: 101, 202..."></div>
+    </div>
+    <div class="mfr">
+      <div class="mfg"><label>Horário agendado</label><input type="time" id="of-edit-hr"></div>
+      <div class="mfg"><label>Funcionário</label><input type="text" id="of-edit-func" placeholder="Nome do funcionário..."></div>
+    </div>
+    <div class="mfg" style="margin-bottom:12px;"><label>Tipo de lançamento</label></div>
+    <div class="modal-taxa-row">
+      <button class="modal-taxa-btn" id="of-medit-taxa" onclick="OFURO.selTaxaEdit('taxa')"><span style="font-size:14px;font-weight:500;display:block">R$ 50,00</span><span style="font-size:11px">💧 Taxa 1h</span></button>
+      <button class="modal-taxa-btn hm" id="of-medit-meia" onclick="OFURO.selTaxaEdit('meia')"><span style="font-size:14px;font-weight:500;display:block">R$ 25,00</span><span style="font-size:11px">⏱ Taxa 30min</span></button>
+      <button class="modal-taxa-btn rv" id="of-medit-rev" onclick="OFURO.selTaxaEdit('revertido')"><span style="font-size:14px;font-weight:500;display:block">Revertido 1h</span><span style="font-size:11px">🔄 Em consumação</span></button>
+    </div>
+    <div class="mfg" style="margin-bottom:12px;"><label>Descrição / Observações</label><textarea id="of-edit-desc" placeholder="Informações adicionais..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn-cancelar" onclick="OFURO.fecharModalBtn()">Cancelar</button>
+      <button class="btn-gravar" onclick="OFURO.gravarEdicao()">💾 Gravar</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+<div class="header">
+  <div class="badge">🌊 Pousada Marie Claire</div>
+  <h1>Controle de Ofurôs</h1>
+  <p>Gerenciamento de agendamentos</p>
+</div>
+
+<div class="storage-bar no-print" id="of-storage-bar">
+  <span id="of-storage-status">☁️ Conectando ao banco de dados...</span>
+  <strong id="of-storage-count"></strong>
+</div>
+
+<div class="tab-row no-print">
+  <button class="tab active" onclick="OFURO.showTab('novo')">Novo agendamento</button>
+  <button class="tab" onclick="OFURO.showTab('registros')">Registros</button>
+</div>
+
+<div class="notif-bar prompt no-print" id="of-notif-perm-bar">
+  <span id="of-notif-perm-txt">🔔 Ative as notificações do sistema para receber alertas mesmo com a aba minimizada</span>
+  <button id="of-notif-perm-btn" onclick="OFURO.pedirPermissao()">Ativar notificações</button>
+</div>
+
+<div class="alarm-bar no-print" id="of-alarm-bar">
+  <div class="alarm-status" id="of-alarm-status">
+    <div class="alarm-dot" id="of-alarm-dot"></div>
+    <span id="of-alarm-txt">Alarme ativo — monitorando agendamentos de hoje</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="alarm-next" id="of-alarm-next"></span>
+    <button class="alarm-btn" id="of-alarm-btn" onclick="OFURO.toggleAlarme()">Desativar</button>
+  </div>
+</div>
+
+<!-- NOVO AGENDAMENTO -->
+<div id="of-tab-novo">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total lançamentos</div><div class="stat-value" id="of-st-tot">0</div></div>
+    <div class="stat-card"><div class="stat-label">Taxa 1h (R$ 50)</div><div class="stat-value" id="of-st-tax" style="color:#185FA5">0</div></div>
+    <div class="stat-card"><div class="stat-label">Taxa 30min (R$ 25)</div><div class="stat-value" id="of-st-mei" style="color:#BA7517">0</div></div>
+    <div class="stat-card"><div class="stat-label">Total arrecadado</div><div class="stat-value" id="of-st-val" style="font-size:15px;color:#185FA5">R$ 0</div></div>
+  </div>
+  <p class="sec-title">Selecione o ofurô</p>
+  <div class="floor-label">🏢 Terceiro andar</div>
+  <div class="ofuro-grid t3" id="of-og-t3"></div>
+  <div class="floor-label" style="margin-top:8px;">🏊 Piscina</div>
+  <div class="ofuro-grid ps" id="of-og-ps" style="margin-bottom:1.5rem;"></div>
+  <div class="form-card">
+    <div class="fr">
+      <div class="fg"><label>Data da compra</label><input type="date" id="of-dc"></div>
+      <div class="fg"><label>Data da reserva</label><input type="date" id="of-dr"></div>
+    </div>
+    <div class="fr3">
+      <div class="fg"><label>Horário do agendamento</label><input type="time" id="of-hr"></div>
+      <div class="fg" style="grid-column:span 2"><label>Apartamento que reservou</label><input type="text" id="of-apt" placeholder="Ex: 101, 202, Bangalô 3..."></div>
+    </div>
+    <div class="fr" style="margin-bottom:12px;">
+      <div class="fg" style="grid-column:span 2">
+        <label>👤 Quem fez o agendamento</label>
+        <input type="text" id="of-func" placeholder="Nome do funcionário responsável..." list="func-dl" autocomplete="off">
+        <datalist id="of-func-dl"></datalist>
+      </div>
+    </div>
+    <div class="fg" style="margin-bottom:8px;"><label>Tipo de lançamento</label></div>
+    <div class="taxa-row">
+      <button class="taxa-btn" id="of-btn-taxa" onclick="OFURO.selTaxa('taxa')"><span class="taxa-price">R$ 50,00</span><span class="taxa-name">💧 Taxa 1h</span></button>
+      <button class="taxa-btn hm" id="of-btn-meia" onclick="OFURO.selTaxa('meia')"><span class="taxa-price">R$ 25,00</span><span class="taxa-name">⏱ Taxa 30min</span><span style="font-size:11px;color:#854F0B;margin-top:5px;display:block;font-weight:600;background:#fde8c8;border-radius:4px;padding:2px 6px;">⚠️ apenas algumas exceções, quando já estiver fazendo uso do ofurô</span></button>
+      <button class="taxa-btn rv" id="of-btn-rev" onclick="OFURO.selTaxa('revertido')"><span class="taxa-price">Revertido 1h</span><span class="taxa-name">🔄 Em consumação</span></button>
+    </div>
+    <div class="fg" style="margin-bottom:16px;"><label>Descrição / Observações</label><textarea id="of-desc" placeholder="Informações adicionais..."></textarea></div>
+    <button class="btn-sub" onclick="OFURO.submitForm()">Registrar agendamento</button>
+  </div>
+</div>
+
+<!-- REGISTROS -->
+<div id="of-tab-registros" style="display:none;">
+  <!-- cabeçalho só aparece no PDF -->
+  <div class="print-header">
+    <h2>🌊 Pousada Marie Claire — Controle de Ofurôs</h2>
+    <p id="of-print-subtitulo">Relatório de registros</p>
+  </div>
+
+  <div class="frow no-print" id="of-f-ofuro"></div>
+  <div class="frow no-print" id="of-f-taxa">
+    <div class="fchip ac" onclick="OFURO.fTaxa('todos',this)">Todos</div>
+    <div class="fchip" onclick="OFURO.fTaxa('taxa',this)">Taxa 1h</div>
+    <div class="fchip" onclick="OFURO.fTaxa('meia',this)">Taxa 30min</div>
+    <div class="fchip" onclick="OFURO.fTaxa('revertido',this)">Revertido em consumação</div>
+  </div>
+  <div class="frow no-print" id="of-f-status">
+    <div class="fchip ac" onclick="OFURO.fStatus('todos',this)">Todos status</div>
+    <div class="fchip" onclick="OFURO.fStatus('confirmada',this)">Confirmada</div>
+    <div class="fchip" onclick="OFURO.fStatus('cancelada',this)">Cancelada</div>
+    <div class="fchip" onclick="OFURO.fStatus('naoconsta',this)">Não consta</div>
+    <div class="fchip" onclick="OFURO.fStatus('pendente',this)">Pendente</div>
+  </div>
+  <div class="frow no-print" id="of-f-func">
+    <button class="btn-pdf" onclick="OFURO.exportarPDF()">🖨️ Exportar PDF</button>
+  </div>
+  <div id="of-rec-list"></div>
+</div>
+
+<div class="footer">Desenvolvido por <span>Francyne Oliveira</span> · Pousada Marie Claire</div>
+</div>
+<div class="toast" id="of-toast"></div>
+
+</div>
+
+
 <div class="aba-principal" id="aba-gerencia">
   <div class="diretrizes-wrap">
     <h2 style="font-size:18px;color:#1F3864;margin-bottom:12px;text-align:center;">💰 Compras e Orçamentos</h2>
@@ -3839,7 +4149,7 @@ carregarDiretrizes();
 let _abaAtiva = 'apartamentos';
 function abrirAbaPrincipal(aba) {
   _abaAtiva = aba;
-  ['apartamentos','pendencias','gerencia'].forEach(a => {
+  ['apartamentos','pendencias','gerencia','ofuros'].forEach(a => {
     const tabBtn = document.getElementById('tab-' + a);
     const tabContent = document.getElementById('aba-' + a);
     if (tabBtn) tabBtn.classList.toggle('active', a === aba);
@@ -3848,6 +4158,7 @@ function abrirAbaPrincipal(aba) {
   window.scrollTo(0, 0);
   if (aba === 'pendencias') carregarPendenciasGeral();
   if (aba === 'gerencia') carregarCompras();
+  if (aba === 'ofuros' && window.OFURO) OFURO.iniciar();
 }
 
 // Recolher/expandir a área de Diretrizes Gerais
@@ -5321,6 +5632,405 @@ function adicionarComentarioCompra(id) {
     body: JSON.stringify({ action: 'adicionar_comentario_compra', id: id, autor: autor, descricao: msg }),
   }).catch(() => {});
 }
+
+// ═════════════════════════════════════════════════════════════════
+// MÓDULO OFURÔS — controle de agendamentos (dados no Supabase)
+// Código isolado numa IIFE; as funções usadas por onclick ficam
+// disponíveis em window.OFURO. Os IDs internos usam o prefixo "of-".
+// ═════════════════════════════════════════════════════════════════
+window.OFURO = (function() {
+// ============================================================
+// CONFIGURAÇÃO SUPABASE
+// ============================================================
+const SUPABASE_URL = 'https://gmxlghpjoroiuwdytsfh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdteGxnaHBqb3JvaXV3ZHl0c2ZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MzI3MDgsImV4cCI6MjA5MzAwODcwOH0.5ZI8bGASQx1GpnHiaGU1HlgTXrOyauYxZmfB72nVboI';
+// ============================================================
+
+const OFUROS=[
+  {num:1,local:'Terceiro andar',g:'t3'},{num:2,local:'Terceiro andar',g:'t3'},
+  {num:3,local:'Terceiro andar',g:'t3'},{num:4,local:'Terceiro andar',g:'t3'},
+  {num:6,local:'Piscina',g:'ps'},{num:7,local:'Piscina',g:'ps'},
+];
+
+let recs=[], selO=null, selT=null, fO=0, fT='todos', fSt='todos', fF='todos';
+let alarmeAtivo=true, alarmeInterval=null, alarmedIds=new Set(), audioCtx=null;
+let somAtivo=false, somInterval=null;
+let editTaxa=null;
+
+// ---- API SUPABASE ----
+async function sbFetch(path, opts={}){
+  const res=await fetch(SUPABASE_URL+'/rest/v1/'+path,{
+    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})},
+    ...opts
+  });
+  if(!res.ok) throw new Error(await res.text());
+  const txt=await res.text();
+  return txt?JSON.parse(txt):[];
+}
+
+async function loadData(){
+  const bar=document.getElementById('of-storage-bar');
+  const status=document.getElementById('of-storage-status');
+  const count=document.getElementById('of-storage-count');
+  try{
+    recs=await sbFetch('ofuros?order=created_at.desc');
+    bar.style.background='#E6F1FB'; bar.style.borderColor='#185FA5'; bar.style.color='#0C447C';
+    status.textContent='☁️ Conectado ao Supabase —';
+    count.textContent=recs.length+' registro'+(recs.length!==1?'s':'');
+  }catch(e){
+    bar.style.background='#FCEBEB'; bar.style.borderColor='#E24B4A'; bar.style.color='#A32D2D';
+    status.textContent='❌ Erro ao conectar: '+e.message;
+    count.textContent='';
+  }
+  renderAll();
+}
+
+async function saveNew(r){
+  await sbFetch('ofuros',{method:'POST',body:JSON.stringify(r)});
+}
+async function updateField(id,fields){
+  await sbFetch('ofuros?id=eq.'+id,{method:'PATCH',body:JSON.stringify(fields)});
+}
+async function deleteRec(id){
+  await sbFetch('ofuros?id=eq.'+id,{method:'DELETE'});
+}
+
+// ---- PDF ----
+function exportarPDF(){
+  // Monta subtítulo com os filtros ativos
+  let filtros=[];
+  if(fO>0) filtros.push('Ofurô '+fO);
+  if(fT!=='todos') filtros.push(fT==='taxa'?'Taxa 1h':fT==='meia'?'Taxa 30min':'Revertido');
+  if(fSt!=='todos') filtros.push(fSt.charAt(0).toUpperCase()+fSt.slice(1));
+  if(fF!=='todos') filtros.push(fF);
+  const sub=filtros.length?'Filtros: '+filtros.join(' · '):'Todos os registros';
+  const data=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('of-print-subtitulo').textContent=sub+' — Gerado em '+data;
+  // Oculta o restante do sistema durante a impressão (cabeçalho, abas, diretrizes)
+  document.body.classList.add('imprimindo-ofuros');
+  window.print();
+  setTimeout(function(){ document.body.classList.remove('imprimindo-ofuros'); }, 1000);
+}
+
+// ---- MODAL EDIÇÃO ----
+function abrirModal(id){
+  const r=recs.find(r=>r.id===id); if(!r)return;
+  document.getElementById('of-edit-id').value=id;
+  document.getElementById('of-edit-dc').value=r.dc||'';
+  document.getElementById('of-edit-dr').value=r.dr||'';
+  document.getElementById('of-edit-ofuro').value=r.ofuro||'';
+  document.getElementById('of-edit-apto').value=r.apto||'';
+  document.getElementById('of-edit-hr').value=r.hr||'';
+  document.getElementById('of-edit-func').value=r.func||'';
+  document.getElementById('of-edit-desc').value=r.descricao||'';
+  editTaxa=r.taxa||null;
+  selTaxaEdit(editTaxa);
+  document.getElementById('of-modal-edit').style.display='flex';
+}
+function fecharModalBtn(){ document.getElementById('of-modal-edit').style.display='none'; }
+function fecharModal(e){ if(e.target===document.getElementById('of-modal-edit')) fecharModalBtn(); }
+
+function selTaxaEdit(v){
+  editTaxa=v;
+  document.getElementById('of-medit-taxa').className='modal-taxa-btn'+(v==='taxa'?' st':'');
+  document.getElementById('of-medit-meia').className='modal-taxa-btn hm'+(v==='meia'?' st':'');
+  document.getElementById('of-medit-rev').className='modal-taxa-btn rv'+(v==='revertido'?' st':'');
+}
+
+async function gravarEdicao(){
+  const id=document.getElementById('of-edit-id').value;
+  const r=recs.find(r=>r.id===id); if(!r)return;
+  const dc=document.getElementById('of-edit-dc').value;
+  const dr=document.getElementById('of-edit-dr').value;
+  const ofuro=parseInt(document.getElementById('of-edit-ofuro').value);
+  const apto=document.getElementById('of-edit-apto').value.trim();
+  const hr=document.getElementById('of-edit-hr').value;
+  const func=document.getElementById('of-edit-func').value.trim();
+  const descricao=document.getElementById('of-edit-desc').value.trim();
+  if(!apto){toast('⚠️ Informe o apartamento');return;}
+  if(!func){toast('⚠️ Informe o funcionário');return;}
+  if(!editTaxa){toast('⚠️ Selecione o tipo de lançamento');return;}
+  try{
+    await updateField(id,{dc,dr,ofuro,apto,hr,func,descricao,taxa:editTaxa});
+    r.dc=dc; r.dr=dr; r.ofuro=ofuro; r.apto=apto;
+    r.hr=hr; r.func=func; r.descricao=descricao; r.taxa=editTaxa;
+    fecharModalBtn(); renderAll(); toast('✅ Lançamento gravado!');
+  }catch(e){ toast('Erro ao gravar: '+e.message); }
+}
+
+// ---- NOTIFICAÇÕES ----
+function atualizarBarraNotif(){
+  const bar=document.getElementById('of-notif-perm-bar'),txt=document.getElementById('of-notif-perm-txt'),btn=document.getElementById('of-notif-perm-btn');
+  if(!('Notification' in window)){bar.className='notif-bar denied';txt.textContent='⚠️ Navegador não suporta notificações';btn.style.display='none';return;}
+  const p=Notification.permission;
+  if(p==='granted'){bar.className='notif-bar granted';txt.textContent='✅ Notificações ativas — você será avisado mesmo com a aba minimizada';btn.style.display='none';}
+  else if(p==='denied'){bar.className='notif-bar denied';txt.textContent='❌ Notificações bloqueadas. Clique no cadeado da barra do navegador para liberar.';btn.style.display='none';}
+  else{bar.className='notif-bar prompt';txt.textContent='🔔 Ative as notificações para alertas mesmo com a aba minimizada';btn.style.display='';btn.textContent='Ativar notificações';}
+}
+async function pedirPermissao(){
+  if(!('Notification' in window))return;
+  const r=await Notification.requestPermission();
+  atualizarBarraNotif();
+  if(r==='granted'){toast('Notificações ativadas!');new Notification('🌊 Pousada Marie Claire',{body:'Você será avisado 30 min antes de cada ofurô.'});}
+}
+function enviarNotifSistema(titulo,corpo){
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  try{const n=new Notification(titulo,{body:corpo,requireInteraction:true,tag:'ofuro-alerta'});n.onclick=()=>{window.focus();n.close();};}catch(e){}
+}
+
+// ---- SOM ----
+function tocarBeep(){
+  try{
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const seq=[{f:880,d:.15},{f:0,d:.05},{f:880,d:.15},{f:0,d:.05},{f:1100,d:.3},{f:0,d:.2}];
+    let t=audioCtx.currentTime;
+    seq.forEach(s=>{if(s.f>0){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=s.f;o.type='sine';g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.01,t+s.d);o.start(t);o.stop(t+s.d);}t+=s.d;});
+  }catch(e){}
+}
+function tocarSom(){somAtivo=true;tocarBeep();somInterval=setInterval(()=>{if(somAtivo)tocarBeep();},1500);}
+function pararSom(){somAtivo=false;if(somInterval){clearInterval(somInterval);somInterval=null;}}
+function fecharNotif(){document.getElementById('of-notif-overlay').style.display='none';pararSom();if(window._countdownTimer)clearInterval(window._countdownTimer);}
+
+// ---- ALARME ----
+function verificarAlarmes(){
+  if(!alarmeAtivo)return;
+  const agora=new Date(),hoje=agora.toISOString().slice(0,10),hAtual=agora.getHours()*60+agora.getMinutes();
+  const candidatos=recs.filter(r=>r.dr===hoje&&r.hr&&r.status!=='cancelada'&&r.status!=='naoconsta');
+  let proximo=null;
+  candidatos.forEach(r=>{
+    const[h,m]=r.hr.split(':').map(Number),hAgend=h*60+m,diff=hAgend-hAtual,key=r.id+'_30';
+    if(diff<=30&&diff>28&&!alarmedIds.has(key)){
+      alarmedIds.add(key);
+      const ofInfo=OFUROS.find(o=>o.num===r.ofuro)||{};
+      tocarSom();
+      enviarNotifSistema(`🛁 Ofurô ${r.ofuro} em 30 minutos!`,`Apto ${r.apto} · ${r.hr}${r.func?' · '+r.func:''}\n${ofInfo.local||''}`);
+      document.getElementById('of-notif-title').textContent=`Ofurô ${r.ofuro} em 30 minutos!`;
+      document.getElementById('of-notif-msg').innerHTML=`<strong>Ofurô ${r.ofuro}</strong> — ${ofInfo.local||''}<br>Apartamento: <strong>${r.apto}</strong><br>Horário: <strong>${r.hr}</strong><br>${r.func?`Agendado por: <strong>${r.func}</strong>`:''}`;
+      document.getElementById('of-notif-overlay').style.display='flex';
+      let seg=10;const btn=document.getElementById('of-notif-close-btn');btn.textContent=`OK (${seg}s)`;
+      if(window._countdownTimer)clearInterval(window._countdownTimer);
+      window._countdownTimer=setInterval(()=>{seg--;if(seg>0){btn.textContent=`OK (${seg}s)`;}else{clearInterval(window._countdownTimer);btn.textContent='OK';}},1000);
+    }
+    if(diff>0&&(!proximo||diff<proximo.diff))proximo={diff,r};
+  });
+  const next=document.getElementById('of-alarm-next');
+  if(proximo){const h=Math.floor(proximo.diff/60),m=proximo.diff%60;next.textContent=`Próximo: Ofurô ${proximo.r.ofuro} em ${h>0?h+'h ':''}${m}min`;}
+  else next.textContent=candidatos.length>0?'Todos monitorados':'Sem agendamentos hoje';
+}
+function toggleAlarme(){
+  alarmeAtivo=!alarmeAtivo;
+  const bar=document.getElementById('of-alarm-bar'),status=document.getElementById('of-alarm-status'),dot=document.getElementById('of-alarm-dot'),txt=document.getElementById('of-alarm-txt'),btn=document.getElementById('of-alarm-btn'),next=document.getElementById('of-alarm-next');
+  if(alarmeAtivo){bar.className='alarm-bar';status.className='alarm-status';dot.className='alarm-dot';txt.textContent='Alarme ativo — monitorando agendamentos de hoje';btn.className='alarm-btn';btn.textContent='Desativar';next.style.color='#3B6D11';iniciarAlarme();}
+  else{bar.className='alarm-bar off';status.className='alarm-status off';dot.className='alarm-dot off';txt.textContent='Alarme desativado';btn.className='alarm-btn off';btn.textContent='Ativar';next.style.color='#aaa';next.textContent='';if(alarmeInterval){clearInterval(alarmeInterval);alarmeInterval=null;}}
+}
+function iniciarAlarme(){if(alarmeInterval)clearInterval(alarmeInterval);verificarAlarmes();alarmeInterval=setInterval(verificarAlarmes,30000);}
+
+// ---- RENDER ----
+function renderAll(){
+  renderGrids();renderStats();renderFChips();renderRecs();updateFuncDl();
+  const count=document.getElementById('of-storage-count');
+  if(count) count.textContent=recs.length+' registro'+(recs.length!==1?'s':'');
+}
+function updateFuncDl(){
+  const names=[...new Set(recs.map(r=>r.func).filter(Boolean))];
+  const dl=document.getElementById('of-func-dl');if(dl)dl.innerHTML=names.map(n=>`<option value="${n}">`).join('');
+  const ff=document.getElementById('of-f-func');
+  if(ff){
+    // mantém o botão PDF no final
+    const btnPdf=ff.querySelector('.btn-pdf');
+    ff.innerHTML=`<div class="fchip${fF==='todos'?' ac':''}" onclick="OFURO.fFunc('todos',this)">Todos funcionários</div>`;
+    names.forEach(n=>{const c=document.createElement('div');c.className='fchip'+(fF===n?' ac':'');c.textContent=n;c.onclick=function(){fFunc(n,this);};ff.appendChild(c);});
+    if(btnPdf) ff.appendChild(btnPdf);
+  }
+}
+function renderGrids(){
+  const t=document.getElementById('of-og-t3'),p=document.getElementById('of-og-ps');t.innerHTML='';p.innerHTML='';
+  OFUROS.forEach(o=>{const cnt=recs.filter(r=>r.ofuro===o.num).length;const b=document.createElement('div');b.className='ofuro-btn'+(selO===o.num?' sel':'');b.innerHTML=`<div class="ofuro-num">${o.num}</div><div class="ofuro-lbl">${o.local}</div><div class="ofuro-cnt">${cnt} agend.</div>`;b.onclick=()=>{selO=o.num;renderGrids();};(o.g==='t3'?t:p).appendChild(b);});
+}
+function renderStats(){
+  const tx=recs.filter(r=>r.taxa==='taxa'),mei=recs.filter(r=>r.taxa==='meia');
+  document.getElementById('of-st-tot').textContent=recs.length;
+  document.getElementById('of-st-tax').textContent=tx.length;
+  document.getElementById('of-st-mei').textContent=mei.length;
+  document.getElementById('of-st-val').textContent='R$ '+(tx.length*50+mei.length*25).toLocaleString('pt-BR');
+}
+function renderFChips(){
+  const c=document.getElementById('of-f-ofuro');c.innerHTML=`<div class="fchip${fO===0?' ac':''}" onclick="OFURO.fOfuro(0,this)">Todos</div>`;
+  OFUROS.forEach(o=>{const ch=document.createElement('div');ch.className='fchip'+(fO===o.num?' ac':'');ch.textContent='Ofurô '+o.num;ch.onclick=function(){fOfuro(o.num,this);};c.appendChild(ch);});
+}
+function fOfuro(v,el){fO=v;document.querySelectorAll('#of-f-ofuro .fchip').forEach(c=>c.classList.remove('ac'));el.classList.add('ac');renderRecs();}
+function fTaxa(v,el){fT=v;document.querySelectorAll('#of-f-taxa .fchip').forEach(c=>c.classList.remove('ac'));el.classList.add('ac');renderRecs();}
+function fStatus(v,el){fSt=v;document.querySelectorAll('#of-f-status .fchip').forEach(c=>c.classList.remove('ac'));el.classList.add('ac');renderRecs();}
+function fFunc(v,el){fF=v;document.querySelectorAll('#of-f-func .fchip').forEach(c=>c.classList.remove('ac'));el.classList.add('ac');renderRecs();}
+function calcTempo(a,b){
+  if(!a||!b)return null;
+  const[ah,am]=a.split(':').map(Number),[bh,bm]=b.split(':').map(Number);
+  let m=(bh*60+bm)-(ah*60+am);if(m<0)m+=1440;
+  const h=Math.floor(m/60),mn=m%60;return{m,txt:h>0?`${h}h ${mn.toString().padStart(2,'0')}min`:`${mn}min`};
+}
+function stInfo(s){
+  if(s==='confirmada')return{cls:'s-conf',txt:'Confirmada'};
+  if(s==='cancelada')return{cls:'s-canc',txt:'Cancelada'};
+  if(s==='naoconsta')return{cls:'s-nc',txt:'Não consta'};
+  return{cls:'s-pend',txt:'Pendente'};
+}
+function initials(n){if(!n)return'?';return n.trim().split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();}
+function fd(d){if(!d)return'-';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}`;}
+function taxaLabel(t){
+  if(t==='taxa')return{cls:'nm',txt:'Taxa 1h · R$ 50'};
+  if(t==='meia')return{cls:'hm',txt:'Taxa 30min · R$ 25'};
+  return{cls:'rv',txt:'Revertido em consumação'};
+}
+
+function renderRecs(){
+  const list=document.getElementById('of-rec-list');
+  let f=[...recs];
+  if(fO>0)f=f.filter(r=>r.ofuro===fO);
+  if(fT!=='todos')f=f.filter(r=>r.taxa===fT);
+  if(fSt!=='todos')f=f.filter(r=>(r.status||'pendente')===fSt);
+  if(fF!=='todos')f=f.filter(r=>r.func===fF);
+  f.sort((a,b)=>new Date(b.dr+' '+(b.hr||'00:00'))-new Date(a.dr+' '+(a.hr||'00:00')));
+  if(!f.length){list.innerHTML='<div class="empty">Nenhum lançamento encontrado.</div>';return;}
+  const info=n=>OFUROS.find(o=>o.num===n)||{};
+  list.innerHTML=f.map(r=>{
+    const loc=(info(r.ofuro).local||'').replace('Terceiro andar','3º andar');
+    const t=calcTempo(r.liga,r.desliga),st=stInfo(r.status||'pendente'),tc=t?(t.m>60?'ov':'ok'):'';
+    const tl=taxaLabel(r.taxa);
+    const isConf=(r.status==='confirmada');
+    return`<div class="rec-card">
+      <div class="rec-main">
+        <div class="oc"><div class="n">${r.ofuro}</div><div class="l">${loc}</div></div>
+        <div class="ri">
+          <h3>Apto ${r.apto}${r.hr?' · '+r.hr:''}</h3>
+          ${r.func?`<div class="fbadge">👤 ${r.func}</div>`:''}
+          <p style="margin-top:3px">${r.descricao||'Sem observações'}</p>
+          <div class="rd">Compra: ${fd(r.dc)} · Reserva: ${fd(r.dr)}</div>
+        </div>
+        <div class="ra">
+          <span class="ttag ${tl.cls}">${tl.txt}</span>
+          <select class="ss ${st.cls}" onchange="OFURO.updSt('${r.id}',this.value)">
+            <option value="pendente" ${(!r.status||r.status==='pendente')?'selected':''}>Pendente</option>
+            <option value="confirmada" ${r.status==='confirmada'?'selected':''}>Confirmada</option>
+            <option value="cancelada" ${r.status==='cancelada'?'selected':''}>Cancelada</option>
+            <option value="naoconsta" ${r.status==='naoconsta'?'selected':''}>Não consta no sistema</option>
+          </select>
+          <div style="display:flex;gap:4px;">
+            <button class="edit-rec-btn" onclick="OFURO.abrirModal('${r.id}')">✏️ Editar</button>
+            <button class="del-btn" onclick="OFURO.delRec('${r.id}')">✕</button>
+          </div>
+        </div>
+      </div>
+      ${isConf?`<div class="obs-panel">
+        <label>📝 Obs. (hóspede no ofurô):</label>
+        <input type="text" placeholder="Ex: pediu toalha extra, voltará amanhã..." value="${(r.obs||'').replace(/"/g,'&quot;')}" onblur="OFURO.updField('${r.id}','obs',this.value)">
+      </div>`:''}
+      <div class="uso-panel">
+        <div class="ug"><label>Hora que ligou</label><input type="time" value="${r.liga||''}" onchange="OFURO.updField('${r.id}','liga',this.value)"></div>
+        <div class="ug"><label>Hora que desligou</label><input type="time" value="${r.desliga||''}" onchange="OFURO.updField('${r.id}','desliga',this.value)"></div>
+        <div class="ug"><label>Tempo total ligado</label><div class="tbadge ${tc}">⏱ ${t?t.txt:'—'}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function updSt(id,v){
+  const r=recs.find(r=>r.id===id);if(!r)return;
+  try{
+    await updateField(id,{status:v});
+    r.status=v; renderRecs(); toast('Status atualizado');
+  }catch(e){ toast('Erro ao atualizar status'); }
+}
+async function updField(id,field,v){
+  const r=recs.find(r=>r.id===id);if(!r)return;
+  try{
+    await updateField(id,{[field]:v});
+    r[field]=v;
+    if(['liga','desliga'].includes(field)) renderRecs();
+    else toast('Salvo ✓');
+  }catch(e){ toast('Erro ao salvar'); }
+}
+function selTaxa(v){
+  selT=v;
+  document.getElementById('of-btn-taxa').className='taxa-btn'+(v==='taxa'?' st':'');
+  document.getElementById('of-btn-meia').className='taxa-btn hm'+(v==='meia'?' st':'');
+  document.getElementById('of-btn-rev').className='taxa-btn rv'+(v==='revertido'?' st':'');
+}
+function showTab(t){
+  ['novo','registros'].forEach(x=>document.getElementById('of-tab-'+x).style.display=x===t?'':'none');
+  document.querySelectorAll('#aba-ofuros .tab').forEach((el,i)=>el.classList.toggle('active',['novo','registros'][i]===t));
+}
+async function submitForm(){
+  const dc=document.getElementById('of-dc').value,dr=document.getElementById('of-dr').value;
+  const apt=document.getElementById('of-apt').value.trim(),hr=document.getElementById('of-hr').value;
+  const desc=document.getElementById('of-desc').value.trim(),func=document.getElementById('of-func').value.trim();
+  if(!selO){toast('⚠️ Selecione um ofurô');return;}
+  if(!dc){toast('⚠️ Informe a data da compra');return;}
+  if(!dr){toast('⚠️ Informe a data da reserva');return;}
+  if(!apt){toast('⚠️ Informe o apartamento');return;}
+  if(!selT){toast('⚠️ Selecione o tipo de lançamento');return;}
+  if(!func){toast('⚠️ Informe quem fez o agendamento');return;}
+  const novo={id:Date.now().toString(),ofuro:selO,dc,dr,apto:apt,hr,taxa:selT,descricao:desc,func,status:'pendente',liga:'',desliga:'',obs:''};
+  try{
+    await saveNew(novo);
+    recs.unshift(novo);
+    const td=new Date().toISOString().slice(0,10);
+    document.getElementById('of-dc').value=td;document.getElementById('of-dr').value=td;
+    ['apt','hr','desc','func'].forEach(id=>document.getElementById('of-'+id).value='');
+    selO=null;selT=null;selTaxa(null);
+    renderAll(); toast('✅ Agendamento registrado!');
+  }catch(e){ toast('Erro ao registrar: '+e.message); }
+}
+async function delRec(id){
+  if(!confirm('Excluir este lançamento?'))return;
+  try{
+    await deleteRec(id);
+    recs=recs.filter(r=>r.id!==id); renderAll(); toast('Lançamento removido');
+  }catch(e){ toast('Erro ao excluir'); }
+}
+function toast(msg){const t=document.getElementById('of-toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+document.addEventListener('click',()=>{if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}},{once:true});
+
+const td=new Date().toISOString().slice(0,10);
+document.getElementById('of-dc').value=td;
+document.getElementById('of-dr').value=td;
+atualizarBarraNotif();
+loadData().then(()=>iniciarAlarme());
+setInterval(()=>loadData(), 30000);
+
+  // Inicialização sob demanda (só ao abrir a aba pela primeira vez)
+  let _iniciado = false;
+  function iniciar() {
+    if (_iniciado) return;
+    _iniciado = true;
+    try { loadData(); } catch(e) { console.error('Ofurôs — erro ao carregar:', e); }
+    try { atualizarBarraNotif(); } catch(e) {}
+    try { iniciarAlarme(); } catch(e) {}
+  }
+
+  return { iniciar: iniciar, recarregar: function(){ try { loadData(); } catch(e){} },
+    abrirModal: abrirModal,
+    delRec: delRec,
+    exportarPDF: exportarPDF,
+    fFunc: fFunc,
+    fOfuro: fOfuro,
+    fStatus: fStatus,
+    fTaxa: fTaxa,
+    fecharModal: fecharModal,
+    fecharModalBtn: fecharModalBtn,
+    fecharNotif: fecharNotif,
+    gravarEdicao: gravarEdicao,
+    pedirPermissao: pedirPermissao,
+    selTaxa: selTaxa,
+    selTaxaEdit: selTaxaEdit,
+    showTab: showTab,
+    submitForm: submitForm,
+    toggleAlarme: toggleAlarme,
+    updField: updField,
+    updSt: updSt
+  };
+})();
+
 </script>
 </body>
 </html>
