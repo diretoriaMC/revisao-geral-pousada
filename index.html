@@ -2373,7 +2373,7 @@
 <!-- ALERTA SONORO -->
 <div class="notif-overlay" id="of-notif-overlay" style="display:none;">
   <div class="notif-box">
-    <div class="notif-icon">🛁</div>
+    <div class="notif-icon" id="of-notif-icon">🛁</div>
     <div class="notif-title" id="of-notif-title">Ofurô em 30 minutos!</div>
     <div class="notif-msg" id="of-notif-msg"></div>
     <button class="notif-close" id="of-notif-close-btn" onclick="OFURO.fecharNotif()">OK</button>
@@ -2446,7 +2446,7 @@
 <div class="alarm-bar no-print" id="of-alarm-bar">
   <div class="alarm-status" id="of-alarm-status">
     <div class="alarm-dot" id="of-alarm-dot"></div>
-    <span id="of-alarm-txt">Alarme ativo — monitorando agendamentos de hoje</span>
+    <span id="of-alarm-txt">Alarme ativo — monitorando agendamentos de hoje (30 min antes + ligar p/ restaurante)</span>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
     <span class="alarm-next" id="of-alarm-next"></span>
@@ -5908,24 +5908,40 @@ function pararSom(){somAtivo=false;if(somInterval){clearInterval(somInterval);so
 function fecharNotif(){document.getElementById('of-notif-overlay').style.display='none';pararSom();if(window._countdownTimer)clearInterval(window._countdownTimer);}
 
 // ---- ALARME ----
+function _dispararAlerta(icone,titulo,notifCorpo,htmlMsg){
+  tocarSom();
+  enviarNotifSistema(titulo,notifCorpo);
+  const ic=document.getElementById('of-notif-icon'); if(ic)ic.textContent=icone;
+  document.getElementById('of-notif-title').textContent=titulo;
+  document.getElementById('of-notif-msg').innerHTML=htmlMsg;
+  document.getElementById('of-notif-overlay').style.display='flex';
+  let seg=10;const btn=document.getElementById('of-notif-close-btn');btn.textContent=`OK (${seg}s)`;
+  if(window._countdownTimer)clearInterval(window._countdownTimer);
+  window._countdownTimer=setInterval(()=>{seg--;if(seg>0){btn.textContent=`OK (${seg}s)`;}else{clearInterval(window._countdownTimer);btn.textContent='OK';}},1000);
+}
 function verificarAlarmes(){
   if(!alarmeAtivo)return;
   const agora=new Date(),hoje=agora.toISOString().slice(0,10),hAtual=agora.getHours()*60+agora.getMinutes();
   const candidatos=recs.filter(r=>r.dr===hoje&&r.hr&&r.status!=='cancelada'&&r.status!=='naoconsta');
   let proximo=null;
   candidatos.forEach(r=>{
-    const[h,m]=r.hr.split(':').map(Number),hAgend=h*60+m,diff=hAgend-hAtual,key=r.id+'_30';
-    if(diff<=30&&diff>28&&!alarmedIds.has(key)){
-      alarmedIds.add(key);
-      const ofInfo=OFUROS.find(o=>o.num===r.ofuro)||{};
-      tocarSom();
-      enviarNotifSistema(`🛁 Ofurô ${r.ofuro} em 30 minutos!`,`Apto ${r.apto} · ${r.hr}${r.func?' · '+r.func:''}\n${ofInfo.local||''}`);
-      document.getElementById('of-notif-title').textContent=`Ofurô ${r.ofuro} em 30 minutos!`;
-      document.getElementById('of-notif-msg').innerHTML=`<strong>Ofurô ${r.ofuro}</strong> — ${ofInfo.local||''}<br>Apartamento: <strong>${r.apto}</strong><br>Horário: <strong>${r.hr}</strong><br>${r.func?`Agendado por: <strong>${r.func}</strong>`:''}`;
-      document.getElementById('of-notif-overlay').style.display='flex';
-      let seg=10;const btn=document.getElementById('of-notif-close-btn');btn.textContent=`OK (${seg}s)`;
-      if(window._countdownTimer)clearInterval(window._countdownTimer);
-      window._countdownTimer=setInterval(()=>{seg--;if(seg>0){btn.textContent=`OK (${seg}s)`;}else{clearInterval(window._countdownTimer);btn.textContent='OK';}},1000);
+    const[h,m]=r.hr.split(':').map(Number),hAgend=h*60+m,diff=hAgend-hAtual;
+    const ofInfo=OFUROS.find(o=>o.num===r.ofuro)||{};
+    const base=`<strong>Ofurô ${r.ofuro}</strong> — ${ofInfo.local||''}<br>Apartamento: <strong>${r.apto}</strong><br>Horário: <strong>${r.hr}</strong><br>${r.func?`Agendado por: <strong>${r.func}</strong>`:''}`;
+    // Alerta 30 minutos ANTES
+    const key30=r.id+'_30';
+    if(diff<=30&&diff>28&&!alarmedIds.has(key30)){
+      alarmedIds.add(key30);
+      _dispararAlerta('🛁',`Ofurô ${r.ofuro} em 30 minutos!`,
+        `Apto ${r.apto} · ${r.hr}${r.func?' · '+r.func:''}\n${ofInfo.local||''}`,base);
+    }
+    // Alerta 5 minutos DEPOIS do horário: ligar para o restaurante
+    const keyPos=r.id+'_pos5';
+    if(diff<=-5&&diff>-7&&!alarmedIds.has(keyPos)){
+      alarmedIds.add(keyPos);
+      _dispararAlerta('📞','LIGAR P/ RESTAURANTE',
+        `Ofurô ${r.ofuro} · Apto ${r.apto} · ${r.hr}\n${ofInfo.local||''}`,
+        `<strong style="color:#A32D2D;font-size:16px;">LIGAR P/ RESTAURANTE</strong><br><br>`+base);
     }
     if(diff>0&&(!proximo||diff<proximo.diff))proximo={diff,r};
   });
@@ -5936,7 +5952,7 @@ function verificarAlarmes(){
 function toggleAlarme(){
   alarmeAtivo=!alarmeAtivo;
   const bar=document.getElementById('of-alarm-bar'),status=document.getElementById('of-alarm-status'),dot=document.getElementById('of-alarm-dot'),txt=document.getElementById('of-alarm-txt'),btn=document.getElementById('of-alarm-btn'),next=document.getElementById('of-alarm-next');
-  if(alarmeAtivo){bar.className='alarm-bar';status.className='alarm-status';dot.className='alarm-dot';txt.textContent='Alarme ativo — monitorando agendamentos de hoje';btn.className='alarm-btn';btn.textContent='Desativar';next.style.color='#3B6D11';iniciarAlarme();}
+  if(alarmeAtivo){bar.className='alarm-bar';status.className='alarm-status';dot.className='alarm-dot';txt.textContent='Alarme ativo — monitorando agendamentos de hoje (30 min antes + ligar p/ restaurante)';btn.className='alarm-btn';btn.textContent='Desativar';next.style.color='#3B6D11';iniciarAlarme();}
   else{bar.className='alarm-bar off';status.className='alarm-status off';dot.className='alarm-dot off';txt.textContent='Alarme desativado';btn.className='alarm-btn off';btn.textContent='Ativar';next.style.color='#aaa';next.textContent='';if(alarmeInterval){clearInterval(alarmeInterval);alarmeInterval=null;}}
 }
 function iniciarAlarme(){if(alarmeInterval)clearInterval(alarmeInterval);verificarAlarmes();alarmeInterval=setInterval(verificarAlarmes,30000);}
