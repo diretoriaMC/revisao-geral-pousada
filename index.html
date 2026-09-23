@@ -2410,6 +2410,7 @@
     <div class="modal-taxa-row">
       <button class="modal-taxa-btn" id="of-medit-taxa" onclick="OFURO.selTaxaEdit('taxa')"><span style="font-size:14px;font-weight:500;display:block">R$ 50,00</span><span style="font-size:11px">💧 Taxa 1h</span></button>
       <button class="modal-taxa-btn hm" id="of-medit-meia" onclick="OFURO.selTaxaEdit('meia')"><span style="font-size:14px;font-weight:500;display:block">R$ 25,00</span><span style="font-size:11px">⏱ Taxa 30min</span></button>
+      <button class="modal-taxa-btn hm" id="of-medit-extra" onclick="OFURO.selTaxaEdit('extra')"><span style="font-size:14px;font-weight:500;display:block">R$ 25,00</span><span style="font-size:11px">➕ Taxa 1h extra</span></button>
       <button class="modal-taxa-btn rv" id="of-medit-rev" onclick="OFURO.selTaxaEdit('revertido')"><span style="font-size:14px;font-weight:500;display:block">Revertido 1h</span><span style="font-size:11px">🔄 Em consumação</span></button>
     </div>
     <div class="mfg" style="margin-bottom:12px;"><label>Descrição / Observações</label><textarea id="of-edit-desc" placeholder="Informações adicionais..."></textarea></div>
@@ -2446,7 +2447,7 @@
 <div class="alarm-bar no-print" id="of-alarm-bar">
   <div class="alarm-status" id="of-alarm-status">
     <div class="alarm-dot" id="of-alarm-dot"></div>
-    <span id="of-alarm-txt">Alarme ativo — monitorando agendamentos de hoje (30 min antes + ligar p/ restaurante)</span>
+    <span id="of-alarm-txt">Alarme ativo — monitorando agendamentos de hoje (30 min antes · ligar p/ restaurante · desligar após 1h)</span>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
     <span class="alarm-next" id="of-alarm-next"></span>
@@ -2457,7 +2458,7 @@
 <!-- NOVO AGENDAMENTO -->
 <div id="of-tab-novo">
   <div class="stats-row">
-    <div class="stat-card"><div class="stat-label">Total lançamentos</div><div class="stat-value" id="of-st-tot">0</div></div>
+    <div class="stat-card"><div class="stat-label">Vendas (sem canceladas)</div><div class="stat-value" id="of-st-tot">0</div></div>
     <div class="stat-card"><div class="stat-label">Taxa 1h (R$ 50)</div><div class="stat-value" id="of-st-tax" style="color:#185FA5">0</div></div>
     <div class="stat-card"><div class="stat-label">Taxa 30min (R$ 25)</div><div class="stat-value" id="of-st-mei" style="color:#BA7517">0</div></div>
     <div class="stat-card"><div class="stat-label">Total arrecadado</div><div class="stat-value" id="of-st-val" style="font-size:15px;color:#185FA5">R$ 0</div></div>
@@ -2487,6 +2488,7 @@
     <div class="taxa-row">
       <button class="taxa-btn" id="of-btn-taxa" onclick="OFURO.selTaxa('taxa')"><span class="taxa-price">R$ 50,00</span><span class="taxa-name">💧 Taxa 1h</span></button>
       <button class="taxa-btn hm" id="of-btn-meia" onclick="OFURO.selTaxa('meia')"><span class="taxa-price">R$ 25,00</span><span class="taxa-name">⏱ Taxa 30min</span><span style="font-size:11px;color:#854F0B;margin-top:5px;display:block;font-weight:600;background:#fde8c8;border-radius:4px;padding:2px 6px;">⚠️ apenas algumas exceções, quando já estiver fazendo uso do ofurô</span></button>
+      <button class="taxa-btn hm" id="of-btn-extra" onclick="OFURO.selTaxa('extra')"><span class="taxa-price">R$ 25,00</span><span class="taxa-name">➕ Taxa 1h extra</span></button>
       <button class="taxa-btn rv" id="of-btn-rev" onclick="OFURO.selTaxa('revertido')"><span class="taxa-price">Revertido 1h</span><span class="taxa-name">🔄 Em consumação</span></button>
     </div>
     <div class="fg" style="margin-bottom:16px;"><label>Descrição / Observações</label><textarea id="of-desc" placeholder="Informações adicionais..."></textarea></div>
@@ -2507,6 +2509,7 @@
     <div class="fchip ac" onclick="OFURO.fTaxa('todos',this)">Todos</div>
     <div class="fchip" onclick="OFURO.fTaxa('taxa',this)">Taxa 1h</div>
     <div class="fchip" onclick="OFURO.fTaxa('meia',this)">Taxa 30min</div>
+    <div class="fchip" onclick="OFURO.fTaxa('extra',this)">Taxa 1h extra</div>
     <div class="fchip" onclick="OFURO.fTaxa('revertido',this)">Revertido em consumação</div>
   </div>
   <div class="frow no-print" id="of-f-status">
@@ -5816,7 +5819,7 @@ function exportarPDF(){
   // Monta subtítulo com os filtros ativos
   let filtros=[];
   if(fO>0) filtros.push('Ofurô '+fO);
-  if(fT!=='todos') filtros.push(fT==='taxa'?'Taxa 1h':fT==='meia'?'Taxa 30min':'Revertido');
+  if(fT!=='todos') filtros.push(fT==='taxa'?'Taxa 1h':fT==='meia'?'Taxa 30min':fT==='extra'?'Taxa 1h extra':'Revertido');
   if(fSt!=='todos') filtros.push(fSt.charAt(0).toUpperCase()+fSt.slice(1));
   if(fF!=='todos') filtros.push(fF);
   const sub=filtros.length?'Filtros: '+filtros.join(' · '):'Todos os registros';
@@ -5850,6 +5853,7 @@ function selTaxaEdit(v){
   editTaxa=v;
   document.getElementById('of-medit-taxa').className='modal-taxa-btn'+(v==='taxa'?' st':'');
   document.getElementById('of-medit-meia').className='modal-taxa-btn hm'+(v==='meia'?' st':'');
+  document.getElementById('of-medit-extra').className='modal-taxa-btn hm'+(v==='extra'?' st':'');
   document.getElementById('of-medit-rev').className='modal-taxa-btn rv'+(v==='revertido'?' st':'');
 }
 
@@ -5943,6 +5947,15 @@ function verificarAlarmes(){
         `Ofurô ${r.ofuro} · Apto ${r.apto} · ${r.hr}\n${ofInfo.local||''}`,
         `<strong style="color:#A32D2D;font-size:16px;">LIGAR P/ RESTAURANTE</strong><br><br>`+base);
     }
+    // Alerta 1 hora DEPOIS do horário: desligar o ofurô
+    const keyDes=r.id+'_des60';
+    if(diff<=-60&&diff>-62&&!alarmedIds.has(keyDes)){
+      alarmedIds.add(keyDes);
+      _dispararAlerta('⏻','DESLIGAR OFURÔ '+r.ofuro,
+        `Apto ${r.apto} · agendado ${r.hr}
+${ofInfo.local||''}`,
+        `<strong style="color:#A32D2D;font-size:16px;">DESLIGAR OFURÔ</strong><br><br>`+base);
+    }
     if(diff>0&&(!proximo||diff<proximo.diff))proximo={diff,r};
   });
   const next=document.getElementById('of-alarm-next');
@@ -5952,7 +5965,7 @@ function verificarAlarmes(){
 function toggleAlarme(){
   alarmeAtivo=!alarmeAtivo;
   const bar=document.getElementById('of-alarm-bar'),status=document.getElementById('of-alarm-status'),dot=document.getElementById('of-alarm-dot'),txt=document.getElementById('of-alarm-txt'),btn=document.getElementById('of-alarm-btn'),next=document.getElementById('of-alarm-next');
-  if(alarmeAtivo){bar.className='alarm-bar';status.className='alarm-status';dot.className='alarm-dot';txt.textContent='Alarme ativo — monitorando agendamentos de hoje (30 min antes + ligar p/ restaurante)';btn.className='alarm-btn';btn.textContent='Desativar';next.style.color='#3B6D11';iniciarAlarme();}
+  if(alarmeAtivo){bar.className='alarm-bar';status.className='alarm-status';dot.className='alarm-dot';txt.textContent='Alarme ativo — monitorando agendamentos de hoje (30 min antes · ligar p/ restaurante · desligar após 1h)';btn.className='alarm-btn';btn.textContent='Desativar';next.style.color='#3B6D11';iniciarAlarme();}
   else{bar.className='alarm-bar off';status.className='alarm-status off';dot.className='alarm-dot off';txt.textContent='Alarme desativado';btn.className='alarm-btn off';btn.textContent='Ativar';next.style.color='#aaa';next.textContent='';if(alarmeInterval){clearInterval(alarmeInterval);alarmeInterval=null;}}
 }
 function iniciarAlarme(){if(alarmeInterval)clearInterval(alarmeInterval);verificarAlarmes();alarmeInterval=setInterval(verificarAlarmes,30000);}
@@ -5984,11 +5997,12 @@ function renderGrids(){
   OFUROS.forEach(o=>{const cnt=recs.filter(r=>r.ofuro===o.num).length;const b=document.createElement('div');b.className='ofuro-btn'+(selO===o.num?' sel':'');b.innerHTML=`<div class="ofuro-num">${o.num}</div><div class="ofuro-lbl">${o.local}</div><div class="ofuro-cnt">${cnt} agend.</div>`;b.onclick=()=>{selO=o.num;renderGrids();};(o.g==='t3'?t:p).appendChild(b);});
 }
 function renderStats(){
-  const tx=recs.filter(r=>r.taxa==='taxa'),mei=recs.filter(r=>r.taxa==='meia');
-  document.getElementById('of-st-tot').textContent=recs.length;
+  const validos=recs.filter(r=>r.status!=='cancelada'&&r.status!=='naoconsta');
+  const tx=validos.filter(r=>r.taxa==='taxa'),mei=validos.filter(r=>r.taxa==='meia'),ext=validos.filter(r=>r.taxa==='extra');
+  document.getElementById('of-st-tot').textContent=validos.length;
   document.getElementById('of-st-tax').textContent=tx.length;
   document.getElementById('of-st-mei').textContent=mei.length;
-  document.getElementById('of-st-val').textContent='R$ '+(tx.length*50+mei.length*25).toLocaleString('pt-BR');
+  document.getElementById('of-st-val').textContent='R$ '+(tx.length*50+mei.length*25+ext.length*25).toLocaleString('pt-BR');
 }
 function renderFChips(){
   const c=document.getElementById('of-f-ofuro');c.innerHTML=`<div class="fchip${fO===0?' ac':''}" onclick="OFURO.fOfuro(0,this)">Todos</div>`;
@@ -6015,6 +6029,7 @@ function fd(d){if(!d)return'-';const[y,m,dd]=d.split('-');return`${dd}/${m}/${y}
 function taxaLabel(t){
   if(t==='taxa')return{cls:'nm',txt:'Taxa 1h · R$ 50'};
   if(t==='meia')return{cls:'hm',txt:'Taxa 30min · R$ 25'};
+  if(t==='extra')return{cls:'hm',txt:'Taxa 1h extra · R$ 25'};
   return{cls:'rv',txt:'Revertido em consumação'};
 }
 
@@ -6089,6 +6104,7 @@ function selTaxa(v){
   selT=v;
   document.getElementById('of-btn-taxa').className='taxa-btn'+(v==='taxa'?' st':'');
   document.getElementById('of-btn-meia').className='taxa-btn hm'+(v==='meia'?' st':'');
+  document.getElementById('of-btn-extra').className='taxa-btn hm'+(v==='extra'?' st':'');
   document.getElementById('of-btn-rev').className='taxa-btn rv'+(v==='revertido'?' st':'');
 }
 function showTab(t){
@@ -6138,36 +6154,39 @@ function gerarRelatorio(){
 
   // Só contam no faturamento os lançamentos válidos
   const contaValor=r=>r.status==='confirmada'||r.status==='pendente';
-  const valorDe=r=>r.taxa==='taxa'?50:r.taxa==='meia'?25:0;
+  const valorDe=r=>r.taxa==='taxa'?50:(r.taxa==='meia'||r.taxa==='extra')?25:0;
 
   const porFunc={};
   noPeriodo.forEach(r=>{
     const f=r.func||'(sem nome)';
-    if(!porFunc[f]) porFunc[f]={nome:f,total:0,h1:0,m30:0,rev:0,valor:0,cancel:0};
+    if(!porFunc[f]) porFunc[f]={nome:f,total:0,h1:0,m30:0,ext:0,rev:0,valor:0,cancel:0};
     const o=porFunc[f];
+    // Cancelados / não consta não entram na contagem de vendas
+    if(!contaValor(r)){ o.cancel++; return; }
     o.total++;
-    if(r.taxa==='taxa') o.h1++; else if(r.taxa==='meia') o.m30++; else o.rev++;
-    if(contaValor(r)) o.valor+=valorDe(r); else o.cancel++;
+    if(r.taxa==='taxa') o.h1++; else if(r.taxa==='meia') o.m30++; else if(r.taxa==='extra') o.ext++; else o.rev++;
+    o.valor+=valorDe(r);
   });
 
-  const lista=Object.values(porFunc).sort((a,b)=>b.valor-a.valor||b.total-a.total);
+  const lista=Object.values(porFunc).filter(f=>f.total>0||f.cancel>0).sort((a,b)=>b.valor-a.valor||b.total-a.total);
   const maxValor=Math.max(...lista.map(f=>f.valor),1);
   const tot=lista.reduce((a,f)=>({
-    total:a.total+f.total, h1:a.h1+f.h1, m30:a.m30+f.m30,
+    total:a.total+f.total, h1:a.h1+f.h1, m30:a.m30+f.m30, ext:a.ext+f.ext,
     rev:a.rev+f.rev, valor:a.valor+f.valor, cancel:a.cancel+f.cancel
-  }),{total:0,h1:0,m30:0,rev:0,valor:0,cancel:0});
+  }),{total:0,h1:0,m30:0,ext:0,rev:0,valor:0,cancel:0});
 
   const brl=v=>'R$ '+v.toLocaleString('pt-BR');
   let html=
     '<div class="rel-cab">'+
       '<h3>📊 Vendas por funcionário</h3>'+
-      '<span class="per">'+fd(de)+' a '+fd(ate)+' · '+noPeriodo.length+' agendamento'+(noPeriodo.length!==1?'s':'')+'</span>'+
+      '<span class="per">'+fd(de)+' a '+fd(ate)+' · '+tot.total+' venda'+(tot.total!==1?'s':'')+(tot.cancel?' · '+tot.cancel+' cancelado'+(tot.cancel!==1?'s':'')+' (fora da conta)':'')+'</span>'+
     '</div>'+
     '<table class="rel-tabela"><thead><tr>'+
       '<th>Funcionário</th>'+
       '<th class="num">Vendas</th>'+
       '<th class="num op">1h</th>'+
       '<th class="num op">30min</th>'+
+      '<th class="num op">1h extra</th>'+
       '<th class="num op">Revert.</th>'+
       '<th class="num op">Cancel.</th>'+
       '<th class="num">Arrecadado</th>'+
@@ -6181,6 +6200,7 @@ function gerarRelatorio(){
       '<td class="num"><strong>'+f.total+'</strong></td>'+
       '<td class="num op">'+f.h1+'</td>'+
       '<td class="num op">'+f.m30+'</td>'+
+      '<td class="num op">'+f.ext+'</td>'+
       '<td class="num op">'+f.rev+'</td>'+
       '<td class="num op">'+(f.cancel||'—')+'</td>'+
       '<td class="num rel-val">'+brl(f.valor)+'</td>'+
@@ -6192,6 +6212,7 @@ function gerarRelatorio(){
       '<td class="num">'+tot.total+'</td>'+
       '<td class="num op">'+tot.h1+'</td>'+
       '<td class="num op">'+tot.m30+'</td>'+
+      '<td class="num op">'+tot.ext+'</td>'+
       '<td class="num op">'+tot.rev+'</td>'+
       '<td class="num op">'+(tot.cancel||'—')+'</td>'+
       '<td class="num">'+brl(tot.valor)+'</td>'+
